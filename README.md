@@ -12,5 +12,5 @@
 10. Group Calling
 11. Real Time Translation
 12. Media Sharing
-13. Privacy and End-to-end Encryption
+13. Privacy
 14. Push Notifications
