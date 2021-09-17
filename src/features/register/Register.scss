@@ -1,0 +1,90 @@
+.register-layout {
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register {
+  height: 550px;
+  width: 480px;
+  padding: 2rem;
+  background-color: #fff;
+  p {
+    color: #999;
+  }
+
+  &__header {
+    width: 100%;
+    height: 25%;
+  }
+
+  &__content {
+    width: 100%;
+    height: 65%;
+
+    & > form {
+      height: 100%;
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    &__input {
+      height: 40px;
+      width: 100%;
+
+      padding: 1rem;
+      transition: 0.3s;
+      outline: none;
+      border: 1.35px solid #ccc;
+      &:focus {
+        border-color: #f09819;
+      }
+    }
+
+    &__btn {
+      height: 40px;
+      width: 100%;
+
+      cursor: pointer;
+      background-image: linear-gradient(to right, #ff512f 0%, #f09819 51%, #ff512f 100%);
+      text-align: center;
+      text-transform: uppercase;
+      transition: 0.5s;
+      background-size: 200% auto;
+      color: white;
+      box-shadow: 0 0 20px #eee;
+      display: block;
+      border: none;
+
+      &:hover {
+        outline: none;
+        background-position: right center; /* change the direction of the change here */
+        color: #fff;
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__footer {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    & > p {
+      margin: 0;
+    }
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
