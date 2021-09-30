@@ -19,8 +19,13 @@
 
 ## Login page
 
-![Login](https://user-images.githubusercontent.com/75214138/135398771-1524f972-787f-4e8f-9d14-26123766ef36.png)
+![Login](https://user-images.githubusercontent.com/75214138/135399065-2b4cfb94-3070-404d-9b61-cd49b1d71c29.png)
 
 ## Chat page
 
 ![Chat](https://user-images.githubusercontent.com/75214138/135398598-f069d717-7b55-4976-9e58-eb5561980421.png)
+
+### Edit profile
+
+![edit profile](https://user-images.githubusercontent.com/75214138/135399203-55f3ba15-fb35-4e58-84b9-dec13b9236eb.png)
+
