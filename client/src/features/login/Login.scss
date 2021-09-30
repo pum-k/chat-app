@@ -1,7 +1,7 @@
 .login-layout {
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+  background-color: #240140;
 
   display: flex;
   align-items: center;
@@ -12,7 +12,9 @@
   height: 400px;
   width: 480px;
   padding: 2rem;
-  background-color: #fff;
+
+  background-color: white;
+
   p {
     color: #999;
   }
@@ -43,7 +45,7 @@
       outline: none;
       border: 1.35px solid #ccc;
       &:focus {
-        border-color: #f09819;
+        border-color: #f857a6;
       }
     }
 
@@ -52,7 +54,7 @@
       width: 100%;
 
       cursor: pointer;
-      background-image: linear-gradient(to right, #ff512f 0%, #f09819 51%, #ff512f 100%);
+      background-image: linear-gradient(to right, #f857a6 0%, #ff5858 51%, #f857a6 100%);
       text-align: center;
       text-transform: uppercase;
       transition: 0.5s;

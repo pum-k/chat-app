@@ -3,7 +3,6 @@ import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 import Chat from 'features/chat/Chat';
 import Login from 'features/login/Login';
 import Register from 'features/register/Register';
-import React, { useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
 
@@ -15,8 +14,7 @@ function App() {
       <PrivateRoute path="/">
         <Chat />
       </PrivateRoute>
-
-      <Route component={NotFound} />
+      <Route path="*" component={NotFound} />
     </Switch>
   );
 }

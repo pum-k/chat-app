@@ -1,0 +1,20 @@
+.modal-account {
+  & .ant-modal-body {
+    padding: 0px;
+    position: relative;
+    height: 650px;
+  }
+  &__cover-image {
+    height: 200px !important;
+    object-fit: cover;
+  }
+  &__avatar {
+    border: 1px solid #fff;
+  }
+  &__info {
+    width: 100%;
+    text-align: center;
+    transform: translateY(-50px);
+    padding: 0 20px;
+  }
+}
