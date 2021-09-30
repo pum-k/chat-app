@@ -1,0 +1,27 @@
+.modal-add-friend {
+  & .ant-modal-body {
+    padding: 0;
+  }
+  &__search {
+    border: none !important;
+    border-bottom: 1px solid #eee !important;
+
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+
+  &__cover-image {
+    height: 200px !important;
+    object-fit: cover;
+  }
+  &__avatar {
+    border: 1px solid #fff;
+  }
+  &__info {
+    width: 100%;
+    text-align: center;
+    transform: translateY(-50px);
+    padding: 0 20px;
+  }
+}

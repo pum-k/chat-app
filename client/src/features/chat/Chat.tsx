@@ -33,6 +33,8 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import TextArea from 'rc-textarea';
 import AccountModal from 'features/accountModal/AccountModal';
+import AddFriendModal from 'features/addFriendModal/AddFriendModal';
+import CreateGroup from 'features/createGroup/CreateGroup';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -43,7 +45,7 @@ const Chat = () => {
   const menu = (
     <Menu>
       <Menu.Item>
-        <Button type="text" icon={<UserOutlined />} onClick={() => showModal()}>
+        <Button type="text" icon={<UserOutlined />} onClick={() => showModalAccount()}>
           Account
         </Button>
       </Menu.Item>
@@ -56,18 +58,43 @@ const Chat = () => {
   );
 
   //handle modal account
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
+  const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
+  const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
+  const [isModalVisibleCreateGroup, setIsModalVisibleCreateGroup] = useState(false);
+  const showModalAccount = () => {
+    setIsModalVisibleAccount(true);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
+  const handleOkAccount = () => {
+    setIsModalVisibleAccount(false);
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleCancelAccount = () => {
+    setIsModalVisibleAccount(false);
+  };
+
+  const showModalAddFriend = () => {
+    setIsModalVisibleAddFriend(true);
+  };
+
+  const handleOkAddFriend = () => {
+    setIsModalVisibleAddFriend(false);
+  };
+
+  const handleCancelAddFriend = () => {
+    setIsModalVisibleAddFriend(false);
+  };
+
+  const showModalCreateGroup = () => {
+    setIsModalVisibleCreateGroup(true);
+  };
+
+  const handleOkCreateGroup = () => {
+    setIsModalVisibleCreateGroup(false);
+  };
+
+  const handleCancelCreateGroup = () => {
+    setIsModalVisibleCreateGroup(false);
   };
 
   // render chat-bubble
@@ -127,10 +154,22 @@ const Chat = () => {
   return (
     <>
       <AccountModal
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
-        handleOk={handleOk}
-        handleCancel={handleCancel}
+        isModalVisible={isModalVisibleAccount}
+        setIsModalVisible={setIsModalVisibleAccount}
+        handleOk={handleOkAccount}
+        handleCancel={handleCancelAccount}
+      />
+      <AddFriendModal
+        isModalVisible={isModalVisibleAddFriend}
+        setIsModalVisible={setIsModalVisibleAddFriend}
+        handleOk={handleOkAddFriend}
+        handleCancel={handleCancelAddFriend}
+      />
+      <CreateGroup
+        isModalVisible={isModalVisibleCreateGroup}
+        setIsModalVisible={setIsModalVisibleCreateGroup}
+        handleOk={handleOkCreateGroup}
+        handleCancel={handleCancelCreateGroup}
       />
       <div className="chat">
         <div className="chat__header">
@@ -172,11 +211,21 @@ const Chat = () => {
               />
               <Space>
                 <Tooltip title="Add friend">
-                  <Button type="text" shape="circle" icon={<UserAddOutlined />} />
+                  <Button
+                    type="text"
+                    shape="circle"
+                    icon={<UserAddOutlined />}
+                    onClick={() => showModalAddFriend()}
+                  />
                 </Tooltip>
 
                 <Tooltip title="Add group chat">
-                  <Button type="text" shape="circle" icon={<UsergroupAddOutlined />} />
+                  <Button
+                    type="text"
+                    shape="circle"
+                    icon={<UsergroupAddOutlined />}
+                    onClick={() => showModalCreateGroup()}
+                  />
                 </Tooltip>
               </Space>
             </div>
