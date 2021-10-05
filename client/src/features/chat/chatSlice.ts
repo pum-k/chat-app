@@ -1,17 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
-
-export interface messageStructure {
-  create_at: any;
-  line_text: string;
-  user_id: string;
-  id: string;
-  room_id: string;
-}
-
-export interface ChatState {
-  messages: Array<messageStructure>;
-}
+import { ChatState, messageStructure } from 'constants/ChatTypes';
 
 const initialState: ChatState = {
   messages: [],
