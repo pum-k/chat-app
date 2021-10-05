@@ -3,16 +3,19 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Space, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 import './Login.scss';
+import { useAppDispatch } from 'app/hooks';
+import { accountLogin } from 'components/Common/accountSlice';
 
 const { Text } = Typography;
 
 const Login = () => {
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInput>();
-  const onSubmit: SubmitHandler<LoginInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<LoginInput> = (data) => dispatch(accountLogin(data));
 
   return (
     <div className="login-layout">

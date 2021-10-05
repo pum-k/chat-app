@@ -12,14 +12,16 @@ const initialState: AccountState = {
   isSuccess: false,
 };
 
-const accountLogin = createAsyncThunk('account/login', async (user: LoginInput) => {
+export const accountLogin = createAsyncThunk('account/login', async (user: LoginInput) => {
   const response = await accountApi.login(user);
-  //   return response.data
+  // return response.data
+  console.log(response);
 });
 
-const accountRegister = createAsyncThunk('account/register', async (user: RegisterInput) => {
+export const accountRegister = createAsyncThunk('account/register', async (user: RegisterInput) => {
   const response = await accountApi.register(user);
-  //   return response.data
+  //   if (response.data) return response.data;
+  console.log(response);
 });
 
 export const accountSlice = createSlice({

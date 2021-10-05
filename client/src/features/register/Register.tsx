@@ -4,16 +4,19 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterInput } from 'constants/AccountTypes';
 import { Typography } from 'antd';
 import { Link } from 'react-router-dom';
+import { useAppDispatch } from 'app/hooks';
+import { accountRegister } from 'components/Common/accountSlice';
 
 const { Text } = Typography;
 
 const Register = () => {
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterInput>();
-  const onSubmit: SubmitHandler<RegisterInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<RegisterInput> = (data) => dispatch(accountRegister(data));
   return (
     <div className="register-layout">
       <div className="register">
