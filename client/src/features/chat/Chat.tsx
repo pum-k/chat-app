@@ -14,7 +14,8 @@ import {
   Dropdown,
   Input,
 } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import {
   MoreOutlined,
   BellOutlined,
@@ -35,13 +36,21 @@ import TextArea from 'rc-textarea';
 import AccountModal from 'features/accountModal/AccountModal';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
-
+import { io } from 'socket.io-client';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
-
+let socket = io('http://localhost:4000');
 const Chat = () => {
   // list item dropdown
+
+  useEffect(() => {
+    socket.emit('join_room', {
+      room_id: localStorage.getItem('room_id'),
+      userInfo: 'thang',
+    });
+  }, []);
+
   const menu = (
     <Menu>
       <Menu.Item>
@@ -99,7 +108,12 @@ const Chat = () => {
 
   // render chat-bubble
   const tempUser = useRef('');
+  // text input of user
+  const [newMessages, SetNewMessages] = useState('');
 
+  socket.on('newMessages', (message) => {
+    setline_text([...line_text, message]);
+  });
   // list users to chat
   const data = [
     {
@@ -113,7 +127,7 @@ const Chat = () => {
   ];
 
   // list messages corresponding to each user
-  const line_text = [
+  const [line_text, setline_text] = useState([
     {
       user_id: 'bahang',
       line_text: 'tao chui may do',
@@ -134,13 +148,22 @@ const Chat = () => {
       user_id: 'bahang',
       line_text: 'm lam sao',
     },
-  ];
+  ]);
 
   // handle send messages
   const chatEnterSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
+
+    SetNewMessages(target.value);
     if (e.key === 'Enter' && e.shiftKey === false) {
-      console.log(target.value);
+      let messageInput = {
+        createAt: Date.now(),
+        line_text: newMessages,
+        user_id: 'Ezzio',
+        id: '2',
+        room_id: localStorage.getItem('room_id')
+      };
+      socket.emit('sendMessage', messageInput);
       target.value = '';
       e.preventDefault();
     }
