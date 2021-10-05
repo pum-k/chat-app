@@ -13,9 +13,10 @@ import {
   Menu,
   Dropdown,
   Input,
+  Form,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import {
   MoreOutlined,
   BellOutlined,
@@ -36,21 +37,35 @@ import TextArea from 'rc-textarea';
 import AccountModal from 'features/accountModal/AccountModal';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
-import { io } from 'socket.io-client';
+// import { io } from 'socket.io-client';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { selectMessages, sendMessage } from './chatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
-let socket = io('http://localhost:4000');
+// let socket = io('http://localhost:4000');
 const Chat = () => {
-  // list item dropdown
-
+  //useEffect
   useEffect(() => {
-    socket.emit('join_room', {
-      room_id: localStorage.getItem('room_id'),
-      userInfo: 'thang',
-    });
+    // socket.emit('join_room', {
+    //   room_id: localStorage.getItem('room_id'),
+    //   userInfo: 'thang',
+    // });
   }, []);
 
+  //data messages
+  const messages = useAppSelector(selectMessages);
+
+  // Scroll when new message
+  const messagesEndRef = useRef<any>(null);
+  useEffect(() => {
+    if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // declare redux hooks
+  const dispatch = useAppDispatch();
+
+  // list item dropdown
   const menu = (
     <Menu>
       <Menu.Item>
@@ -66,10 +81,12 @@ const Chat = () => {
     </Menu>
   );
 
-  //handle modal account
+  // declare useState
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
   const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
   const [isModalVisibleCreateGroup, setIsModalVisibleCreateGroup] = useState(false);
+
+  //handle modal account
   const showModalAccount = () => {
     setIsModalVisibleAccount(true);
   };
@@ -107,13 +124,13 @@ const Chat = () => {
   };
 
   // render chat-bubble
-  const tempUser = useRef('');
+  // const tempUser = useRef('');
   // text input of user
-  const [newMessages, SetNewMessages] = useState('');
+  // const [newMessages, SetNewMessages] = useState('');
 
-  socket.on('newMessages', (message) => {
-    setline_text([...line_text, message]);
-  });
+  // socket.on('newMessages', (message) => {
+  //   setline_text([...line_text, message]);
+  // });
   // list users to chat
   const data = [
     {
@@ -126,47 +143,26 @@ const Chat = () => {
     },
   ];
 
-  // list messages corresponding to each user
-  const [line_text, setline_text] = useState([
-    {
-      user_id: 'bahang',
-      line_text: 'tao chui may do',
-    },
-    {
-      user_id: 'bahang',
-      line_text: 'con di cho',
-    },
-    {
-      user_id: 'dvh',
-      line_text: 'immom',
-    },
-    {
-      user_id: 'dvh',
-      line_text: 'immom',
-    },
-    {
-      user_id: 'bahang',
-      line_text: 'm lam sao',
-    },
-  ]);
-
   // handle send messages
+  const [form] = Form.useForm();
+
   const chatEnterSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
-
-    SetNewMessages(target.value);
     if (e.key === 'Enter' && e.shiftKey === false) {
-      let messageInput = {
-        createAt: Date.now(),
-        line_text: newMessages,
-        user_id: 'Ezzio',
-        id: '2',
-        room_id: localStorage.getItem('room_id')
-      };
-      socket.emit('sendMessage', messageInput);
-      target.value = '';
-      e.preventDefault();
+      onFinish({ message: target.value });
     }
+  };
+
+  const onFinish = (value: any) => {
+    form.resetFields();
+    const newMessage = {
+      create_at: Date.now(),
+      line_text: value.message,
+      user_id: 'test',
+      id: 'test',
+      room_id: 'test',
+    };
+    dispatch(sendMessage(newMessage));
   };
 
   //handle search
@@ -308,74 +304,62 @@ const Chat = () => {
               </section>
             </div>
             <div className="chat__content__2nd__chat-box">
-              {line_text
-                .slice(0)
-                .reverse()
-                .map((item, index) => {
-                  if (!tempUser.current) {
-                    tempUser.current = item.user_id;
-                    return (
-                      <Comment
-                        actions={[]}
-                        author={<b>{item.user_id}</b>}
-                        avatar={
-                          <Avatar
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                            alt="Han Solo"
-                          />
-                        }
-                        content={<p>{item.line_text}</p>}
-                        datetime={
-                          <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                            <span>{moment().fromNow()}</span>
-                          </Tooltip>
-                        }
-                      />
-                    );
-                  } else if (item.user_id === tempUser.current) {
-                    return (
-                      <p style={{ marginLeft: '45px', marginBottom: '0px' }}>{item.line_text}</p>
-                    );
-                  } else {
-                    tempUser.current = item.user_id;
-                    return (
-                      <Comment
-                        actions={[]}
-                        author={<b>{item.user_id}</b>}
-                        avatar={
-                          <Avatar
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                            alt="Han Solo"
-                          />
-                        }
-                        content={<p>{item.line_text}</p>}
-                        datetime={
-                          <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                            <span>{moment().fromNow()}</span>
-                          </Tooltip>
-                        }
-                      />
-                    );
-                  }
+              {messages &&
+                messages.map((item, index) => {
+                  return (
+                    <Comment
+                      key={index}
+                      actions={[]}
+                      author={<b>{item.user_id}</b>}
+                      avatar={
+                        <Avatar
+                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                          alt="Han Solo"
+                        />
+                      }
+                      content={<p>{item.line_text}</p>}
+                      datetime={
+                        <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                          <span>{moment().fromNow()}</span>
+                        </Tooltip>
+                      }
+                    />
+                  );
                 })}
+              <div ref={messagesEndRef} />
             </div>
             <div className="chat__content__2nd__input">
-              <Space size="middle">
-                <TextArea
-                  placeholder="Chat now..."
-                  autoSize={{ minRows: 1, maxRows: 3 }}
-                  onKeyPress={(e) => chatEnterSubmit(e)}
-                />
-                <Tooltip placement="top" title={`Send`}>
-                  <Button
-                    shape="circle"
-                    icon={<SendOutlined />}
-                    type="primary"
-                    size="large"
-                    className="chat__content__2nd__input__btn-send"
-                  />
-                </Tooltip>
-              </Space>
+              <Form
+                name="chat"
+                autoComplete="off"
+                onFinish={onFinish}
+                form={form}
+                className="chat__content__2nd__input__form"
+              >
+                <Space size="small" style={{ width: '100%' }}>
+                  <Form.Item name="message" style={{ width: '100%' }}>
+                    <TextArea
+                      placeholder="Chat now..."
+                      autoSize={{ minRows: 1, maxRows: 3 }}
+                      onKeyPress={(e: any) => {
+                        chatEnterSubmit(e);
+                      }}
+                    />
+                  </Form.Item>
+                  <Form.Item>
+                    <Tooltip placement="top" title={`Send`}>
+                      <Button
+                        shape="circle"
+                        icon={<SendOutlined />}
+                        type="primary"
+                        size="large"
+                        className="chat__content__2nd__input__btn-send"
+                        htmlType="submit"
+                      />
+                    </Tooltip>
+                  </Form.Item>
+                </Space>
+              </Form>
             </div>
           </section>
           <section className="chat__content__3th">
