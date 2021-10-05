@@ -19,8 +19,8 @@ export const accountLogin = createAsyncThunk('account/login', async (user: Login
 });
 
 export const accountRegister = createAsyncThunk('account/register', async (user: RegisterInput) => {
-  const response = await accountApi.register(user);
-    if (response) return response;
+  const response: any = await accountApi.register(user);
+  return response.data;
   // console.log(response);
 });
 
@@ -52,3 +52,5 @@ export const accountSlice = createSlice({
     });
   },
 });
+
+export default accountSlice.reducer;
