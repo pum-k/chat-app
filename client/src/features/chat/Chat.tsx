@@ -14,6 +14,7 @@ import {
   Dropdown,
   Input,
   Form,
+  message,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 // import axios from 'axios';
@@ -37,22 +38,15 @@ import TextArea from 'rc-textarea';
 import AccountModal from 'features/accountModal/AccountModal';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
-// import { io } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { selectMessages, sendMessage } from './chatSlice';
+import { joinRoom, selectMessages, sendMessage } from './chatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
-// let socket = io('http://localhost:4000');
-const Chat = () => {
-  //useEffect
-  useEffect(() => {
-    // socket.emit('join_room', {
-    //   room_id: localStorage.getItem('room_id'),
-    //   userInfo: 'thang',
-    // });
-  }, []);
+const socket = io('http://localhost:4000');
 
+const Chat = () => {
   //data messages
   const messages = useAppSelector(selectMessages);
 
@@ -64,6 +58,18 @@ const Chat = () => {
 
   // declare redux hooks
   const dispatch = useAppDispatch();
+
+  //  ----------------------------------
+  // |       SOCKET.IO----->           |
+  // ----------------------------------
+
+  useEffect(() => {
+    dispatch(joinRoom(socket));
+  }, []);
+
+  //  ----------------------------------
+  // |       <-----SOCKET.IO           |
+  // ----------------------------------
 
   // list item dropdown
   const menu = (
@@ -123,14 +129,6 @@ const Chat = () => {
     setIsModalVisibleCreateGroup(false);
   };
 
-  // render chat-bubble
-  // const tempUser = useRef('');
-  // text input of user
-  // const [newMessages, SetNewMessages] = useState('');
-
-  // socket.on('newMessages', (message) => {
-  //   setline_text([...line_text, message]);
-  // });
   // list users to chat
   const data = [
     {
@@ -162,7 +160,10 @@ const Chat = () => {
       id: 'test',
       room_id: 'test',
     };
-    dispatch(sendMessage(newMessage));
+    socket.on('newMessages', (message) => {
+      // dispatch(sendMessage(newMessage));
+      console.log(message);
+    });
   };
 
   //handle search
