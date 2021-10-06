@@ -20,8 +20,8 @@ export const accountLogin = createAsyncThunk('account/login', async (user: Login
 
 export const accountRegister = createAsyncThunk('account/register', async (user: RegisterInput) => {
   const response = await accountApi.register(user);
-  //   if (response.data) return response.data;
-  console.log(response);
+    if (response) return response;
+  // console.log(response);
 });
 
 export const accountSlice = createSlice({
@@ -48,6 +48,7 @@ export const accountSlice = createSlice({
     });
     builder.addCase(accountRegister.fulfilled, (state, action) => {
       state.loadding = false;
+      console.log(action.payload);
     });
   },
 });

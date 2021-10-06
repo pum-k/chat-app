@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { LoginInput, RegisterInput } from 'constants/AccountTypes';
 
-const API = process.env.API_URL;
+const API = 'http://localhost:4000';
 
 export const accountApi = {
   login: (params: LoginInput) => {
@@ -18,8 +18,9 @@ export const accountApi = {
       });
   },
   register: (params: RegisterInput) => {
+    // console.log(API);
     return axios
-      .post(`${API}/login`, {
+      .post(`${API}/register`, {
         username: params.username,
         password: params.password,
         phoneNumber: params.phoneNumber,

@@ -10,7 +10,7 @@ router.get("/", functionAutho.checkNotAuthenticated, (req, res) => {
 });
 
 router.post("/", passport.authenticate("local"), function (req, res) {
-  res.send({ id: user.ID, redirect: "/home" });
+  res.send({ id: user.ID});
 });
 
 passport.use(
