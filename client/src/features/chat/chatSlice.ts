@@ -10,14 +10,19 @@ export const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    sendMessage: (state, action: PayloadAction<messageStructure>) => {
-      if (action.payload.line_text) {
-        state.messages.push(action.payload);
-      }
+    joinRoom: (state, action) => {
+      action.payload.emit('join_room', {
+        room_id: localStorage.getItem('room_id'),
+        userInfo: 'thang',
+      });
+    },
+    sendMessage: (state, action) => {
+      // if (action.payload.line_text) {
+      // }
     },
   },
 });
 
 export default chatSlice.reducer;
-export const { sendMessage } = chatSlice.actions;
+export const { sendMessage, joinRoom } = chatSlice.actions;
 export const selectMessages = (state: RootState) => state.chat.messages;
