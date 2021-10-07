@@ -39,7 +39,7 @@ mongoose.connection.on("connected", () => {
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
+app.set('socketio', io);
 app.use("/chat", chatroom);
 app.use("/login", login);
 app.use("/register", register);
@@ -57,6 +57,5 @@ io.on("connection", function (socket) {
     console.log("user disconnected");
   });
 });
-app.set("socketio", io);
 
 server.listen(4000, () => console.log("server is running at port 4000"));

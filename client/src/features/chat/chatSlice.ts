@@ -27,10 +27,11 @@ export const chatSlice = createSlice({
       });
     },
     newMessage: (state, action) => {
-      action.payload.on('newMessages', (message: any) => {
-        state.messages.push(message);
-        // setMessage([...messages, message]);
-      });
+      state.messages.push({  create_at: "20/12/2000",
+        line_text: action.payload,
+        user_id: "thang",
+       
+       })
     },
     sendMessage: (state, action) => {
       // if (action.payload.line_text) {
@@ -51,5 +52,5 @@ export const chatSlice = createSlice({
 });
 
 export default chatSlice.reducer;
-export const { sendMessage, joinRoom } = chatSlice.actions;
+export const { sendMessage, joinRoom ,newMessage } = chatSlice.actions;
 export const selectMessages = (state: RootState) => state.chat.messages;
