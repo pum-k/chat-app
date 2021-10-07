@@ -29,3 +29,6 @@
 
 ![edit profile](https://user-images.githubusercontent.com/75214138/135399203-55f3ba15-fb35-4e58-84b9-dec13b9236eb.png)
 
+# CDM diagram
+
+[chat-app-database.pdf](https://github.com/pum-k/chat-app/files/7303489/chat-app-database.pdf)
