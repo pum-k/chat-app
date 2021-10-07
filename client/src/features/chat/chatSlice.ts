@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
 import { ChatState, messageStructure } from 'constants/ChatTypes';
-
+import io from 'socket.io-client';
 const initialState: ChatState = {
   messages: [],
 };
