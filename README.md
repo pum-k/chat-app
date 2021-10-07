@@ -31,4 +31,4 @@
 
 # CDM diagram
 
-[chat-app-database.pdf](https://github.com/pum-k/chat-app/files/7303489/chat-app-database.pdf)
+![image](https://user-images.githubusercontent.com/75214138/136390192-72855f24-1066-442a-adb8-4e1f57131dfd.png)
