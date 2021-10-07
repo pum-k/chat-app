@@ -40,7 +40,7 @@ import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
 import { io } from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { joinRoom, selectMessages, sendMessages  } from './chatSlice';
+import { joinRoom, selectMessages, sendMessages, newMessage  } from './chatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -65,6 +65,15 @@ const Chat = () => {
 
   useEffect(() => {
     dispatch(joinRoom(socket));
+    // dispatch(newMessage(socket));
+    socket.on('newMessages', (message: any) => {
+      // state.messages.push(message);
+    
+      
+      // console.log('new Message');
+      dispatch(newMessage(message));
+      // setMessage([...messages, message]);
+    });
   }, []);
 
   //  ----------------------------------
