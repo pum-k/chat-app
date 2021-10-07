@@ -9,11 +9,18 @@ import './App.css';
 function App() {
   return (
     <Switch>
-      <Route path="/login" component={Login} exact />
-      <Route path="/register" component={Register} exact />
-      <PrivateRoute path="/">
-        <Chat />
-      </PrivateRoute>
+      {localStorage.getItem('access_token') ? (
+        <PrivateRoute path="/">
+          <Chat />
+        </PrivateRoute>
+      ) : (
+        <>
+          {' '}
+          <Route path="/login" component={Login} exact />
+          <Route path="/register" component={Register} exact />{' '}
+        </>
+      )}
+
       <Route path="*" component={NotFound} />
     </Switch>
   );

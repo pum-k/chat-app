@@ -40,12 +40,12 @@ mongoose.connection.on("connected", () => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use("/chatroom", chatroom);
+app.use("/chat", chatroom);
 app.use("/login", login);
 app.use("/register", register);
 
 io.on("connection", function (socket) {
-  console.log("1 nguoi vua connect");
+ 
   socket.on("join_room", (data) => {
     socket.join(data.room_id);
     console.log("1 nguoi vua join vao room " + data.room_id);

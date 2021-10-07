@@ -11,7 +11,7 @@ export const accountApi = {
         password: params.password,
       })
       .then((response) => {
-        return response.data;
+        return response;
       })
       .catch((error) => {
         console.log(error);
@@ -27,7 +27,7 @@ export const accountApi = {
         dateOfBirth: params.dateOfBirth,
       })
       .then((response) => {
-        return response.data;
+        return response;
       })
       .catch((error) => {
         console.log(error);

@@ -13,15 +13,15 @@ const initialState: AccountState = {
 };
 
 export const accountLogin = createAsyncThunk('account/login', async (user: LoginInput) => {
-  const response = await accountApi.login(user);
-  // return response.data
-  console.log(response);
+  const response: any = await accountApi.login(user);
+  return response.data;
+  // console.log(response);
 });
 
 export const accountRegister = createAsyncThunk('account/register', async (user: RegisterInput) => {
   const response: any = await accountApi.register(user);
   return response.data;
-  // console.log(response);
+  // console.log(response.data);
 });
 
 export const accountSlice = createSlice({
@@ -38,6 +38,11 @@ export const accountSlice = createSlice({
     });
     builder.addCase(accountLogin.fulfilled, (state, action) => {
       state.loadding = false;
+      // console.log(action.payload);
+      if(action.payload.id){
+        localStorage.setItem('access_token' , action.payload.id)
+        window.location.href = 'http://localhost:3000';
+      }
     });
     builder.addCase(accountRegister.pending, (state) => {
       state.loadding = true;
@@ -48,7 +53,12 @@ export const accountSlice = createSlice({
     });
     builder.addCase(accountRegister.fulfilled, (state, action) => {
       state.loadding = false;
-      console.log(action.payload);
+      state.isSuccess = action.payload.isSuccess;
+      if (action.payload.isSuccess) {
+        window.location.href = 'http://localhost:3000/login';
+      }
+
+      // console.log(action.payload);
     });
   },
 });
