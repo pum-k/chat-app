@@ -29,3 +29,6 @@
 
 ![edit profile](https://user-images.githubusercontent.com/75214138/135399203-55f3ba15-fb35-4e58-84b9-dec13b9236eb.png)
 
+# CDM diagram
+
+![image](https://user-images.githubusercontent.com/75214138/136390192-72855f24-1066-442a-adb8-4e1f57131dfd.png)
