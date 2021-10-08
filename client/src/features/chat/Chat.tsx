@@ -40,7 +40,7 @@ import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
 import { io } from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { joinRoom, selectMessages, sendMessages, newMessage  } from './chatSlice';
+import { joinRoom, selectMessages, sendMessageAsync, sendMessage } from './chatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -65,14 +65,16 @@ const Chat = () => {
 
   useEffect(() => {
     dispatch(joinRoom(socket));
-    // dispatch(newMessage(socket));
+
     socket.on('newMessages', (message: any) => {
-      // state.messages.push(message);
-    
-      
-      // console.log('new Message');
-      dispatch(newMessage(message));
-      // setMessage([...messages, message]);
+      const newMessage = {
+        create_at: Date.now(),
+        line_text: message,
+        user_id: 'test',
+        id: 'test',
+        room_id: 'test',
+      };
+      dispatch(sendMessage(newMessage));
     });
   }, []);
 
@@ -169,7 +171,7 @@ const Chat = () => {
       id: 'test',
       room_id: 'test',
     };
-    dispatch(sendMessages(newMessage));
+    dispatch(sendMessageAsync(newMessage));
   };
 
   //handle search

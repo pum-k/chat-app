@@ -1,5 +1,5 @@
 import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, Descriptions } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormRegister } from 'react-hook-form';
 import './AddFriendModal.scss';
 
@@ -13,6 +13,7 @@ interface ModalProps {
 }
 const AddFriendModal: FC<ModalProps> = (props) => {
   const { isModalVisible, setIsModalVisible, handleOk, handleCancel } = props;
+  const [showSearchResult, setShowSearchResult] = useState(false);
 
   // handle submit form
   const onFinish = (values: any) => {
@@ -22,6 +23,10 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+
+  useEffect(() => {
+    if (!isModalVisible) setShowSearchResult(false);
+  }, [isModalVisible]);
 
   return (
     <>
@@ -33,12 +38,12 @@ const AddFriendModal: FC<ModalProps> = (props) => {
         className="modal-add-friend"
         width={400}
         footer={
-          false
+          !showSearchResult
             ? [
                 <Button
                   type="text"
                   onClick={() => {
-                    setIsModalVisible(false);
+                    setIsModalVisible(true);
                   }}
                   size="large"
                 >
@@ -50,6 +55,9 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                   key="submit"
                   htmlType="submit"
                   type="primary"
+                  onClick={() => {
+                    setShowSearchResult(true);
+                  }}
                 >
                   Search
                 </Button>,
@@ -57,43 +65,53 @@ const AddFriendModal: FC<ModalProps> = (props) => {
             : null
         }
       >
-        {/* <Form
-          name="searchFriend"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Please input friend username!' }]}
+        {showSearchResult ? (
+          <>
+            <Image
+              width={400}
+              src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
+              className="modal-add-friend__cover-image"
+            />
+            <Space direction="vertical" className="modal-add-friend__info">
+              <Avatar
+                size={100}
+                src={
+                  <Image src="https://s120-ava-talk.zadn.vn/d/9/9/1/6/120/b1c672818fc133d72cb8685a850c578c.jpg" />
+                }
+                className="modal-add-friend__avatar"
+              />
+              <Title level={4}>Your friend name</Title>
+              <Space>
+                <Button type="ghost">Chat now</Button>
+                <Button type="primary">Add friend</Button>
+              </Space>
+              <Space direction="vertical">
+                <Text>Username: Duong Dang Khoa</Text>
+                <Text>Gender: Male</Text>
+                <Text>Birthday: 12/06/2000</Text>
+              </Space>
+            </Space>
+          </>
+        ) : (
+          <Form
+            name="searchFriend"
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+            style={{ padding: '1rem' }}
           >
-            <Input placeholder="username, Ex: pumk1206" className="modal-add-friend__search" />
-          </Form.Item>
-        </Form> */}
-        <Image
-          width={400}
-          src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
-          className="modal-add-friend__cover-image"
-        />
-        <Space direction="vertical" className="modal-add-friend__info">
-          <Avatar
-            size={100}
-            src={
-              <Image src="https://s120-ava-talk.zadn.vn/d/9/9/1/6/120/b1c672818fc133d72cb8685a850c578c.jpg" />
-            }
-            className="modal-add-friend__avatar"
-          />
-          <Title level={4}>Your friend name</Title>
-          <Space>
-            <Button type="ghost">Chat now</Button>
-            <Button type="primary">Add friend</Button>
-          </Space>
-          <Space direction="vertical">
-            <Text>Username: Duong Dang Khoa</Text>
-            <Text>Gender: Male</Text>
-            <Text>Birthday: 12/06/2000</Text>
-          </Space>
-        </Space>
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: 'Please input friend username!' }]}
+            >
+              <Input
+                placeholder="username, Ex: pumk1206"
+                className="modal-add-friend__search"
+                size="large"
+              />
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </>
   );
