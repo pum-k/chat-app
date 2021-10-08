@@ -7,6 +7,7 @@ const session = require("express-session");
 const chatroom = require("./router/chatFunction");
 const login = require("./router/login");
 const register = require("./router/register");
+const user = require("./router/user");
 var cors = require("cors");
 app.use(
   cors({
@@ -43,7 +44,7 @@ app.set('socketio', io);
 app.use("/chat", chatroom);
 app.use("/login", login);
 app.use("/register", register);
-
+app.use('/user' , user)
 io.on("connection", function (socket) {
  
   socket.on("join_room", (data) => {

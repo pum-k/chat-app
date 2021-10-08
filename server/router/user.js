@@ -1,26 +1,19 @@
 var express = require("express");
 var router = express.Router();
-
-router.post("/addfriend", (req, res) => {
+var user = require("../public/db/schema/User_Schema");
+router.post("/addfriend", async (req, res) => {
   let newFriendAdd = req.body;
   let findFriend = await user
     .find({ username: newFriendAdd.username })
     .lean()
     .exec();
   if (findFriend) {
-    await User.findByIdAndUpdate(
+    await user.findByIdAndUpdate(
       { _id: newFriendAdd.owners },
       { $push: { friends: findFriend._id } }
     );
-    await project.save(function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send({ redirect: "/addmember" });
-      }
-    });
-  }
-  else{
-      res.send({error: "khong tim thay voi username nay"})
+  } else {
+    res.send({ error: "khong tim thay voi username nay" });
   }
 });
+module.exports = router;
