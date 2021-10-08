@@ -1,16 +1,15 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { message } from 'antd';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
 import { ChatState, messageStructure } from 'constants/ChatTypes';
-import io from 'socket.io-client';
 import { chatApi } from 'api/chatAPI';
+
 const initialState: ChatState = {
   messages: [],
   loadding: false,
 };
-export const sendMessages = createAsyncThunk(
-  'chat/sendMessages',
-  async (message: messageStructure) => {
+export const sendMessageAsync = createAsyncThunk(
+  'chat/sendMessageAsync',
+  async (message: messageStructure, thunkAPI) => {
     const response: any = await chatApi.sendMessage(message);
     return response.data;
   }
@@ -26,31 +25,26 @@ export const chatSlice = createSlice({
         userInfo: localStorage.getItem('access_token'),
       });
     },
-    newMessage: (state, action) => {
-      state.messages.push({  create_at: "20/12/2000",
-        line_text: action.payload,
-        user_id: "thang",
-       
-       })
-    },
+
     sendMessage: (state, action) => {
-      // if (action.payload.line_text) {
-      // }
+      if (action.payload.line_text) {
+        state.messages.push(action.payload);
+      }
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(sendMessages.pending, (state) => {
+    builder.addCase(sendMessageAsync.pending, (state) => {
       state.loadding = true;
     });
-    builder.addCase(sendMessages.rejected, (state) => {
+    builder.addCase(sendMessageAsync.rejected, (state) => {
       state.loadding = false;
     });
-    builder.addCase(sendMessages.fulfilled, (state, action) => {
-      console.log(action.payload);
+    builder.addCase(sendMessageAsync.fulfilled, (state, action) => {
+      state.loadding = false;
     });
   },
 });
 
 export default chatSlice.reducer;
-export const { sendMessage, joinRoom ,newMessage } = chatSlice.actions;
+export const { sendMessage, joinRoom } = chatSlice.actions;
 export const selectMessages = (state: RootState) => state.chat.messages;
