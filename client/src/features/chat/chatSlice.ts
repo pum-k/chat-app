@@ -28,6 +28,7 @@ export const chatSlice = createSlice({
 
     sendMessage: (state, action) => {
       if (action.payload.line_text) {
+      
         state.messages.push(action.payload);
       }
     },

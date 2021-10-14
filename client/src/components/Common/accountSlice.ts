@@ -39,8 +39,8 @@ export const accountSlice = createSlice({
     builder.addCase(accountLogin.fulfilled, (state, action) => {
       state.loadding = false;
       // console.log(action.payload);
-      if(action.payload.id){
-        localStorage.setItem('access_token' , action.payload.id)
+      if (action.payload.id) {
+        localStorage.setItem('access_token', action.payload.id);
         window.location.href = 'http://localhost:3000';
       }
     });

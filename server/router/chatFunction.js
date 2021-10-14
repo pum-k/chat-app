@@ -1,10 +1,15 @@
 var express = require("express");
 var router = express.Router();
-
-router.post("/sendMessage", (req, res) => {
+const user = require("../public/db/schema/User_Schema");
+router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
-  console.log(req.body);
-  io.to(req.body.room_id).emit("newMessages", req.body.line_text)
+  let people = await user.findById({_id : req.body.id})
+  let newMessage = {
+    message: req.body.line_text,
+    user_name: people.username, 
+    create_at: people.createAt
+  }
+  io.to(req.body.room_id).emit("newMessages", newMessage)
   // console.log(req.body);
   res.send({ sendSuccess: true });
 });

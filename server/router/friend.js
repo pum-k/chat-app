@@ -1,10 +1,17 @@
 var express = require("express");
 var router = express.Router();
-
-router.post("/addfriend", (req, res) => {
+router.post("/findFriend",async (req, res) => {
   let newFriendAdd = req.body;
   let findFriend = await user
-    .find({ username: newFriendAdd.username })
+    .find({ phoneNumber: newFriendAdd.phoneNumber })
+    .lean()
+    .exec();
+    res.send(findFriend);
+})
+router.post("/addFriend", async (req, res) => {
+  let newFriendAdd = req.body;
+  let findFriend = await user
+    .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
   if (findFriend) {
@@ -12,15 +19,9 @@ router.post("/addfriend", (req, res) => {
       { _id: newFriendAdd.owners },
       { $push: { friends: findFriend._id } }
     );
-    await project.save(function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send({ redirect: "/addmember" });
-      }
-    });
   }
   else{
       res.send({error: "khong tim thay voi username nay"})
   }
 });
+module.exports = router

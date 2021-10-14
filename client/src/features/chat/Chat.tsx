@@ -66,13 +66,12 @@ const Chat = () => {
   useEffect(() => {
     dispatch(joinRoom(socket));
 
-    socket.on('newMessages', (message: any) => {
+    socket.on('newMessages', (data: any) => {
+      console.log(data);
       const newMessage = {
-        create_at: Date.now(),
-        line_text: message,
-        user_id: 'test',
-        id: 'test',
-        room_id: 'test',
+        create_at: data.create_at,
+        line_text: data.message,
+        user_name: data.user_name,
       };
       dispatch(sendMessage(newMessage));
     });
@@ -167,12 +166,13 @@ const Chat = () => {
     const newMessage = {
       create_at: Date.now(),
       line_text: value.message,
-      user_id: 'test',
-      id: 'test',
-      room_id: 'test',
+      user_name: 'test',
+      // id: 'test',
+      // room_id: 'test',
     };
     dispatch(sendMessageAsync(newMessage));
   };
+  // input form search
 
   //handle search
   const onSearch = (value: any) => {
@@ -319,7 +319,7 @@ const Chat = () => {
                     <Comment
                       key={index}
                       actions={[]}
-                      author={<b>{item.user_id}</b>}
+                      author={<b>{item.user_name}</b>}
                       avatar={
                         <Avatar
                           src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
