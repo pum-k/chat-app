@@ -1,9 +1,8 @@
 export interface messageStructure {
   create_at: any;
   line_text: string;
-  user_id: string;
-  // id: string;
-  // room_id: string
+  user_name: string;
+
 }
 
 export interface ChatState {

@@ -2,7 +2,8 @@ import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, Descripti
 import React, { FC, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormRegister } from 'react-hook-form';
 import './AddFriendModal.scss';
-
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { FindFriend , selectFriend} from './AddFriendSlice';
 const { Title, Text } = Typography;
 
 interface ModalProps {
@@ -15,17 +16,31 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   const { isModalVisible, setIsModalVisible, handleOk, handleCancel } = props;
   const [showSearchResult, setShowSearchResult] = useState(false);
 
+  const Friends = useAppSelector(selectFriend);
+  console.log(Friends);
+  // useEffect(() => {
+  //   console.log();
+    
+  // },[Friends])
+  const dispatch = useAppDispatch();
   // handle submit form
   const onFinish = (values: any) => {
-    console.log('Success:', values);
+    dispatch(FindFriend(values))
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  const inputNumber = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const target = e.target as HTMLTextAreaElement;
+    if (e.key === 'Enter' && e.shiftKey === false) {
+      onFinish( target.value);
+    }
+  };
 
   useEffect(() => {
     if (!isModalVisible) setShowSearchResult(false);
+    // console.log(Friends);
   }, [isModalVisible]);
 
   return (
@@ -86,7 +101,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                 <Button type="primary">Add friend</Button>
               </Space>
               <Space direction="vertical">
-                <Text>Username: Duong Dang Khoa</Text>
+                <Text>Username: {Friends.username}</Text>
                 <Text>Gender: Male</Text>
                 <Text>Birthday: 12/06/2000</Text>
               </Space>
@@ -101,13 +116,16 @@ const AddFriendModal: FC<ModalProps> = (props) => {
             style={{ padding: '1rem' }}
           >
             <Form.Item
-              name="username"
+              name="phoneNumber"
               rules={[{ required: true, message: 'Please input friend username!' }]}
             >
               <Input
                 placeholder="username, Ex: pumk1206"
                 className="modal-add-friend__search"
                 size="large"
+                onKeyPress={(e: any) => {
+                  inputNumber(e);
+                }}
               />
             </Form.Item>
           </Form>
