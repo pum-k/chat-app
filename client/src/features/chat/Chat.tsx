@@ -17,7 +17,6 @@ import {
   message,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-// import axios from 'axios';
 import {
   MoreOutlined,
   BellOutlined,
@@ -33,7 +32,7 @@ import {
 } from '@ant-design/icons';
 import './Chat.scss';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import TextArea from 'rc-textarea';
 import AccountModal from 'features/accountModal/AccountModal';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
@@ -47,6 +46,23 @@ const { Search } = Input;
 const socket = io('http://localhost:4000');
 
 const Chat = () => {
+  // ---------------------------
+  //|       URL paramenter     |
+  //---------------------------
+
+    const currentURL = useLocation();
+    console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
+    
+
+    // when url change then fetch room data 
+    useEffect(() => {
+
+    }, [currentURL])
+   // ---------------------------
+  //|       URL paramenter     |
+  //---------------------------
+
+
   //data messages
   const messages = useAppSelector(selectMessages);
 
