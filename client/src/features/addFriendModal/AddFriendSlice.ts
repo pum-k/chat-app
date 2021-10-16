@@ -14,6 +14,10 @@ export const FindFriend = createAsyncThunk('friend/FindFriend', async (number: F
   const response: any = await friendApi.findFriend(number);
   return response.data;
 });
+export const addFriend = createAsyncThunk('friend/addFriend', async (number: FriendTypes) => {
+  const response: any = await friendApi.addFriends(number);
+  return response.data;
+});
 
 export const AddFriendSlice = createSlice({
   name: 'friend',
@@ -27,13 +31,21 @@ export const AddFriendSlice = createSlice({
       state.loadding = false;
     });
     builder.addCase(FindFriend.fulfilled, (state, action) => {
-      // console.log(action.payload);
-      
       state.loadding = true;
       if(action.payload){
         state.username = action.payload[0].username
+        state.phoneNumber = action.payload[0].phoneNumber
       }
-    
+    });
+    builder.addCase(addFriend.pending, (state) => {
+      state.loadding = true;
+    });
+    builder.addCase(addFriend.rejected, (state) => {
+      state.loadding = false;
+    });
+    builder.addCase(addFriend.fulfilled, (state, action) => {
+      state.loadding = true;
+
     });
   },
 });

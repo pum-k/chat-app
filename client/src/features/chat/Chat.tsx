@@ -14,7 +14,7 @@ import {
   Dropdown,
   Input,
   Form,
-  message,
+
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 // import axios from 'axios';
@@ -40,7 +40,7 @@ import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
 import { io } from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { joinRoom, selectMessages, sendMessageAsync, sendMessage } from './chatSlice';
+import { joinRoom, selectMessages, sendMessageAsync, sendMessage , renderChatListAsync} from './chatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -48,13 +48,12 @@ const socket = io('http://localhost:4000');
 
 const Chat = () => {
   //data messages
-  const messages = useAppSelector(selectMessages);
-
+  const chatpage = useAppSelector(selectMessages);
   // Scroll when new message
   const messagesEndRef = useRef<any>(null);
   useEffect(() => {
     if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [chatpage]);
 
   // declare redux hooks
   const dispatch = useAppDispatch();
@@ -63,11 +62,12 @@ const Chat = () => {
   // |       SOCKET.IO----->           |
   // ----------------------------------
 
-  useEffect(() => {
+  useEffect( () => {
+    dispatch(renderChatListAsync());
     dispatch(joinRoom(socket));
-
     socket.on('newMessages', (data: any) => {
-      console.log(data);
+      console.log('new messages');
+      
       const newMessage = {
         create_at: data.create_at,
         line_text: data.message,
@@ -260,18 +260,18 @@ const Chat = () => {
             <div className="chat__content__1st__list-chater">
               <List
                 itemLayout="horizontal"
-                dataSource={data}
+                dataSource={chatpage.ListRoomChat}
                 renderItem={(item) => (
                   <List.Item>
                     <Link
-                      to={`/${item.id}`}
+                      to={`/${item.RoomSocketId}`}
                       style={{ width: '100%', height: '100%', display: 'flex' }}
                     >
                       <List.Item.Meta
                         avatar={
                           <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
                         }
-                        title={<p>{item.title}</p>}
+                        title={<p>{item.RoomName}</p>}
                         description="Ant Design, a design language for background applications, is refined by Ant UED Team, Ant Design, a design language for background applications, is refined by Ant UED Team Ant Design, a design language for background applications, is refined by Ant UED Team"
                       />
                       <Badge count={1} style={{ marginLeft: '1rem' }} />
@@ -313,8 +313,8 @@ const Chat = () => {
               </section>
             </div>
             <div className="chat__content__2nd__chat-box">
-              {messages &&
-                messages.map((item, index) => {
+              {chatpage &&
+                chatpage.messages.map((item, index) => {
                   return (
                     <Comment
                       key={index}

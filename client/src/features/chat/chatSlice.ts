@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
-import { ChatState, messageStructure } from 'constants/ChatTypes';
+import { ChatState, messageStructure , RoomChatStructure } from 'constants/ChatTypes';
 import { chatApi } from 'api/chatAPI';
 
 const initialState: ChatState = {
   messages: [],
+  ListRoomChat: [],
   loadding: false,
 };
 export const sendMessageAsync = createAsyncThunk(
@@ -14,7 +15,10 @@ export const sendMessageAsync = createAsyncThunk(
     return response.data;
   }
 );
-
+export const renderChatListAsync = createAsyncThunk('chat/listRoomChatAsync', async () => {
+  const response: any = await chatApi.renderListChat();
+  return response.data;
+});
 export const chatSlice = createSlice({
   name: 'chat',
   initialState,
@@ -25,10 +29,8 @@ export const chatSlice = createSlice({
         userInfo: localStorage.getItem('access_token'),
       });
     },
-
     sendMessage: (state, action) => {
       if (action.payload.line_text) {
-      
         state.messages.push(action.payload);
       }
     },
@@ -43,9 +45,28 @@ export const chatSlice = createSlice({
     builder.addCase(sendMessageAsync.fulfilled, (state, action) => {
       state.loadding = false;
     });
+    builder.addCase(renderChatListAsync.pending, (state) => {
+      state.loadding = true;
+    });
+    builder.addCase(renderChatListAsync.rejected, (state) => {
+      state.loadding = false;
+    });
+    builder.addCase(renderChatListAsync.fulfilled, (state, action) => {
+      if (action.payload) {
+        // action.payload.map((item: any) => {
+        //   let RoomChat = {
+        //     RoomName: item.name,
+        //     RoomSocketId: item.socketRoom,
+        //   };
+        //   allRoomChat.push(RoomChat);
+        // });
+        state.ListRoomChat = action.payload
+      }
+      state.loadding = true;
+    });
   },
 });
 
 export default chatSlice.reducer;
 export const { sendMessage, joinRoom } = chatSlice.actions;
-export const selectMessages = (state: RootState) => state.chat.messages;
+export const selectMessages = (state: RootState) => state.chat;

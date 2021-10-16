@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const ChatMessage = new Schema({
   roomOwnerID: { type: String, required: true },
-  line_text: string,
+  line_text:  { type: String},
   userId: { type: String, required: true },
   createAt: { type: Date, default: Date.now },
 });

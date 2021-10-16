@@ -8,8 +8,21 @@ export const friendApi = {
     console.log('api call');
     
     return axios
-      .post(`http://localhost:4000/user/findFriend`, {
+      .post(`${API}/user/findFriend`, {
         phoneNumber:  params.phoneNumber
+      })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  addFriends: (params: FriendTypes) => {
+    return axios
+      .post(`${API}/user/addfriend`, {
+        phoneNumber:  params.phoneNumber,
+        owners: localStorage.getItem('access_token')
       })
       .then((response) => {
         return response;
