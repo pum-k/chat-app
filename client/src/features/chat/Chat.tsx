@@ -50,21 +50,18 @@ const Chat = () => {
   //|       URL paramenter     |
   //---------------------------
 
-    const currentURL = useLocation();
-    console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
-    
+  const currentURL = useLocation();
+  console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
 
-    // when url change then fetch room data 
-    useEffect(() => {
-
-    }, [currentURL])
-   // ---------------------------
+  // when url change then fetch room data
+  useEffect(() => {}, [currentURL]);
+  // ---------------------------
   //|       URL paramenter     |
   //---------------------------
 
-
   //data messages
   const messages = useAppSelector(selectMessages);
+
 
   // Scroll when new message
   const messagesEndRef = useRef<any>(null);
@@ -174,6 +171,7 @@ const Chat = () => {
     const target = e.target as HTMLTextAreaElement;
     if (e.key === 'Enter' && e.shiftKey === false) {
       onFinish({ message: target.value });
+      e.preventDefault();
     }
   };
 
@@ -331,25 +329,44 @@ const Chat = () => {
             <div className="chat__content__2nd__chat-box">
               {messages &&
                 messages.map((item, index) => {
-                  return (
-                    <Comment
-                      key={index}
-                      actions={[]}
-                      author={<b>{item.user_name}</b>}
-                      avatar={
-                        <Avatar
-                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                          alt="Han Solo"
-                        />
-                      }
-                      content={<p>{item.line_text}</p>}
-                      datetime={
-                        <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                          <span>{moment().fromNow()}</span>
-                        </Tooltip>
-                      }
-                    />
-                  );
+                  if (item.user_name !== 'owner')
+                    return (
+                      <Comment
+                        style={{ width: '40%' }}
+                        key={index}
+                        actions={[]}
+                        author={<b>{item.user_name}</b>}
+                        avatar={
+                          <Avatar
+                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                            alt="Han Solo"
+                          />
+                        }
+                        content={<p>{item.line_text}</p>}
+                        datetime={
+                          <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                            <span>{moment().fromNow()}</span>
+                          </Tooltip>
+                        }
+                      />
+                    );
+                  else
+                    return (
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Space
+                          direction="vertical"
+                          style={{ width: '40%', alignItems: 'flex-end' }}
+                        >
+                          <Space>
+                            <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                              <span style={{color: '#ccc',  fontSize: '12px'}}>{moment().fromNow()}</span>
+                            </Tooltip>
+                            <b style={{color: '#00000073', fontSize: '12px'}}>{item.user_name}</b>
+                          </Space>
+                          <p style={{ textAlign: 'right' }}>{item.line_text}</p>
+                        </Space>
+                      </div>
+                    );
                 })}
               <div ref={messagesEndRef} />
             </div>
@@ -365,10 +382,11 @@ const Chat = () => {
                   <Form.Item name="message" style={{ width: '100%' }}>
                     <TextArea
                       placeholder="Chat now..."
-                      autoSize={{ minRows: 1, maxRows: 3 }}
+                      autoSize={{ maxRows: 3 }}
                       onKeyPress={(e: any) => {
                         chatEnterSubmit(e);
                       }}
+                      autoFocus
                     />
                   </Form.Item>
                   <Form.Item>
