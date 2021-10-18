@@ -183,6 +183,7 @@ const Chat = () => {
     const target = e.target as HTMLTextAreaElement;
     if (e.key === 'Enter' && e.shiftKey === false) {
       onFinish({ message: target.value });
+      e.preventDefault();
     }
   };
 
@@ -374,10 +375,11 @@ const Chat = () => {
                   <Form.Item name="message" style={{ width: '100%' }}>
                     <TextArea
                       placeholder="Chat now..."
-                      autoSize={{ minRows: 1, maxRows: 3 }}
+                      autoSize={{ maxRows: 3 }}
                       onKeyPress={(e: any) => {
                         chatEnterSubmit(e);
                       }}
+                      autoFocus
                     />
                   </Form.Item>
                   <Form.Item>
