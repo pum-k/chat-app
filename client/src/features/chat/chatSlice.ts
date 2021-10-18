@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
-import { ChatState, messageStructure , RoomChatStructure } from 'constants/ChatTypes';
+import { ChatState, messageStructure, RoomChatStructure } from 'constants/ChatTypes';
 import { chatApi } from 'api/chatAPI';
 
 const initialState: ChatState = {
@@ -10,13 +10,17 @@ const initialState: ChatState = {
 };
 export const sendMessageAsync = createAsyncThunk(
   'chat/sendMessageAsync',
-  async (message: messageStructure, thunkAPI) => {
+  async (message: messageStructure) => {
     const response: any = await chatApi.sendMessage(message);
     return response.data;
   }
 );
 export const renderChatListAsync = createAsyncThunk('chat/listRoomChatAsync', async () => {
   const response: any = await chatApi.renderListChat();
+  return response.data;
+});
+export const renderMessageAsync = createAsyncThunk('chat/renderMessageAsync', async () => {
+  const response: any = await chatApi.renderMessage();
   return response.data;
 });
 export const chatSlice = createSlice({
@@ -53,16 +57,21 @@ export const chatSlice = createSlice({
     });
     builder.addCase(renderChatListAsync.fulfilled, (state, action) => {
       if (action.payload) {
-        // action.payload.map((item: any) => {
-        //   let RoomChat = {
-        //     RoomName: item.name,
-        //     RoomSocketId: item.socketRoom,
-        //   };
-        //   allRoomChat.push(RoomChat);
-        // });
-        state.ListRoomChat = action.payload
+        state.ListRoomChat = action.payload.infoAllRoomChat;
+        state.messages = action.payload.ChatMessageFirstRoom;
       }
       state.loadding = true;
+    });
+    builder.addCase(renderMessageAsync.pending, (state) => {
+      state.loadding = true;
+    });
+    builder.addCase(renderMessageAsync.rejected, (state) => {
+      state.loadding = false;
+    });
+    builder.addCase(renderMessageAsync.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.messages = action.payload.ListMessages;
+      }
     });
   },
 });

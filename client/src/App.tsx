@@ -8,8 +8,10 @@ import './App.css';
 
 function App() {
   return (
+    // <Route path="/register" component={Register} exact />
     <Switch>
-      {localStorage.getItem('access_token') ? (
+      {
+      localStorage.getItem('access_token') ? (
         <PrivateRoute path="/">
           <Chat />
         </PrivateRoute>

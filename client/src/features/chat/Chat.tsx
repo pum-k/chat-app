@@ -14,7 +14,6 @@ import {
   Dropdown,
   Input,
   Form,
-
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -39,7 +38,15 @@ import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
 import { io } from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { joinRoom, selectMessages, sendMessageAsync, sendMessage , renderChatListAsync} from './chatSlice';
+import {
+  joinRoom,
+  selectMessages,
+  sendMessageAsync,
+  sendMessage,
+  renderChatListAsync,
+  renderMessageAsync,
+} from './chatSlice';
+import { useDispatch } from 'react-redux';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -49,19 +56,15 @@ const Chat = () => {
   // ---------------------------
   //|       URL paramenter     |
   //---------------------------
+  const dispatch = useAppDispatch();
+  const currentURL = useLocation();
+  // console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
 
-    const currentURL = useLocation();
-    console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
-    
+  // when url change then fetch room data
 
-    // when url change then fetch room data 
-    useEffect(() => {
-
-    }, [currentURL])
-   // ---------------------------
+  // ---------------------------
   //|       URL paramenter     |
   //---------------------------
-
 
   //data messages
   const chatpage = useAppSelector(selectMessages);
@@ -72,18 +75,17 @@ const Chat = () => {
   }, [chatpage]);
 
   // declare redux hooks
-  const dispatch = useAppDispatch();
 
   //  ----------------------------------
   // |       SOCKET.IO----->           |
   // ----------------------------------
 
-  useEffect( () => {
+  useEffect(() => {
+    console.log('render chat List');
+
     dispatch(renderChatListAsync());
     dispatch(joinRoom(socket));
     socket.on('newMessages', (data: any) => {
-      console.log('new messages');
-      
       const newMessage = {
         create_at: data.create_at,
         line_text: data.message,
@@ -92,6 +94,13 @@ const Chat = () => {
       dispatch(sendMessage(newMessage));
     });
   }, []);
+  useEffect(() => {
+    console.log(currentURL.pathname.slice(1));
+    // if (currentURL.pathname.slice(1)) {
+    localStorage.setItem('room_id', currentURL.pathname.slice(1));
+    dispatch(renderMessageAsync());
+    // }
+  }, [currentURL]);
 
   //  ----------------------------------
   // |       <-----SOCKET.IO           |

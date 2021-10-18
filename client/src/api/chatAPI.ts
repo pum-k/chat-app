@@ -19,6 +19,7 @@ export const chatApi = {
       });
   },
   listMessage: (params: messageStructure) => {
+    
     return axios
       .post(`${API}/chat/sendMessage`, {
         room_id: localStorage.getItem('room_id'),
@@ -43,4 +44,17 @@ export const chatApi = {
         console.log(error);
       });
   },
+  renderMessage: () => {
+    console.log(localStorage.getItem('room_id'));
+    return axios
+    .post(`${API}/chat/listMessages`, {
+      chatRoom: localStorage.getItem('room_id'),
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
 };
