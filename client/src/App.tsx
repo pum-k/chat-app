@@ -1,30 +1,46 @@
 import NotFound from 'components/NotFound/NotFound';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
-import Chat from 'features/chat/Chat';
+import ContentChat from 'features/contentChat/ContentChat';
+import HeaderChat from 'features/headerChat/HeaderChat';
 import Login from 'features/login/Login';
 import Register from 'features/register/Register';
+import SiderChat from 'features/siderChat/SiderChat';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
 
 function App() {
-  return (
-    // <Route path="/register" component={Register} exact />
-    <Switch>
-      {
-      localStorage.getItem('access_token') ? (
-        <PrivateRoute path="/">
-          <Chat />
-        </PrivateRoute>
-      ) : (
-        <>
-          {' '}
-          <Route path="/login" component={Login} exact />
-          <Route path="/register" component={Register} exact />{' '}
-        </>
-      )}
+  const isAuthenticated = Boolean(localStorage.getItem('access_token'));
 
-      <Route path="*" component={NotFound} />
-    </Switch>
+  return (
+    <div className="App">
+      <Switch>
+        <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
+          <HeaderChat />
+          <div
+          style={{display: 'flex', width: '100%'}}
+          >
+            <SiderChat />
+            <Switch>
+              <Route exact path="/t/:id_room">
+                <ContentChat />
+              </Route>
+            </Switch>
+          </div>
+        </PrivateRoute>
+
+        <Route path="/login">
+          <Login />
+        </Route>
+
+        <Route path="/register">
+          <Register />
+        </Route>
+
+        <Route path="*">
+          <NotFound />
+        </Route>
+      </Switch>
+    </div>
   );
 }
 

@@ -7,8 +7,8 @@ export interface messageStructure {
 
 export interface ChatState {
   messages: Array<messageStructure>,
-  ListRoomChat: Array<RoomChatStructure>,
-  loadding: boolean,
+  loading: boolean,
+  listRoomChat: Array<RoomChatStructure>,
 }
 
 export interface RoomChatStructure {

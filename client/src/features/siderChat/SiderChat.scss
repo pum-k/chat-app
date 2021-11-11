@@ -1,0 +1,58 @@
+.sider-chat {
+  height: 91vh;
+  width: 20%;
+
+  border-right: 1px solid #eee;
+  overflow-y: auto;
+
+  & .ant-list-item {
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 2em;
+
+    &:hover {
+      background-color: #e6f7ff;
+      z-index: 10;
+    }
+
+    & .ant-list-item-meta-description {
+      color: rgba(0, 0, 0, 0.45);
+      font-size: 14px;
+      line-height: 1.5715;
+      overflow: hidden;
+      height: 25px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__header {
+    width: 100%;
+    height: 10%;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__search {
+      width: 70% !important;
+
+      & button {
+        background-color: #f857a6;
+        border-color: #f857a6;
+
+        &:hover {
+          background-color: #f857a5cc;
+          border-color: #f857a5cc;
+        }
+      }
+    }
+  }
+  &__list-chater {
+    height: 90%;
+    width: 100%;
+    overflow: auto;
+    position: relative;
+  }
+}

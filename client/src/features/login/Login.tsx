@@ -1,14 +1,24 @@
 import { LoginInput } from 'constants/AccountTypes';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Space, Typography } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './Login.scss';
 import { useAppDispatch } from 'app/hooks';
 import { accountLogin } from 'components/Common/accountSlice';
+import { useEffect } from 'react';
 
 const { Text } = Typography;
 
 const Login = () => {
+  let history = useHistory();
+  useEffect(() => {
+    let isAuthenticated = Boolean(localStorage.getItem('access_token'));
+    if(isAuthenticated) {
+      history.push('/t');
+    }
+  })
+
+
   const dispatch = useAppDispatch();
   const {
     register,

@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootState } from 'app/store';
-import { ChatState, messageStructure, RoomChatStructure } from 'constants/ChatTypes';
 import { chatApi } from 'api/chatAPI';
+import { RootState } from 'app/store';
+import { ChatState, messageStructure } from 'constants/ChatTypes';
 
 const initialState: ChatState = {
   messages: [],
-  ListRoomChat: [],
-  loadding: false,
+  loading: false,
+  listRoomChat: [],
 };
+
 export const sendMessageAsync = createAsyncThunk(
   'chat/sendMessageAsync',
   async (message: messageStructure) => {
@@ -15,16 +16,18 @@ export const sendMessageAsync = createAsyncThunk(
     return response.data;
   }
 );
+
 export const renderChatListAsync = createAsyncThunk('chat/listRoomChatAsync', async () => {
   const response: any = await chatApi.renderListChat();
   return response.data;
 });
+
 export const renderMessageAsync = createAsyncThunk('chat/renderMessageAsync', async () => {
   const response: any = await chatApi.renderMessage();
   return response.data;
 });
-export const chatSlice = createSlice({
-  name: 'chat',
+export const contentChatSlice = createSlice({
+  name: 'contentChatSlice',
   initialState,
   reducers: {
     joinRoom: (state, action) => {
@@ -41,32 +44,34 @@ export const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
-      state.loadding = true;
+      state.loading = true;
     });
     builder.addCase(sendMessageAsync.rejected, (state) => {
-      state.loadding = false;
+      state.loading = false;
     });
     builder.addCase(sendMessageAsync.fulfilled, (state, action) => {
-      state.loadding = false;
+      state.loading = false;
+      console.log(action.payload);
+      
     });
     builder.addCase(renderChatListAsync.pending, (state) => {
-      state.loadding = true;
+      state.loading = true;
     });
     builder.addCase(renderChatListAsync.rejected, (state) => {
-      state.loadding = false;
+      state.loading = false;
     });
     builder.addCase(renderChatListAsync.fulfilled, (state, action) => {
       if (action.payload) {
-        state.ListRoomChat = action.payload.infoAllRoomChat;
+        state.listRoomChat = action.payload.infoAllRoomChat;
         state.messages = action.payload.ChatMessageFirstRoom;
       }
-      state.loadding = true;
+      state.loading = true;
     });
     builder.addCase(renderMessageAsync.pending, (state) => {
-      state.loadding = true;
+      state.loading = true;
     });
     builder.addCase(renderMessageAsync.rejected, (state) => {
-      state.loadding = false;
+      state.loading = false;
     });
     builder.addCase(renderMessageAsync.fulfilled, (state, action) => {
       if (action.payload) {
@@ -76,6 +81,6 @@ export const chatSlice = createSlice({
   },
 });
 
-export default chatSlice.reducer;
-export const { sendMessage, joinRoom } = chatSlice.actions;
-export const selectMessages = (state: RootState) => state.chat;
+export default contentChatSlice.reducer;
+export const { sendMessage, joinRoom } = contentChatSlice.actions;
+export const selectMessages = (state: RootState) => state.contentChat.messages;
