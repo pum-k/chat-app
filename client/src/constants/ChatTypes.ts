@@ -8,4 +8,10 @@ export interface messageStructure {
 export interface ChatState {
   messages: Array<messageStructure>,
   loading: boolean,
+  listRoomChat: Array<RoomChatStructure>,
+}
+
+export interface RoomChatStructure {
+  RoomName:  string;
+  RoomSocketId: string;
 }
