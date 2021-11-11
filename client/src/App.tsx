@@ -5,7 +5,7 @@ import HeaderChat from 'features/headerChat/HeaderChat';
 import Login from 'features/login/Login';
 import Register from 'features/register/Register';
 import SiderChat from 'features/siderChat/SiderChat';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
 
   return (
     <div className="App">
+      <Redirect to='/t' />
       <Switch>
         <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
           <HeaderChat />
