@@ -7,5 +7,11 @@ export interface messageStructure {
 
 export interface ChatState {
   messages: Array<messageStructure>,
+  ListRoomChat: Array<RoomChatStructure>,
   loadding: boolean,
+}
+
+export interface RoomChatStructure {
+  RoomName:  string;
+  RoomSocketId: string;
 }

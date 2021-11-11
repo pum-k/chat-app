@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
-const { uuid } = require("uuidv4");
+
 const mongoose = require("mongoose");
 const session = require("express-session");
 const chatroom = require("./router/chatFunction");
@@ -38,7 +38,6 @@ mongoose
 mongoose.connection.on("connected", () => {
   console.log("Mongoose connected to db");
 });
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.set('socketio', io);

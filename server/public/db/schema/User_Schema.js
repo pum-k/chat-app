@@ -11,7 +11,7 @@ const User = new Schema(
     avatar: { type: String},
     createAt: { type: Date, default: Date.now },
     friends: [{ type: Schema.Types.ObjectId, ref: "user"}],
-    RoomChatId : [{ type: Schema.Types.ObjectId, ref: "Project"}]
+    RoomChatId : [{ type: Schema.Types.ObjectId, ref: "chatroom"}]
   },
   { collection: "users" }
 );

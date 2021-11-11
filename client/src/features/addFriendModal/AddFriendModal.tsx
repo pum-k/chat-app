@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormRegister } from 'react-hook-form';
 import './AddFriendModal.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { FindFriend , selectFriend} from './AddFriendSlice';
+import { FindFriend, selectFriend, addFriend } from './AddFriendSlice';
 const { Title, Text } = Typography;
 
 interface ModalProps {
@@ -17,15 +17,10 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   const [showSearchResult, setShowSearchResult] = useState(false);
 
   const Friends = useAppSelector(selectFriend);
-  console.log(Friends);
-  // useEffect(() => {
-  //   console.log();
-    
-  // },[Friends])
   const dispatch = useAppDispatch();
-  // handle submit form
   const onFinish = (values: any) => {
-    dispatch(FindFriend(values))
+    dispatch(FindFriend(values));
+    setShowSearchResult(true);
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -34,7 +29,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   const inputNumber = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
     if (e.key === 'Enter' && e.shiftKey === false) {
-      onFinish( target.value);
+      onFinish(target.value);
     }
   };
 
@@ -70,9 +65,6 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                   key="submit"
                   htmlType="submit"
                   type="primary"
-                  onClick={() => {
-                    setShowSearchResult(true);
-                  }}
                 >
                   Search
                 </Button>,
@@ -98,7 +90,9 @@ const AddFriendModal: FC<ModalProps> = (props) => {
               <Title level={4}>Your friend name</Title>
               <Space>
                 <Button type="ghost">Chat now</Button>
-                <Button type="primary">Add friend</Button>
+                <Button type="primary" onClick={() => {dispatch(addFriend(Friends))}}>
+                  Add friend
+                </Button>
               </Space>
               <Space direction="vertical">
                 <Text>Username: {Friends.username}</Text>

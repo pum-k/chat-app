@@ -14,7 +14,6 @@ import {
   Dropdown,
   Input,
   Form,
-  message,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -39,7 +38,15 @@ import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
 import { io } from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { joinRoom, selectMessages, sendMessageAsync, sendMessage } from './chatSlice';
+import {
+  joinRoom,
+  selectMessages,
+  sendMessageAsync,
+  sendMessage,
+  renderChatListAsync,
+  renderMessageAsync,
+} from './chatSlice';
+import { useDispatch } from 'react-redux';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -49,38 +56,36 @@ const Chat = () => {
   // ---------------------------
   //|       URL paramenter     |
   //---------------------------
-
+  const dispatch = useAppDispatch();
   const currentURL = useLocation();
-  console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
+  // console.log(currentURL.pathname.slice(1)); // room id: 1203910293h1uiujdiawjd
 
   // when url change then fetch room data
-  useEffect(() => {}, [currentURL]);
+
   // ---------------------------
   //|       URL paramenter     |
   //---------------------------
 
   //data messages
-  const messages = useAppSelector(selectMessages);
-
-
+  const chatpage = useAppSelector(selectMessages);
   // Scroll when new message
   const messagesEndRef = useRef<any>(null);
   useEffect(() => {
     if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [chatpage]);
 
   // declare redux hooks
-  const dispatch = useAppDispatch();
 
   //  ----------------------------------
   // |       SOCKET.IO----->           |
   // ----------------------------------
 
   useEffect(() => {
-    dispatch(joinRoom(socket));
+    console.log('render chat List');
 
+    dispatch(renderChatListAsync());
+    dispatch(joinRoom(socket));
     socket.on('newMessages', (data: any) => {
-      console.log(data);
       const newMessage = {
         create_at: data.create_at,
         line_text: data.message,
@@ -89,6 +94,13 @@ const Chat = () => {
       dispatch(sendMessage(newMessage));
     });
   }, []);
+  useEffect(() => {
+    console.log(currentURL.pathname.slice(1));
+    // if (currentURL.pathname.slice(1)) {
+    localStorage.setItem('room_id', currentURL.pathname.slice(1));
+    dispatch(renderMessageAsync());
+    // }
+  }, [currentURL]);
 
   //  ----------------------------------
   // |       <-----SOCKET.IO           |
@@ -274,18 +286,18 @@ const Chat = () => {
             <div className="chat__content__1st__list-chater">
               <List
                 itemLayout="horizontal"
-                dataSource={data}
+                dataSource={chatpage.ListRoomChat}
                 renderItem={(item) => (
                   <List.Item>
                     <Link
-                      to={`/${item.id}`}
+                      to={`/${item.RoomSocketId}`}
                       style={{ width: '100%', height: '100%', display: 'flex' }}
                     >
                       <List.Item.Meta
                         avatar={
                           <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
                         }
-                        title={<p>{item.title}</p>}
+                        title={<p>{item.RoomName}</p>}
                         description="Ant Design, a design language for background applications, is refined by Ant UED Team, Ant Design, a design language for background applications, is refined by Ant UED Team Ant Design, a design language for background applications, is refined by Ant UED Team"
                       />
                       <Badge count={1} style={{ marginLeft: '1rem' }} />
@@ -327,46 +339,27 @@ const Chat = () => {
               </section>
             </div>
             <div className="chat__content__2nd__chat-box">
-              {messages &&
-                messages.map((item, index) => {
-                  if (item.user_name !== 'owner')
-                    return (
-                      <Comment
-                        style={{ width: '40%' }}
-                        key={index}
-                        actions={[]}
-                        author={<b>{item.user_name}</b>}
-                        avatar={
-                          <Avatar
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                            alt="Han Solo"
-                          />
-                        }
-                        content={<p>{item.line_text}</p>}
-                        datetime={
-                          <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                            <span>{moment().fromNow()}</span>
-                          </Tooltip>
-                        }
-                      />
-                    );
-                  else
-                    return (
-                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Space
-                          direction="vertical"
-                          style={{ width: '40%', alignItems: 'flex-end' }}
-                        >
-                          <Space>
-                            <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                              <span style={{color: '#ccc',  fontSize: '12px'}}>{moment().fromNow()}</span>
-                            </Tooltip>
-                            <b style={{color: '#00000073', fontSize: '12px'}}>{item.user_name}</b>
-                          </Space>
-                          <p style={{ textAlign: 'right' }}>{item.line_text}</p>
-                        </Space>
-                      </div>
-                    );
+              {chatpage &&
+                chatpage.messages.map((item, index) => {
+                  return (
+                    <Comment
+                      key={index}
+                      actions={[]}
+                      author={<b>{item.user_name}</b>}
+                      avatar={
+                        <Avatar
+                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                          alt="Han Solo"
+                        />
+                      }
+                      content={<p>{item.line_text}</p>}
+                      datetime={
+                        <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                          <span>{moment().fromNow()}</span>
+                        </Tooltip>
+                      }
+                    />
+                  );
                 })}
               <div ref={messagesEndRef} />
             </div>
