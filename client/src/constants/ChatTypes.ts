@@ -7,5 +7,5 @@ export interface messageStructure {
 
 export interface ChatState {
   messages: Array<messageStructure>,
-  loadding: boolean,
+  loading: boolean,
 }

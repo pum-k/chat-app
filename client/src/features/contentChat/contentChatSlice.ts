@@ -1,22 +1,23 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { chatApi } from 'api/chatAPI';
 import { RootState } from 'app/store';
 import { ChatState, messageStructure } from 'constants/ChatTypes';
-import { chatApi } from 'api/chatAPI';
 
 const initialState: ChatState = {
   messages: [],
-  loadding: false,
+  loading: false,
 };
+
 export const sendMessageAsync = createAsyncThunk(
   'chat/sendMessageAsync',
-  async (message: messageStructure, thunkAPI) => {
+  async (message: messageStructure) => {
     const response: any = await chatApi.sendMessage(message);
     return response.data;
   }
 );
 
-export const chatSlice = createSlice({
-  name: 'chat',
+export const contentChatSlice = createSlice({
+  name: 'contentChatSlice',
   initialState,
   reducers: {
     joinRoom: (state, action) => {
@@ -28,24 +29,25 @@ export const chatSlice = createSlice({
 
     sendMessage: (state, action) => {
       if (action.payload.line_text) {
-      
         state.messages.push(action.payload);
       }
     },
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
-      state.loadding = true;
+      state.loading = true;
     });
     builder.addCase(sendMessageAsync.rejected, (state) => {
-      state.loadding = false;
+      state.loading = false;
     });
     builder.addCase(sendMessageAsync.fulfilled, (state, action) => {
-      state.loadding = false;
+      state.loading = false;
+      console.log(action.payload);
+      
     });
   },
 });
 
-export default chatSlice.reducer;
-export const { sendMessage, joinRoom } = chatSlice.actions;
-export const selectMessages = (state: RootState) => state.chat.messages;
+export default contentChatSlice.reducer;
+export const { sendMessage, joinRoom } = contentChatSlice.actions;
+export const selectMessages = (state: RootState) => state.contentChat.messages;

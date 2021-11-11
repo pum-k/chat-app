@@ -1,24 +1,14 @@
-import React from 'react';
-import { Redirect, useHistory, Route, RouteProps, Switch } from 'react-router-dom';
-import Login from 'features/login/Login';
-import Register from 'features/register/Register';
+import { Redirect, Route, RouteProps } from 'react-router';
 
-const PrivateRoute = (props: RouteProps) => {
-  const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+export type PrivateRouteProps = {
+  isAuthenticated: boolean;
+  authenticationPath: string;
+} & RouteProps;
 
-  if (!isLoggedIn)
-    return (
-      <Switch>
-        <Redirect to="/login" />
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/register">
-          <Register />
-        </Route>
-      </Switch>
-    );
-  else return <Route {...props} />;
+export default function PrivateRoute({isAuthenticated, authenticationPath, ...routeProps}: PrivateRouteProps) {
+  if(isAuthenticated) {
+    return <Route {...routeProps} />;
+  } else {
+    return <Redirect to={{ pathname: authenticationPath }} />;
+  }
 };
-
-export default PrivateRoute;

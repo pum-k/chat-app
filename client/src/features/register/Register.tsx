@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Register.scss';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterInput } from 'constants/AccountTypes';
 import { Typography } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useAppDispatch } from 'app/hooks';
 import { accountRegister } from 'components/Common/accountSlice';
 
 const { Text } = Typography;
 
 const Register = () => {
+  let history = useHistory();
+  useEffect(() => {
+    let isAuthenticated = Boolean(localStorage.getItem('access_token'));
+    if(isAuthenticated) {
+      history.push('/t');
+    }
+  })
   const dispatch = useAppDispatch();
   const {
     register,
