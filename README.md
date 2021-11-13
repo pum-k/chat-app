@@ -1,7 +1,7 @@
 # All Feature in The Chat App
 
-1. Registration Page
-2. Contact Integration
+1. Registration Page ---
+2. Contact Integration ---
 3. Profile Customization
 4. Messaging
 5. Chat History
