@@ -76,7 +76,6 @@ router.post("/editUserInfo", async (req, res) => {
     gender: request.u_gender || infoUser.gender,
   };
   await user.updateOne(
-    
     { _id: request.owners },
     {
       $set: {
