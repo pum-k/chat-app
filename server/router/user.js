@@ -74,8 +74,6 @@ router.post("/editUserInfo", async (req, res) => {
     dateOfBirth: request.u_date_of_birth || infoUser.dateOfBirth,
     displayName: request.u_display_name || infoUser.displayName,
     gender: request.u_gender || infoUser.gender,
-    avatar: request.u_avatar || infoUser.avatar,
-    createAt: request.createAt || infoUser.createAt,
   };
   await user.updateOne(
     { _id: request.owners },
@@ -86,8 +84,7 @@ router.post("/editUserInfo", async (req, res) => {
         phoneNumber: edit_User.phoneNumber,
         dateOfBirth: edit_User.dateOfBirth,
         displayName: edit_User.displayName,
-        avatar: edit_User.avatar,
-        createAt: edit_User.createAt,
+     
       },
     },
     { new: true },
