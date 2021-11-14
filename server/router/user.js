@@ -1,9 +1,9 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var user = require("../public/db/schema/User_Schema");
-var RoomChat = require("../public/db/schema/chatroom_Schema");
-const { v4: uuidv4 } = require("uuid");
-router.post("/addfriend", async (req, res) => {
+var user = require('../public/db/schema/User_Schema');
+var RoomChat = require('../public/db/schema/chatroom_Schema');
+const { v4: uuidv4 } = require('uuid');
+router.post('/addfriend', async (req, res) => {
   let newFriendAdd = req.body;
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
@@ -19,7 +19,7 @@ router.post("/addfriend", async (req, res) => {
       { $push: { friends: newFriendAdd.owners } }
     );
     let newRoom = new RoomChat({
-      RoomName: "room vua ket ban",
+      RoomName: 'room vua ket ban',
       SocketId: uuidv4(),
     });
     await newRoom.save(async (err) => {
@@ -45,12 +45,12 @@ router.post("/addfriend", async (req, res) => {
       }
     });
 
-    res.send("tao room thnah cong");
+    res.send('tao room thnah cong');
   } else {
-    res.send({ error: "khong tim thay voi username nay" });
+    res.send({ error: 'khong tim thay voi username nay' });
   }
 });
-router.post("/findFriend", async (req, res) => {
+router.post('/findFriend', async (req, res) => {
   let newFriendAdd = req.body;
 
   let findFriend = await user
@@ -59,40 +59,34 @@ router.post("/findFriend", async (req, res) => {
     .exec();
   res.send(findFriend);
 });
-router.post('/getInfouser' , async (req, res) => {
-  let request = req.body
-  let UserInfo = await user.find({_id : request.owners}).lean().exec();
+router.post('/getInfoUser', async (req, res) => {
+  let request = req.body;
+  let UserInfo = await user.find({ _id: request.owners }).lean().exec();
   res.send(UserInfo);
-})
-router.post("/editUserInfo", async (req, res) => {
+});
+router.post('/editUserInfo', async (req, res) => {
   let request = req.body;
   let infoUser = await user.findById({ _id: request.owners }).lean().exec();
   let edit_User = {
-    username: request.username || infoUser.username,
-    password: request.password || infoUser.password,
-    phoneNumber: request.phoneNumber || infoUser.phoneNumber,
-    dateOfBirth: request.u_date_of_birth || infoUser.dateOfBirth,
-    displayName: request.u_display_name || infoUser.displayName,
-    gender: request.u_gender || infoUser.gender,
+    dateOfBirth: request.dateOfBirth || infoUser.dateOfBirth,
+    displayName: request.displayName || infoUser.displayName,
+    gender: request.gender,
   };
   await user.updateOne(
     { _id: request.owners },
     {
       $set: {
-        username: edit_User.username,
-        password: edit_User.password,
-        phoneNumber: edit_User.phoneNumber,
         dateOfBirth: edit_User.dateOfBirth,
         displayName: edit_User.displayName,
-     
+        gender: edit_User.gender,
       },
     },
     { new: true },
     (err) => {
       if (err) {
-        res.send({ error: err });
+        res.send({ success: false });
       } else {
-        res.send({ success: "update thanh cong" });
+        res.send({ success: true });
       }
     }
   );

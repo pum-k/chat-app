@@ -14,6 +14,9 @@ import { EditOutlined } from '@ant-design/icons';
 import React, { FC, useEffect, useState } from 'react';
 import './AccountModal.scss';
 import moment from 'moment';
+import { fetchUserModal, selectUserModal, updateUserModal } from './accountModalSlice';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { updateUserType } from 'constants/accountModalTypes';
 
 interface ModalProps {
   isModalVisible: boolean;
@@ -26,22 +29,28 @@ const { Title } = Typography;
 
 const AccountModal: FC<ModalProps> = (props) => {
   const { isModalVisible, handleOk, handleCancel, setIsModalVisible } = props;
-
+  const dispatch = useAppDispatch();
   const [form] = Form.useForm();
 
-  // default account
-  const user = {
-    display: 'Duong Dang Khoa',
-    username: 'ddkhoa1206',
-    birthday: new Date('12/06/2000'),
-    isMale: true,
-  };
+  // fetch user
+  useEffect(() => {
+    dispatch(fetchUserModal());
+  }, []);
+
+  // get user from state
+  const user = useAppSelector(selectUserModal);
 
   // handle form
   const onFinish = (values: any) => {
     setIsEditDisplayName(false);
     setIsModalVisible(false);
-    console.log('Success:', values);
+    let dataUpdate: updateUserType = {
+      dateOfBirth: values.dateOfBirth || null,
+      displayName: values.displayName || null,
+      gender: values.gender,
+    };
+    dispatch(updateUserModal(dataUpdate));
+
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -57,6 +66,9 @@ const AccountModal: FC<ModalProps> = (props) => {
 
   //handle edit display
   const [isEditDisplayName, setIsEditDisplayName] = useState(false);
+  useEffect(() => {
+    setIsEditDisplayName(false);
+  }, [isModalVisible]);
 
   return (
     <>
@@ -101,7 +113,7 @@ const AccountModal: FC<ModalProps> = (props) => {
             src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
             className="modal-account__cover-image"
           />
-          <Space direction="vertical" className="modal-account__info">
+          <Space direction="vertical" className="modal-account__info" size="small">
             <Avatar
               size={100}
               src={
@@ -109,17 +121,17 @@ const AccountModal: FC<ModalProps> = (props) => {
               }
               className="modal-account__avatar"
             />
-            <Form.Item name="display">
+            <Form.Item name="displayName">
               {isEditDisplayName ? (
                 <Input
-                  defaultValue={user.display}
+                  defaultValue={user.user_display_name || 'No available'}
                   size="large"
                   style={{ width: '100%' }}
                   onChange={() => setIsAllowSubmit(true)}
                 />
               ) : (
                 <>
-                  <Title level={4}>{user.display}</Title>
+                  <Title level={4}>{user.user_display_name || 'No available'}</Title>
                   <EditOutlined
                     style={{
                       marginBottom: '10px',
@@ -131,25 +143,36 @@ const AccountModal: FC<ModalProps> = (props) => {
                 </>
               )}
             </Form.Item>
-            <Form.Item name="username" label="Username">
+            <Form.Item label="Username">
               <Input
-                defaultValue={user.username}
+                defaultValue={user.user_name || 'No available'}
                 disabled
                 size="large"
                 onChange={() => setIsAllowSubmit(true)}
               />
             </Form.Item>
-            <Form.Item name="birthday" label="Birthday">
+            <Form.Item label="Phone number">
+              <Input
+                defaultValue={user.user_phone_number || 'No available'}
+                disabled
+                size="large"
+                onChange={() => setIsAllowSubmit(true)}
+              />
+            </Form.Item>
+            <Form.Item name="dateOfBirth" label="Birthday">
               <DatePicker
                 placeholder="2000-12-24"
                 size="large"
-                defaultValue={moment(user.birthday, 'YYYY-MM-DD')}
+                defaultValue={moment(user.user_birthday || '01-01-2000', 'YYYY-MM-DD')}
                 style={{ width: '100%' }}
                 onChange={() => setIsAllowSubmit(true)}
               />
             </Form.Item>
             <Form.Item name="gender" label="Gender">
-              <Radio.Group defaultValue={user.isMale} onChange={() => setIsAllowSubmit(true)}>
+              <Radio.Group
+                defaultValue={user.user_gender || true}
+                onChange={() => setIsAllowSubmit(true)}
+              >
                 <Radio value={true}>Male</Radio>
                 <Radio value={false}>Female</Radio>
               </Radio.Group>

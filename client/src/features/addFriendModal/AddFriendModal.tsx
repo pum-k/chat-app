@@ -1,6 +1,5 @@
-import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, Descriptions } from 'antd';
+import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, message  } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { FieldValues, SubmitHandler, useForm, UseFormRegister } from 'react-hook-form';
 import './AddFriendModal.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { FindFriend, selectFriend, addFriend } from './AddFriendSlice';
@@ -12,11 +11,14 @@ interface ModalProps {
   handleCancel: () => void | undefined;
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+
+
 const AddFriendModal: FC<ModalProps> = (props) => {
   const { isModalVisible, setIsModalVisible, handleOk, handleCancel } = props;
   const [showSearchResult, setShowSearchResult] = useState(false);
 
-  const Friends = useAppSelector(selectFriend);
+  const friend = useAppSelector(selectFriend);
   const dispatch = useAppDispatch();
   const onFinish = (values: any) => {
     dispatch(FindFriend(values));
@@ -35,8 +37,18 @@ const AddFriendModal: FC<ModalProps> = (props) => {
 
   useEffect(() => {
     if (!isModalVisible) setShowSearchResult(false);
-    // console.log(Friends);
   }, [isModalVisible]);
+
+  const key = 'updatable';
+ 
+ 
+  const openMessage = () => {
+    message.loading({ content: ' Wait a minute...', key });
+    setTimeout(() => {
+      message.success({ content: ' Make friends successfully!', key, duration: 2 });
+      setIsModalVisible(false);
+    }, 1000);
+  };
 
   return (
     <>
@@ -76,28 +88,39 @@ const AddFriendModal: FC<ModalProps> = (props) => {
           <>
             <Image
               width={400}
-              src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
+              src="error"
+              fallback="http://aimory.vn/wp-content/uploads/2017/10/no-image.png"
               className="modal-add-friend__cover-image"
             />
             <Space direction="vertical" className="modal-add-friend__info">
               <Avatar
                 size={100}
                 src={
-                  <Image src="https://s120-ava-talk.zadn.vn/d/9/9/1/6/120/b1c672818fc133d72cb8685a850c578c.jpg" />
+                  <Image
+                    src="error"
+                    fallback="http://aimory.vn/wp-content/uploads/2017/10/no-image.png"
+                  />
                 }
                 className="modal-add-friend__avatar"
               />
-              <Title level={4}>Your friend name</Title>
-              <Space>
-                <Button type="ghost">Chat now</Button>
-                <Button type="primary" onClick={() => {dispatch(addFriend(Friends))}}>
-                  Add friend
-                </Button>
-              </Space>
+
+              <Title level={4}>{friend.username || friend.username}</Title>
+
+              <Button
+                type="primary"
+                onClick={() => {
+                  dispatch(addFriend(friend));
+                  openMessage();
+                }}
+              >
+                Add friend
+              </Button>
+
               <Space direction="vertical">
-                <Text>Username: {Friends.username}</Text>
-                <Text>Gender: Male</Text>
-                <Text>Birthday: 12/06/2000</Text>
+                <Text>Username: {friend.username}</Text>
+                <Text>Phone number: {friend.phoneNumber || 'Not updated yet'}</Text>
+                <Text>Gender: {friend.gender ? 'Male' : 'Female'}</Text>
+                <Text>Birthday: {friend.birthday || 'Not updated yet'}</Text>
               </Space>
             </Space>
           </>

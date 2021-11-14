@@ -1,4 +1,5 @@
 export type ListRoomChat =  {
+    loading: boolean
     data: Array<RoomChatRender>
 }
 

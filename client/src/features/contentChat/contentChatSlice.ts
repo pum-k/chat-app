@@ -17,15 +17,13 @@ export const sendMessageAsync = createAsyncThunk(
   }
 );
 
-export const renderChatListAsync = createAsyncThunk('chat/listRoomChatAsync', async () => {
-  const response: any = await chatApi.renderListChat();
-  return response.data;
-});
+
 
 export const renderMessageAsync = createAsyncThunk('chat/renderMessageAsync', async () => {
   const response: any = await chatApi.renderMessage();
   return response.data;
 });
+
 export const contentChatSlice = createSlice({
   name: 'contentChatSlice',
   initialState,
@@ -53,19 +51,6 @@ export const contentChatSlice = createSlice({
       state.loading = false;
       console.log(action.payload);
       
-    });
-    builder.addCase(renderChatListAsync.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(renderChatListAsync.rejected, (state) => {
-      state.loading = false;
-    });
-    builder.addCase(renderChatListAsync.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.listRoomChat = action.payload.infoAllRoomChat;
-        state.messages = action.payload.ChatMessageFirstRoom;
-      }
-      state.loading = true;
     });
     builder.addCase(renderMessageAsync.pending, (state) => {
       state.loading = true;

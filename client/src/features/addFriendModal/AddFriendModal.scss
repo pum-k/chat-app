@@ -14,9 +14,10 @@
   &__cover-image {
     height: 200px !important;
     object-fit: cover;
+    border-bottom: 1px solid #ccc;
   }
   &__avatar {
-    border: 1px solid #fff;
+    border: 1px solid #ccc !important;
   }
   &__info {
     width: 100%;

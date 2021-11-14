@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { authApi } from 'api/authApi';
+import { userApi } from 'api/userApi';
 import { AccountState, LoginInput, RegisterInput } from 'constants/AccountTypes';
 
 const initialState: AccountState = {
@@ -12,14 +12,14 @@ const initialState: AccountState = {
   isSuccess: false,
 };
 
-export const authLogin = createAsyncThunk('auth/login', async (user: LoginInput) => {
-  const response: any = await authApi.login(user);
+export const authLogin = createAsyncThunk('user/login', async (user: LoginInput) => {
+  const response: any = await userApi.login(user);
   return response.data;
   // console.log(response);
 });
 
-export const authRegister = createAsyncThunk('auth/register', async (user: RegisterInput) => {
-  const response: any = await authApi.register(user);
+export const authRegister = createAsyncThunk('user/register', async (user: RegisterInput) => {
+  const response: any = await userApi.register(user);
   return response.data;
   // console.log(response.data);
 });

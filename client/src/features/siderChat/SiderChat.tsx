@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
-import { Avatar, Badge, Space, List, Tooltip, Button, Input } from 'antd';
+import { Avatar, Badge, Space, List, Tooltip, Button, Input, Empty } from 'antd';
 import { UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
+import { fetchListRoom, selectListRoom, selectListRoomLoading } from './siderChatSlice';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'app/hooks';
 
 const { Search } = Input;
 
-const SiderChat = () => {
-  const data = [
-    {
-      id: '123121233',
-      title: 'Duong Dang Khoa',
-    },
-    {
-      id: '1231204',
-      title: 'Duong Huu Thang',
-    },
-  ];
+interface Props {
+  onLoading: () => void;
+  offLoading: () => void;
+}
+
+const SiderChat: FC<Props> = (props) => {
+  const { onLoading, offLoading } = props;
+  const dispatch = useDispatch();
+  const rooms = useAppSelector(selectListRoom);
 
   const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
 
@@ -51,6 +52,19 @@ const SiderChat = () => {
   const onSearch = (value: any) => {
     console.log(value);
   };
+
+  useEffect(() => {
+    dispatch(fetchListRoom());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalVisibleAddFriend]);
+  const loading = useAppSelector(selectListRoomLoading);
+  useEffect(() => {
+    if (loading) {
+      onLoading();
+    } else {
+      offLoading();
+    }
+  }, [loading]);
 
   return (
     <>
@@ -96,24 +110,42 @@ const SiderChat = () => {
           </Space>
         </div>
         <div className="sider-chat__list-chater">
-          <List
-            itemLayout="horizontal"
-            dataSource={data}
-            renderItem={(item) => (
-              <List.Item>
-                <Link to={`/t/${item.id}`} style={{ width: '100%', height: '100%', display: 'flex' }}>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                    }
-                    title={<p>{item.title}</p>}
-                    description="Ant Design, a design language for background applications, is refined by Ant UED Team, Ant Design, a design language for background applications, is refined by Ant UED Team Ant Design, a design language for background applications, is refined by Ant UED Team"
-                  />
-                  <Badge count={1} style={{ marginLeft: '1rem' }} />
-                </Link>
-              </List.Item>
-            )}
-          />
+          {rooms.length > 0 ? (
+            <List
+              itemLayout="horizontal"
+              dataSource={rooms}
+              renderItem={(item) => (
+                <List.Item>
+                  <Link
+                    to={`/t/${item.room_id}`}
+                    style={{ width: '100%', height: '100%', display: 'flex' }}
+                  >
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                      }
+                      title={<p>{item.friend_name}</p>}
+                      description="Ant Design, a design language for background applications, is refined by Ant UED Team, Ant Design, a design language for background applications, is refined by Ant UED Team Ant Design, a design language for background applications, is refined by Ant UED Team"
+                    />
+                    <Badge count={1} style={{ marginLeft: '1rem' }} />
+                  </Link>
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Empty
+              style={{ marginTop: '1rem' }}
+              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+              imageStyle={{
+                height: 60,
+              }}
+              description={<span>You haven't chated anyone yet</span>}
+            >
+              <Button type="primary" onClick={() => setIsModalVisibleAddFriend(true)}>
+                Add friend and chat now
+              </Button>
+            </Empty>
+          )}
         </div>
       </section>
     </>
