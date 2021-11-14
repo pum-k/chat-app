@@ -9,6 +9,7 @@ const User = new Schema(
     dateOfBirth: {type: String},
     displayName: { type: String },
     avatar: { type: String},
+    gender: { type: String},
     createAt: { type: Date, default: Date.now },
     friends: [{ type: Schema.Types.ObjectId, ref: "user"}],
     RoomChatId : [{ type: Schema.Types.ObjectId, ref: "chatroom"}]
