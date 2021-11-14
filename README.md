@@ -1,7 +1,7 @@
 # All Feature in The Chat App
 
-1. Registration Page
-2. Contact Integration
+1. Registration Page ---
+2. Add Contact ---
 3. Profile Customization
 4. Messaging
 5. Chat History
@@ -9,11 +9,9 @@
 7. Voice Messaging Feature
 8. Video Calling
 9. Voice Calling
-10. Group Calling
-11. Real Time Translation
-12. Media Sharing
-13. Privacy
-14. Push Notifications
+10. Media Sharing
+11. Privacy
+12. Push Notifications
 
 # UI
 
