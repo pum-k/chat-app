@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { accountApi } from 'api/accountApi';
+import { authApi } from 'api/authApi';
 import { AccountState, LoginInput, RegisterInput } from 'constants/AccountTypes';
 
 const initialState: AccountState = {
@@ -12,31 +12,31 @@ const initialState: AccountState = {
   isSuccess: false,
 };
 
-export const accountLogin = createAsyncThunk('account/login', async (user: LoginInput) => {
-  const response: any = await accountApi.login(user);
+export const authLogin = createAsyncThunk('auth/login', async (user: LoginInput) => {
+  const response: any = await authApi.login(user);
   return response.data;
   // console.log(response);
 });
 
-export const accountRegister = createAsyncThunk('account/register', async (user: RegisterInput) => {
-  const response: any = await accountApi.register(user);
+export const authRegister = createAsyncThunk('auth/register', async (user: RegisterInput) => {
+  const response: any = await authApi.register(user);
   return response.data;
   // console.log(response.data);
 });
 
-export const accountSlice = createSlice({
-  name: 'account',
+export const authSlice = createSlice({
+  name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(accountLogin.pending, (state) => {
+    builder.addCase(authLogin.pending, (state) => {
       state.loadding = true;
     });
-    builder.addCase(accountLogin.rejected, (state) => {
+    builder.addCase(authLogin.rejected, (state) => {
       state.loadding = false;
       state.error = 'Login Failed!';
     });
-    builder.addCase(accountLogin.fulfilled, (state, action) => {
+    builder.addCase(authLogin.fulfilled, (state, action) => {
       state.loadding = false;
       // console.log(action.payload);
       if (action.payload.id) {
@@ -44,14 +44,14 @@ export const accountSlice = createSlice({
         window.location.href = 'http://localhost:3000';
       }
     });
-    builder.addCase(accountRegister.pending, (state) => {
+    builder.addCase(authRegister.pending, (state) => {
       state.loadding = true;
     });
-    builder.addCase(accountRegister.rejected, (state) => {
+    builder.addCase(authRegister.rejected, (state) => {
       state.loadding = false;
       state.error = 'Login Failed!';
     });
-    builder.addCase(accountRegister.fulfilled, (state, action) => {
+    builder.addCase(authRegister.fulfilled, (state, action) => {
       state.loadding = false;
       state.isSuccess = action.payload.isSuccess;
       if (action.payload.isSuccess) {
@@ -63,4 +63,4 @@ export const accountSlice = createSlice({
   },
 });
 
-export default accountSlice.reducer;
+export default authSlice.reducer;

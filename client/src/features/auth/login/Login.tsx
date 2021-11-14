@@ -4,7 +4,7 @@ import { Space, Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.scss';
 import { useAppDispatch } from 'app/hooks';
-import { accountLogin } from 'components/Common/accountSlice';
+import { authLogin } from 'features/auth/authSlice';
 import { useEffect } from 'react';
 
 const { Text } = Typography;
@@ -25,7 +25,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInput>();
-  const onSubmit: SubmitHandler<LoginInput> = (data) => dispatch(accountLogin(data));
+  const onSubmit: SubmitHandler<LoginInput> = (data) => dispatch(authLogin(data));
 
   return (
     <div className="login-layout">

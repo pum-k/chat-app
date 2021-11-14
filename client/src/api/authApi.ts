@@ -3,7 +3,7 @@ import { LoginInput, RegisterInput } from 'constants/AccountTypes';
 
 const API = 'http://localhost:4000';
 
-export const accountApi = {
+export const authApi = {
   login: (params: LoginInput) => {
     return axios
       .post(`${API}/login`, {

@@ -29,14 +29,16 @@ app.use(
     cookie: { expires: 100000 * 60 },
   })
 );
+
+
 mongoose
-  .connect("mongodb://localhost:27017/chat-app", {
+  .connect("mongodb+srv://administrator:administrator@chatdb.oyaqd.mongodb.net/chatdb?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .catch((err) => console.log(err));
 mongoose.connection.on("connected", () => {
-  console.log("Mongoose connected to db");
+  console.log("Mongoose connected successfully");
 });
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -60,4 +62,4 @@ io.on("connection", function (socket) {
   });
 });
 
-server.listen(4000, () => console.log("server is running at port 4000"));
+server.listen(4000, () => console.log("Server is running at port 4000"));

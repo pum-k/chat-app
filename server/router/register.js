@@ -19,11 +19,11 @@ router.post("/", async (req, res) => {
       if (!err) {
         res.send({ isSuccess: true });
       } else {
-        res.send({ error: "dang ky that bai", isSuccess: false });
+        res.send({ error: "Register fail", isSuccess: false });
       }
     });
   } else {
-    res.send({ error: "username nay da ton tai" });
+    res.send({ error: "Username is exist" });
   }
 });
 module.exports = router;

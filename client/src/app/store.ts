@@ -1,10 +1,10 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import contentChatReducer from 'features/contentChat/contentChatSlice';
-import accountReducer from 'components/Common/accountSlice';
+import authReducer from 'features/auth/authSlice';
 import friendReducer from '../features/addFriendModal/AddFriendSlice'
 export const store = configureStore({
   reducer: {
-    account: accountReducer,
+    auth: authReducer,
     contentChat: contentChatReducer,
     friend: friendReducer,
   },

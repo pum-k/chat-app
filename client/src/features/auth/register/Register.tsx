@@ -5,7 +5,7 @@ import { RegisterInput } from 'constants/AccountTypes';
 import { Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { useAppDispatch } from 'app/hooks';
-import { accountRegister } from 'components/Common/accountSlice';
+import { authRegister } from 'features/auth/authSlice';
 
 const { Text } = Typography;
 
@@ -23,7 +23,7 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterInput>();
-  const onSubmit: SubmitHandler<RegisterInput> = (data) => dispatch(accountRegister(data));
+  const onSubmit: SubmitHandler<RegisterInput> = (data) => dispatch(authRegister(data));
   return (
     <div className="register-layout">
       <div className="register">
