@@ -62,9 +62,8 @@ router.post("/listChatPage", async (req, res) => {
         }
       }
       infoAllRoomChat.push({
-        RoomName: RoomName,
-        RoomSocketId: eachRoomChat[0]._id,
-        createAt: eachRoomChat[0].createAt,
+        friend_name: RoomName,
+        room_id: eachRoomChat[0]._id,
       });
     }
   }
