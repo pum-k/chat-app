@@ -35,6 +35,7 @@ const AccountModal: FC<ModalProps> = (props) => {
   // fetch user
   useEffect(() => {
     dispatch(fetchUserModal());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // get user from state

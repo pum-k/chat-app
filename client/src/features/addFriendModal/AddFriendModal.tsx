@@ -40,8 +40,6 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   }, [isModalVisible]);
 
   const key = 'updatable';
- 
- 
   const openMessage = () => {
     message.loading({ content: ' Wait a minute...', key });
     setTimeout(() => {
@@ -104,7 +102,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                 className="modal-add-friend__avatar"
               />
 
-              <Title level={4}>{friend.username || friend.username}</Title>
+              <Title level={4}>{friend.username || ''}</Title>
 
               <Button
                 type="primary"
@@ -117,7 +115,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
               </Button>
 
               <Space direction="vertical">
-                <Text>Username: {friend.username}</Text>
+                <Text>Username: {friend.username || ''}</Text>
                 <Text>Phone number: {friend.phoneNumber || 'Not updated yet'}</Text>
                 <Text>Gender: {friend.gender ? 'Male' : 'Female'}</Text>
                 <Text>Birthday: {friend.birthday || 'Not updated yet'}</Text>

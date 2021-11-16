@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Space, Form, List, Typography, Avatar, Checkbox } from 'antd';
+import { Button, Input, Modal, Space, Form, List, Avatar, Checkbox } from 'antd';
 import React, { FC } from 'react';
 import './CreateGroup.scss';
 import { CameraOutlined, SearchOutlined } from '@ant-design/icons';

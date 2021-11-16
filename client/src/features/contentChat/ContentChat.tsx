@@ -89,6 +89,7 @@ const ContentChat = () => {
       };
       dispatch(sendMessage(newMessage));
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO
 

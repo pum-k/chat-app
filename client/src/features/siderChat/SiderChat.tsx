@@ -64,6 +64,7 @@ const SiderChat: FC<Props> = (props) => {
     } else {
       offLoading();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   return (
