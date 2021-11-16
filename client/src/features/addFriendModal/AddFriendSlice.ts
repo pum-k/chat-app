@@ -31,7 +31,7 @@ export const AddFriendSlice = createSlice({
       state.loadding = false;
     });
     builder.addCase(FindFriend.fulfilled, (state, action) => {
-      state.loadding = true;
+      state.loadding = false;
       if(action.payload){
         state.username = action.payload[0].username
         state.phoneNumber = action.payload[0].phoneNumber
@@ -44,8 +44,7 @@ export const AddFriendSlice = createSlice({
       state.loadding = false;
     });
     builder.addCase(addFriend.fulfilled, (state, action) => {
-      state.loadding = true;
-
+      state.loadding = false;
     });
   },
 });
