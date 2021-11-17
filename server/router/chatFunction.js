@@ -5,6 +5,7 @@ var RoomChat = require("../public/db/schema/chatroom_Schema");
 
 router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
+  console.log(req.body);
   let people = await users.findById({ _id: req.body.id });
   let newMessage = {
     message: req.body.line_text,
@@ -29,6 +30,7 @@ router.post("/sendMessage", async (req, res) => {
   console.log(newMessage);
 });
 router.post("/listMessages", async (req, res) => {
+  console.log(req.body);
   if (req.body.chatRoom) {
     let ListMessages = await RoomChat.find({ _id: req.body.chatRoom })
       .lean()
