@@ -32,7 +32,7 @@ export const contentChatSlice = createSlice({
       });
     },
     newMessage: (state, action) => {
-      if (action.payload.line_text && action.payload.user_Id !== localStorage.getItem('owners')) {
+      if (action.payload.line_text && action.payload.user_Id !== localStorage.getItem('access_token')) {
         state.messages.push(action.payload);
       }
     },
