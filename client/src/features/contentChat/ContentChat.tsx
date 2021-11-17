@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -12,6 +12,8 @@ import {
   Empty,
   Form,
   Input,
+  Divider,
+  Skeleton,
 } from 'antd';
 import {
   BellOutlined,
@@ -22,16 +24,21 @@ import {
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
-import { joinRoom, renderMessageAsync, selectMessages, newMessage, sendMessageAsync } from './contentChatSlice';
-import './ContentChat.scss';
 import {
-  useLocation
-} from "react-router-dom";
-import { io } from "socket.io-client";
+  joinRoom,
+  renderMessageAsync,
+  selectMessages,
+  newMessage,
+  sendMessageAsync,
+} from './contentChatSlice';
+import './ContentChat.scss';
+import { useLocation } from 'react-router-dom';
+import { io } from 'socket.io-client';
+import InfiniteScroll from 'react-infinite-scroll-component';
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Panel } = Collapse;
-const socket = io('http://localhost:4000'); 
+const socket = io('http://localhost:4000');
 const ContentChat = () => {
   // REDUX--------------------------->
   // -> Declare
@@ -39,14 +46,17 @@ const ContentChat = () => {
 
   // -> Fetch data
   let location = useLocation();
-  const roomId = (location.pathname).slice(3);
-  localStorage.setItem('room_id', roomId);
+  useEffect(() => {
+    const roomId = location.pathname.slice(3);
+    localStorage.setItem('room_id', roomId);
+    dispatch(renderMessageAsync());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+
   // ????
 
   // -> get store messages
   const messages = useAppSelector(selectMessages);
-  console.table(messages);
-  
 
   // -> handle send message
   const onFinish = (value: any) => {
@@ -54,21 +64,42 @@ const ContentChat = () => {
     const newMessage = {
       createAt: Date.now(),
       line_text: value.message,
-      user_name: 'test',
-      // id: 'test',
-      // room_id: 'test',
+      user_name: localStorage.getItem('owners') || '',
     };
     dispatch(sendMessageAsync(newMessage));
   };
   // <---------------------------REDUX
 
-  // AUTO SCROLL LASTED MESSAGE----------->
-  const messagesEndRef = useRef<any>(null);
-  useEffect(() => {
-    if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-  // <-----------AUTO SCROLL LASTED MESSAGE
+  // Load more---------------------------------->
+  const [elementTh, setElementTh] = useState(11);
+  const [hasMoreLoad, setHasMoreLoad] = useState(true);
 
+  const [messRender, setMessRender] = useState(
+    [...messages].reverse().splice(0, Number(elementTh))
+  );
+
+  const handleLoadMore = async () => {
+    if (Number(messages.length) > Number(elementTh + 11)) {
+      setTimeout(() => {
+        setElementTh(Number(elementTh + 11));
+        setMessRender([...messages].reverse().splice(0, Number(elementTh + 11)));
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        setMessRender([...messages].reverse());
+        setHasMoreLoad(false);
+      }, 1000);
+    }
+  };
+
+  // when send a new message
+  useEffect(() => {
+    setMessRender([...messages].reverse().splice(0, Number(elementTh)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+
+  // <---------------------------------Load more
   // HANDLE SEND MESSAGE------------------>
   const [form] = Form.useForm(); // This form of antd
   // -> When send message by "enter" or click button
@@ -82,21 +113,19 @@ const ContentChat = () => {
   // <------------------HANDLE SEND MESSAGE
 
   // SOCKET.IO----------------------------->
-  // const socket = io('http://localhost:4000'); // Declare socket
   useEffect(() => {
     dispatch(joinRoom(socket)); // Join room by id_room
-    dispatch(renderMessageAsync())
-    // -> when send message
+    // -> when new message
     socket.on('newMessages', (data: any) => {
-      const Message = {
+      const message = {
         create_at: data.create_at,
         line_text: data.message,
         user_name: data.user_name,
-        user_Id : data.user_Id
+        user_Id: data.user_Id,
       };
-      dispatch(newMessage(Message)); // <- LAM CAI GI
+      dispatch(newMessage(message));
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // <-----------------------------SOCKET.IO
@@ -132,48 +161,64 @@ const ContentChat = () => {
             </Space>
           </section>
         </div>
-        <div className="content-chat__2nd__chat-box">
-          {messages &&
-            messages.map((item, index) => {
-              if (item.user_name !== 'owner')
-                return (
-                  <Comment
-                    style={{ width: '100%' }}
-                    key={index}
-                    actions={[]}
-                    author={<b>{item.user_name}</b>}
-                    avatar={
-                      <Avatar
-                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                        alt="Han Solo"
-                      />
-                    }
-                    content={<p>{item.line_text}</p>}
-                    datetime={
-                      <Tooltip title={moment(item.createAt).format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment(item.createAt).fromNow()}</span>
-                      </Tooltip>
-                    }
-                  />
-                );
-              else
-                return (
-                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Space direction="vertical" style={{ width: '40%', alignItems: 'flex-end' }}>
-                      <Space>
-                        <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                          <span style={{ color: '#ccc', fontSize: '12px' }}>
-                            {moment().fromNow()}
-                          </span>
+        <div className="content-chat__2nd__chat-box" id="scrollableDiv">
+          <InfiniteScroll
+            dataLength={messRender.length}
+            next={handleLoadMore}
+            style={{ display: 'flex', flexDirection: 'column-reverse' }} //To put endMessage and loader to the top.
+            inverse={true}
+            hasMore={hasMoreLoad}
+            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+            endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+            scrollableTarget="scrollableDiv"
+          >
+            {messages ? (
+              messRender.map((item, index) => {
+                if (item.user_name !== 'owner')
+                  return (
+                    <Comment
+                      style={{ width: '100%' }}
+                      key={index}
+                      actions={[]}
+                      author={<b>{item.user_name}</b>}
+                      avatar={
+                        <Avatar
+                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                          alt="Han Solo"
+                        />
+                      }
+                      content={<p>{item.line_text}</p>}
+                      datetime={
+                        <Tooltip title={moment(item.createAt).format('YYYY-MM-DD HH:mm:ss')}>
+                          <span>{moment(item.createAt).fromNow()}</span>
                         </Tooltip>
-                        <b style={{ color: '#00000073', fontSize: '12px' }}>{item.user_name}</b>
+                      }
+                    />
+                  );
+                else
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Space direction="vertical" style={{ width: '40%', alignItems: 'flex-end' }}>
+                        <Space>
+                          <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                            <span style={{ color: '#ccc', fontSize: '12px' }}>
+                              {moment().fromNow()}
+                            </span>
+                          </Tooltip>
+                          <b style={{ color: '#00000073', fontSize: '12px' }}>{item.user_name}</b>
+                        </Space>
+                        <p style={{ textAlign: 'right' }}>{item.line_text}</p>
                       </Space>
-                      <p style={{ textAlign: 'right' }}>{item.line_text}</p>
-                    </Space>
-                  </div>
-                );
-            })}
-          <div ref={messagesEndRef} />
+                    </div>
+                  );
+              })
+            ) : (
+              <div>
+                <Title level={1}>Now you two are friends</Title>
+                <Title level={3}>Let's text each other!</Title>
+              </div>
+            )}
+          </InfiniteScroll>
         </div>
         <div className="content-chat__2nd__input">
           <Form

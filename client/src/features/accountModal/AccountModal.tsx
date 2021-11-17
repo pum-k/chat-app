@@ -40,7 +40,7 @@ const AccountModal: FC<ModalProps> = (props) => {
 
   // get user from state
   const user = useAppSelector(selectUserModal);
-  console.log(user)
+
   
   // handle form
   const onFinish = (values: any) => {
