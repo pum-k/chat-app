@@ -10,7 +10,7 @@ const User = new Schema(
     displayName: { type: String },
     avatar: { type: String},
     cover_image: { type: String},
-    gender: { type: Boolean},
+    gender: { type: String},
     createAt: { type: Date, default: Date.now },
     friends: [{ type: Schema.Types.ObjectId, ref: "user"}],
     RoomChatId : [{ type: Schema.Types.ObjectId, ref: "chatroom"}]

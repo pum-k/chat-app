@@ -6,7 +6,7 @@ import { friendApi } from 'api/friendAPI';
 const initialState: FriendTypes = {
   phoneNumber: '',
   username: '',
-  gender: true,
+  gender: 'male',
   birthday: '',
   loadding: false,
 };
