@@ -123,7 +123,7 @@ const ContentChat = () => {
         user_name: data.user_name,
         user_Id: data.user_Id,
       };
-      dispatch(newMessage(message));
+      dispatch(renderMessageAsync());
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
