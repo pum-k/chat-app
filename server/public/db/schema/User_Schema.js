@@ -6,10 +6,11 @@ const User = new Schema(
     username: { type: String, required: true },
     password: { type: String, required: true },
 	  phoneNumber: {type: String},
-    dateOfBirth: {type: String},
+    dateOfBirth: {type: Date},
     displayName: { type: String },
     avatar: { type: String},
-    gender: { type: String},
+    cover_image: { type: String},
+    gender: { type: Boolean},
     createAt: { type: Date, default: Date.now },
     friends: [{ type: Schema.Types.ObjectId, ref: "user"}],
     RoomChatId : [{ type: Schema.Types.ObjectId, ref: "chatroom"}]

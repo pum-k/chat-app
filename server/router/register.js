@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
     .lean()
     .exec();
   if (checkUser.length == 0) {
-    let User = new user(req.body);
+    let User = new user({...req.body , gender: true});
     await User.save(function (err, result) {
       if (!err) {
         res.send({ isSuccess: true });
