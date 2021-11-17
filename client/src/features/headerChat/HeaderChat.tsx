@@ -3,7 +3,7 @@ import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin }
 import { MoreOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import {  useState } from 'react';
 import './HeaderChat.scss';
-import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
 
 const { Title } = Typography;

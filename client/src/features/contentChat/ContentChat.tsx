@@ -16,7 +16,6 @@ import {
 import {
   BellOutlined,
   SendOutlined,
-  MessageOutlined,
   StopOutlined,
   PhoneFilled,
   VideoCameraFilled,
