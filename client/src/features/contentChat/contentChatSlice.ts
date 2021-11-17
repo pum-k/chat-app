@@ -16,9 +16,6 @@ export const sendMessageAsync = createAsyncThunk(
     return response.data;
   }
 );
-
-
-
 export const renderMessageAsync = createAsyncThunk('chat/renderMessageAsync', async () => {
   const response: any = await chatApi.renderMessage();
   return response.data;
@@ -34,8 +31,8 @@ export const contentChatSlice = createSlice({
         userInfo: localStorage.getItem('access_token'),
       });
     },
-    sendMessage: (state, action) => {
-      if (action.payload.line_text) {
+    newMessage: (state, action) => {
+      if (action.payload.line_text && action.payload.user_Id !== localStorage.getItem('owners')) {
         state.messages.push(action.payload);
       }
     },
@@ -49,8 +46,6 @@ export const contentChatSlice = createSlice({
     });
     builder.addCase(sendMessageAsync.fulfilled, (state, action) => {
       state.loading = false;
-      console.log(action.payload);
-      
     });
     builder.addCase(renderMessageAsync.pending, (state) => {
       state.loading = true;
@@ -67,5 +62,5 @@ export const contentChatSlice = createSlice({
 });
 
 export default contentChatSlice.reducer;
-export const { sendMessage, joinRoom } = contentChatSlice.actions;
+export const { newMessage, joinRoom } = contentChatSlice.actions;
 export const selectMessages = (state: RootState) => state.contentChat.messages;

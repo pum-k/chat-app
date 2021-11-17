@@ -45,7 +45,7 @@ export const chatApi = {
       });
   },
   renderMessage: () => {
-    console.log(localStorage.getItem('room_id'));
+    
     return axios
     .post(`${API}/chat/listMessages`, {
       chatRoom: localStorage.getItem('room_id'),

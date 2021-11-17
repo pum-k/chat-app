@@ -23,30 +23,37 @@ import {
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
-import { joinRoom, selectMessages, sendMessage, sendMessageAsync } from './contentChatSlice';
+import { joinRoom, renderMessageAsync, selectMessages, newMessage, sendMessageAsync } from './contentChatSlice';
 import './ContentChat.scss';
-import { io } from 'socket.io-client';
-
+import {
+  useLocation
+} from "react-router-dom";
+import { io } from "socket.io-client";
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Panel } = Collapse;
-
+const socket = io('http://localhost:4000'); 
 const ContentChat = () => {
   // REDUX--------------------------->
   // -> Declare
   const dispatch = useAppDispatch();
 
   // -> Fetch data
+  let location = useLocation();
+  const roomId = (location.pathname).slice(3);
+  localStorage.setItem('room_id', roomId);
   // ????
 
   // -> get store messages
   const messages = useAppSelector(selectMessages);
+  console.table(messages);
+  
 
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
     const newMessage = {
-      create_at: Date.now(),
+      createAt: Date.now(),
       line_text: value.message,
       user_name: 'test',
       // id: 'test',
@@ -76,21 +83,23 @@ const ContentChat = () => {
   // <------------------HANDLE SEND MESSAGE
 
   // SOCKET.IO----------------------------->
-  const socket = io('http://localhost:4000'); // Declare socket
+  // const socket = io('http://localhost:4000'); // Declare socket
   useEffect(() => {
     dispatch(joinRoom(socket)); // Join room by id_room
-
+    dispatch(renderMessageAsync())
     // -> when send message
     socket.on('newMessages', (data: any) => {
-      const newMessage = {
+      const Message = {
         create_at: data.create_at,
         line_text: data.message,
         user_name: data.user_name,
+        user_Id : data.user_Id
       };
-      dispatch(sendMessage(newMessage));
+      dispatch(newMessage(Message)); // <- LAM CAI GI
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   // <-----------------------------SOCKET.IO
 
   return (
@@ -130,7 +139,7 @@ const ContentChat = () => {
               if (item.user_name !== 'owner')
                 return (
                   <Comment
-                    style={{ width: '40%' }}
+                    style={{ width: '100%' }}
                     key={index}
                     actions={[]}
                     author={<b>{item.user_name}</b>}
@@ -142,8 +151,8 @@ const ContentChat = () => {
                     }
                     content={<p>{item.line_text}</p>}
                     datetime={
-                      <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment().fromNow()}</span>
+                      <Tooltip title={moment(item.createAt).format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{moment(item.createAt).fromNow()}</span>
                       </Tooltip>
                     }
                   />
@@ -207,14 +216,11 @@ const ContentChat = () => {
           <Panel header="Privacy settings" key="1">
             <button className="content-chat__3th__btn">
               <BellOutlined />
-              <p>Turn off the chat</p>
-            </button>
-            <button className="content-chat__3th__btn">
-              <MessageOutlined /> <p>Ignore the message</p>
+              <p>Turn off notification</p>
             </button>
             <button className="content-chat__3th__btn">
               <StopOutlined />
-              <p>Block texting</p>
+              <p>Block this user</p>
             </button>
           </Panel>
           <Panel header="Shared files" key="2">

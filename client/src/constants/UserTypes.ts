@@ -5,6 +5,6 @@ export type UserType = {
     user_name: string;
     user_phone_number: string;
     user_birthday: string;
-    user_gender: boolean;
+    user_gender: string;
 }
 

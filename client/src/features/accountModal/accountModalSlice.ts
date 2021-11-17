@@ -13,7 +13,7 @@ const initialState: AccountModal = {
     user_name: '',
     user_phone_number: '',
     user_birthday: '',
-    user_gender: true,
+    user_gender: 'male',
   },
 };
 
@@ -46,13 +46,13 @@ export const accountModalSlice = createSlice({
         let user = {
           user_cover_image: action.payload[0].cover_image || '',
           user_avatar: action.payload[0].avatar || '',
-          user_display_name: action.payload[0].display_name || '',
+          user_display_name: action.payload[0].displayName || '',
           user_name: action.payload[0].username || '',
           user_phone_number: action.payload[0].phoneNumber || '',
           user_birthday: action.payload[0].dateOfBirth || '',
-          user_gender: action.payload[0].gender || true,
+          user_gender: action.payload[0].gender || 'male',
         };
-        state.user = user;
+        state.user = user;        
         state.loading = false;
       }
     });
@@ -64,8 +64,17 @@ export const accountModalSlice = createSlice({
     });
     builder.addCase(updateUserModal.fulfilled, (state, action) => {
       if (action.payload) {
-        console.log(action.payload);
-        state.loading = false;
+        let user = {
+          user_cover_image: action.payload.data.cover_image || state.user.user_cover_image,
+          user_avatar: action.payload.data.avatar || state.user.user_avatar,
+          user_display_name: action.payload.data.displayName || state.user.user_display_name,
+          user_name: action.payload.data.username || state.user.user_name,
+          user_phone_number: action.payload.data.phoneNumber || state.user.user_phone_number,
+          user_birthday: action.payload.data.dateOfBirth || state.user.user_birthday,
+          user_gender: action.payload.data.gender || state.user.user_gender,
+        };
+        state.user = user;
+        state.loading = false;        
       }
     });
   },
@@ -73,4 +82,4 @@ export const accountModalSlice = createSlice({
 
 export default accountModalSlice.reducer;
 export const selectUserModal = (state: RootState) => state.accountModal.user;
-export const selectHeaderChatLoading = (state: RootState) => state.accountModal.loading;
+export const selectUserUpdate = (state: RootState) => state.accountModal.loading;

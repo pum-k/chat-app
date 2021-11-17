@@ -25,7 +25,7 @@ function App() {
             <div style={{ display: 'flex', width: '100%' }}>
               <SiderChat onLoading={() => setLoading(true)} offLoading={() => setLoading(false)}/>
               <Switch>
-                <Route exact path="/t/:id_room">
+                <Route path="/t/:room">
                   <ContentChat />
                 </Route>
               </Switch>
