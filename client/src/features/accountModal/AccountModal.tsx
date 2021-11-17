@@ -40,7 +40,8 @@ const AccountModal: FC<ModalProps> = (props) => {
 
   // get user from state
   const user = useAppSelector(selectUserModal);
-
+  console.log(user)
+  
   // handle form
   const onFinish = (values: any) => {
     setIsEditDisplayName(false);
@@ -164,18 +165,18 @@ const AccountModal: FC<ModalProps> = (props) => {
               <DatePicker
                 placeholder="2000-12-24"
                 size="large"
-                defaultValue={moment(user.user_birthday || '01-01-2000', 'YYYY-MM-DD')}
+                defaultValue={moment(moment(user.user_birthday).format('YYYY-MM-DD'),'YYYY-MM-DD')}
                 style={{ width: '100%' }}
                 onChange={() => setIsAllowSubmit(true)}
               />
             </Form.Item>
             <Form.Item name="gender" label="Gender">
               <Radio.Group
-                defaultValue={user.user_gender || true}
+                defaultValue={user.user_gender}
                 onChange={() => setIsAllowSubmit(true)}
               >
-                <Radio value={true}>Male</Radio>
-                <Radio value={false}>Female</Radio>
+                <Radio value={'male'}>Male</Radio>
+                <Radio value={'female'}>Female</Radio>
               </Radio.Group>
             </Form.Item>
           </Space>

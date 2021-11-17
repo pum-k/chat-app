@@ -10,6 +10,7 @@ router.post("/sendMessage", async (req, res) => {
     message: req.body.line_text,
     user_name: people.username,
     create_at: people.createAt,
+    user_Id: people._id
   };
   io.to(req.body.room_id).emit("newMessages", newMessage);
   await RoomChat.findByIdAndUpdate(
@@ -32,7 +33,8 @@ router.post("/listMessages", async (req, res) => {
     let ListMessages = await RoomChat.find({ _id: req.body.chatRoom })
       .lean()
       .exec();
-    if (ListMessages[0].textChat.length > 0) {
+    // console.log(ListMessages);
+      if (ListMessages[0].textChat.length > 0) {
       res.send({ ListMessages: ListMessages[0].textChat });
     }
   }

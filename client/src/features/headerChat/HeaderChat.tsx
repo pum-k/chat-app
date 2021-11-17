@@ -1,16 +1,15 @@
 import AccountModal from 'features/accountModal/AccountModal';
 import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import './HeaderChat.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { fetchUser, selectHeaderChatLoading, selectUser } from './headerChatSlice';
+import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
 
 const { Title } = Typography;
 
 const HeaderChat = () => {
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
-  const dispatch = useAppDispatch();
   const showModalAccount = () => {
     setIsModalVisibleAccount(true);
   };
@@ -22,14 +21,8 @@ const HeaderChat = () => {
   const handleCancelAccount = () => {
     setIsModalVisibleAccount(false);
   };
-
-  useEffect(() => {
-    dispatch(fetchUser());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const InfoUser = useAppSelector(selectUser);
-  const loading = useAppSelector(selectHeaderChatLoading);
+  const InfoUser = useAppSelector(selectUserModal);
+  const loading = useAppSelector(selectUserUpdate);
 
   const menu = (
     <Menu>
@@ -83,7 +76,7 @@ const HeaderChat = () => {
               </Badge>
               <section>
                 <Title level={5} style={{ marginBottom: '0px', color: 'white' }}>
-                  {InfoUser.user_name}
+                  { InfoUser.user_display_name || InfoUser.user_name}
                 </Title>
                 <Badge color={'#54ff00'} text={'Available'} style={{ color: '#fff' }} />
               </section>

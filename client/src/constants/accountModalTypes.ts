@@ -8,5 +8,5 @@ export type AccountModal = {
 export type updateUserType = {
     dateOfBirth: String;
     displayName: String;
-    gender: Boolean;
+    gender: string;
 }
