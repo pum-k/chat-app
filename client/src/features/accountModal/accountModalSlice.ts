@@ -66,7 +66,7 @@ export const accountModalSlice = createSlice({
       if (action.payload) {
         let user = {
           user_cover_image: action.payload.data.cover_image || state.user.user_cover_image,
-          user_avatar: action.payload.data.avatar || state.user.user_avatar,
+          user_avatar: action.payload.data.user_avatar || state.user.user_avatar,
           user_display_name: action.payload.data.displayName || state.user.user_display_name,
           user_name: action.payload.data.username || state.user.user_name,
           user_phone_number: action.payload.data.phoneNumber || state.user.user_phone_number,
