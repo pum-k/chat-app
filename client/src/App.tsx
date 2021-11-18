@@ -1,6 +1,5 @@
 import NotFound from 'components/NotFound/NotFound';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
-import ContentChat from 'features/contentChat/ContentChat';
 import HeaderChat from 'features/headerChat/HeaderChat';
 import Login from 'features/auth/login/Login';
 import Register from 'features/auth/register/Register';
@@ -8,15 +7,19 @@ import SiderChat from 'features/siderChat/SiderChat';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import { Spin } from 'antd';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
+import UploadAvatarModal from 'features/uploadAvatarModal/UploadAvatarModal';
+
+const ContentChat = lazy(() => import('./features/contentChat/ContentChat'));
 
 function App() {
   const isAuthenticated = Boolean(localStorage.getItem('access_token'));
   const [loading, setLoading] = useState(false);
-  
 
   return (
     <div className="App">
+      <Suspense fallback={ <Spin spinning={loading} tip="Loading..." size="large" />}>
+     
       <Spin spinning={loading} tip="Loading..." size="large">
         <Redirect to="/t" />
         <Switch>
@@ -45,7 +48,10 @@ function App() {
           </Route>
         </Switch>
       </Spin>
+    </Suspense>
+
     </div>
+    // <UploadAvatarModal isModalVisible={true} setIsModalVisibleClose={() => {}} />
   );
 }
 
