@@ -29,6 +29,7 @@ import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { messageStructure } from 'constants/ChatTypes';
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Panel } = Collapse;
@@ -68,9 +69,7 @@ const ContentChat = () => {
   const [elementTh, setElementTh] = useState(11);
   const [hasMoreLoad, setHasMoreLoad] = useState(true);
 
-  const [messRender, setMessRender] = useState(
-    [...messages].reverse().splice(0, Number(elementTh))
-  );
+  const [messRender, setMessRender] = useState<Array<messageStructure>>();
 
   const handleLoadMore = async () => {
     if (Number(messages.length) > Number(elementTh + 11)) {
@@ -88,7 +87,14 @@ const ContentChat = () => {
 
   // when send a new message
   useEffect(() => {
-    setMessRender([...messages].reverse().splice(0, Number(elementTh)));
+    if (messages) {
+      setMessRender([...messages].reverse().splice(0, Number(elementTh)));
+    }
+    if (messRender && messRender.length < 11) {
+      setHasMoreLoad(false);
+    } else {
+      setHasMoreLoad(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
@@ -106,7 +112,6 @@ const ContentChat = () => {
   // <------------------HANDLE SEND MESSAGE
 
   // SOCKET.IO----------------------------->
-
 
   useEffect(() => {
     // -> when new message
@@ -154,7 +159,7 @@ const ContentChat = () => {
         </div>
         <div className="content-chat__2nd__chat-box" id="scrollableDiv">
           <InfiniteScroll
-            dataLength={messRender.length}
+            dataLength={messRender ? messRender.length : 0}
             next={handleLoadMore}
             style={{ display: 'flex', flexDirection: 'column-reverse' }} //To put endMessage and loader to the top.
             inverse={true}
@@ -163,7 +168,7 @@ const ContentChat = () => {
             endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
             scrollableTarget="scrollableDiv"
           >
-            {messages ? (
+            {messRender && messRender.length > 0 ? (
               messRender.map((item, index) => {
                 if (item.user_name !== 'owner')
                   return (

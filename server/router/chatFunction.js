@@ -38,6 +38,8 @@ router.post("/listMessages", async (req, res) => {
     // console.log(ListMessages);
       if (ListMessages[0].textChat.length > 0) {
       res.send({ ListMessages: ListMessages[0].textChat });
+    } else {
+      res.send({ ListMessages: null })
     }
   }
   console.log(req.body.chatRoom);
