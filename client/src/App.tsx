@@ -8,7 +8,6 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import { Spin } from 'antd';
 import { lazy, Suspense, useState } from 'react';
-import UploadAvatarModal from 'features/uploadAvatarModal/UploadAvatarModal';
 
 const ContentChat = lazy(() => import('./features/contentChat/ContentChat'));
 
@@ -18,38 +17,39 @@ function App() {
 
   return (
     <div className="App">
-      <Suspense fallback={ <Spin spinning={loading} tip="Loading..." size="large" />}>
-     
-      <Spin spinning={loading} tip="Loading..." size="large">
-        <Redirect to="/t" />
-        <Switch>
-          <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
-            <HeaderChat />
-            <div style={{ display: 'flex', width: '100%' }}>
-              <SiderChat onLoading={() => setLoading(true)} offLoading={() => setLoading(false)}/>
-              <Switch>
-                <Route path="/t/:room">
-                  <ContentChat />
-                </Route>
-              </Switch>
-            </div>
-          </PrivateRoute>
+      <Suspense fallback={<Spin spinning={loading} tip="Loading..." size="large" />}>
+        <Spin spinning={loading} tip="Loading..." size="large">
+          <Redirect to="/t" />
+          <Switch>
+            <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
+              <HeaderChat />
+              <div style={{ display: 'flex', width: '100%' }}>
+                <SiderChat
+                  onLoading={() => setLoading(true)}
+                  offLoading={() => setLoading(false)}
+                />
+                <Switch>
+                  <Route path="/t/:room">
+                    <ContentChat />
+                  </Route>
+                </Switch>
+              </div>
+            </PrivateRoute>
 
-          <Route path="/login">
-            <Login />
-          </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
 
-          <Route path="/register">
-            <Register />
-          </Route>
+            <Route path="/register">
+              <Register />
+            </Route>
 
-          <Route path="*">
-            <NotFound />
-          </Route>
-        </Switch>
-      </Spin>
-    </Suspense>
-
+            <Route path="*">
+              <NotFound />
+            </Route>
+          </Switch>
+        </Spin>
+      </Suspense>
     </div>
     // <UploadAvatarModal isModalVisible={true} setIsModalVisibleClose={() => {}} />
   );
