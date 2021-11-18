@@ -1,5 +1,5 @@
 import { message, Modal, Upload } from 'antd';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import './UploadAvatarModal.scss';
 
@@ -66,6 +66,10 @@ const UploadAvatarModal: FC<Props> = (prop) => {
       onSuccess('ok');
     }, 0);
   };
+
+  useEffect(() => {
+    setImageUrl(undefined);
+  }, [isModalVisible===false])
 
   return (
     <Modal
