@@ -73,7 +73,7 @@ const UploadCoverImageModal: FC<Props> = (prop) => {
       visible={isModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
-      className="modal-upload-img"
+      className="modal-upload-cover-img"
       width={850}
     >
       <Upload
