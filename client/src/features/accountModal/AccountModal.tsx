@@ -18,6 +18,8 @@ import moment from 'moment';
 import { fetchUserModal, selectUserModal, updateUserModal } from './accountModalSlice';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { updateUserType } from 'constants/accountModalTypes';
+import UploadAvatarModal from 'features/uploadAvatarModal/UploadAvatarModal';
+import UploadCoverImageModal from 'features/uploadCoverImageModal/UploadCoverImageModal';
 
 interface ModalProps {
   isModalVisible: boolean;
@@ -32,6 +34,9 @@ const AccountModal: FC<ModalProps> = (props) => {
   const { isModalVisible, handleOk, handleCancel, setIsModalVisible } = props;
   const dispatch = useAppDispatch();
   const [form] = Form.useForm();
+
+  const [isModalVisibleUploadAvatar, setIsModalVisibleUploadAvatar] = useState(false);
+  const [isModalVisibleUploadCoverImage, setIsModalVisibleUploadCoverImage] = useState(false);
 
   // fetch user
   useEffect(() => {
@@ -73,6 +78,14 @@ const AccountModal: FC<ModalProps> = (props) => {
 
   return (
     <>
+      <UploadAvatarModal
+        isModalVisible={isModalVisibleUploadAvatar}
+        setIsModalVisibleClose={() => setIsModalVisibleUploadAvatar(false)}
+      />
+      <UploadCoverImageModal
+        isModalVisible={isModalVisibleUploadCoverImage}
+        setIsModalVisibleClose={() => setIsModalVisibleUploadCoverImage(false)}
+      />
       <Modal
         title="Account settings"
         visible={isModalVisible}
@@ -120,6 +133,7 @@ const AccountModal: FC<ModalProps> = (props) => {
                 }}
                 icon={<CameraOutlined />}
                 shape="circle"
+                onClick={() => setIsModalVisibleUploadCoverImage(true)}
               />
             </Tooltip>
 
@@ -142,6 +156,7 @@ const AccountModal: FC<ModalProps> = (props) => {
                   }}
                   icon={<CameraOutlined />}
                   shape="circle"
+                  onClick={() => setIsModalVisibleUploadAvatar(true)}
                 />
               </Tooltip>
 
