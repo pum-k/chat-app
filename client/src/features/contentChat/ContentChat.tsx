@@ -24,13 +24,7 @@ import {
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
-import {
-  joinRoom,
-  renderMessageAsync,
-  selectMessages,
-  newMessage,
-  sendMessageAsync,
-} from './contentChatSlice';
+import { joinRoom, renderMessageAsync, selectMessages, sendMessageAsync } from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
@@ -49,22 +43,22 @@ const ContentChat = () => {
   useEffect(() => {
     const roomId = location.pathname.slice(3);
     localStorage.setItem('room_id', roomId);
+    dispatch(joinRoom(socket)); // Join room by id_room
     dispatch(renderMessageAsync());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   // ????
 
   // -> get store messages
   const messages = useAppSelector(selectMessages);
-
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
     const newMessage = {
       createAt: Date.now(),
       line_text: value.message,
-      user_name: localStorage.getItem('owners') || '',
+      user_name: localStorage.getItem('access_token') || '',
     };
     dispatch(sendMessageAsync(newMessage));
   };
@@ -98,7 +92,6 @@ const ContentChat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-
   // <---------------------------------Load more
   // HANDLE SEND MESSAGE------------------>
   const [form] = Form.useForm(); // This form of antd
@@ -113,22 +106,20 @@ const ContentChat = () => {
   // <------------------HANDLE SEND MESSAGE
 
   // SOCKET.IO----------------------------->
+
+
   useEffect(() => {
-    dispatch(joinRoom(socket)); // Join room by id_room
     // -> when new message
-    socket.on('newMessages', (data: any) => {
-      const message = {
-        create_at: data.create_at,
-        line_text: data.message,
-        user_name: data.user_name,
-        user_Id: data.user_Id,
-      };
+    socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
+      console.log(`dispatch(renderMessageAsync())`);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // <-----------------------------SOCKET.IO
+
+  // console.log(window.localStorage.getItem('room_id') + ' | ' +  roomIdRef.current);
 
   return (
     <div className="content-chat">

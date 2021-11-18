@@ -31,11 +31,6 @@ export const contentChatSlice = createSlice({
         userInfo: localStorage.getItem('access_token'),
       });
     },
-    newMessage: (state, action) => {
-      if (action.payload.line_text && action.payload.user_Id !== localStorage.getItem('access_token')) {
-        state.messages.push(action.payload);
-      }
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
@@ -62,5 +57,5 @@ export const contentChatSlice = createSlice({
 });
 
 export default contentChatSlice.reducer;
-export const { newMessage, joinRoom } = contentChatSlice.actions;
+export const { joinRoom } = contentChatSlice.actions;
 export const selectMessages = (state: RootState) => state.contentChat.messages;
