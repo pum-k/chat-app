@@ -8,6 +8,7 @@ import './SiderChat.scss';
 import { fetchListRoom, selectListRoom, selectListRoomLoading } from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
+import { useHistory } from 'react-router-dom';
 
 const { Search } = Input;
 
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const SiderChat: FC<Props> = (props) => {
+  const history = useHistory();
   const { onLoading, offLoading } = props;
   const dispatch = useDispatch();
   const rooms = useAppSelector(selectListRoom);
@@ -64,7 +66,7 @@ const SiderChat: FC<Props> = (props) => {
     } else {
       offLoading();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   return (
@@ -115,8 +117,9 @@ const SiderChat: FC<Props> = (props) => {
             <List
               itemLayout="horizontal"
               dataSource={rooms}
-              renderItem={(item) => (
+              renderItem={(item, index) => (
                 <List.Item>
+                  {index === 0 && history.push(`/t/${item.room_id}`)}
                   <Link
                     to={`/t/${item.room_id}`}
                     style={{ width: '100%', height: '100%', display: 'flex' }}
