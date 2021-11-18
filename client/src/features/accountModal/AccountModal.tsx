@@ -9,8 +9,9 @@ import {
   Button,
   DatePicker,
   Radio,
+  Tooltip,
 } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, CameraOutlined } from '@ant-design/icons';
 import React, { FC, useEffect, useState } from 'react';
 import './AccountModal.scss';
 import moment from 'moment';
@@ -35,13 +36,12 @@ const AccountModal: FC<ModalProps> = (props) => {
   // fetch user
   useEffect(() => {
     dispatch(fetchUserModal());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // get user from state
   const user = useAppSelector(selectUserModal);
 
-  
   // handle form
   const onFinish = (values: any) => {
     setIsEditDisplayName(false);
@@ -52,7 +52,6 @@ const AccountModal: FC<ModalProps> = (props) => {
       gender: values.gender,
     };
     dispatch(updateUserModal(dataUpdate));
-
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -110,19 +109,51 @@ const AccountModal: FC<ModalProps> = (props) => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Image
-            width={520}
-            src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
-            className="modal-account__cover-image"
-          />
-          <Space direction="vertical" className="modal-account__info" size="small">
-            <Avatar
-              size={100}
-              src={
-                <Image src="https://s120-ava-talk.zadn.vn/d/9/9/1/6/120/b1c672818fc133d72cb8685a850c578c.jpg" />
-              }
-              className="modal-account__avatar"
+          <div style={{ width: 'auto', height: 'auto', position: 'relative' }}>
+            <Tooltip title="Update cover image">
+              <Button
+                style={{
+                  position: 'absolute',
+                  top: '5px',
+                  right: '5px',
+                  zIndex: 10,
+                }}
+                icon={<CameraOutlined />}
+                shape="circle"
+              />
+            </Tooltip>
+
+            <Image
+              width={520}
+              src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
+              className="modal-account__cover-image"
             />
+          </div>
+
+          <Space direction="vertical" className="modal-account__info" size="small">
+            <div style={{ width: 'auto', height: 'auto', position: 'relative' }}>
+              <Tooltip title="Update avatar">
+                <Button
+                  style={{
+                    position: 'absolute',
+                    bottom: '5px',
+                    right: '185px',
+                    zIndex: 10,
+                  }}
+                  icon={<CameraOutlined />}
+                  shape="circle"
+                />
+              </Tooltip>
+
+              <Avatar
+                size={100}
+                src={
+                  <Image src="https://s120-ava-talk.zadn.vn/d/9/9/1/6/120/b1c672818fc133d72cb8685a850c578c.jpg" />
+                }
+                className="modal-account__avatar"
+              />
+            </div>
+
             <Form.Item name="displayName">
               {isEditDisplayName ? (
                 <Input
@@ -165,16 +196,13 @@ const AccountModal: FC<ModalProps> = (props) => {
               <DatePicker
                 placeholder="2000-12-24"
                 size="large"
-                defaultValue={moment(moment(user.user_birthday).format('YYYY-MM-DD'),'YYYY-MM-DD')}
+                defaultValue={moment(moment(user.user_birthday).format('YYYY-MM-DD'), 'YYYY-MM-DD')}
                 style={{ width: '100%' }}
                 onChange={() => setIsAllowSubmit(true)}
               />
             </Form.Item>
             <Form.Item name="gender" label="Gender">
-              <Radio.Group
-                defaultValue={user.user_gender}
-                onChange={() => setIsAllowSubmit(true)}
-              >
+              <Radio.Group defaultValue={user.user_gender} onChange={() => setIsAllowSubmit(true)}>
                 <Radio value={'male'}>Male</Radio>
                 <Radio value={'female'}>Female</Radio>
               </Radio.Group>
