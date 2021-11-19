@@ -256,11 +256,11 @@ const ContentChat = () => {
           <Panel header="Privacy settings" key="1">
             <button className="content-chat__3th__btn">
               <BellOutlined />
-              <p>Turn off notification</p>
+              <p>Block user</p>
             </button>
             <button className="content-chat__3th__btn">
               <StopOutlined />
-              <p>Block this user</p>
+              <p>Unfriend this user</p>
             </button>
           </Panel>
           <Panel header="Shared files" key="2">
