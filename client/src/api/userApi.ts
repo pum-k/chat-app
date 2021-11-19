@@ -19,7 +19,6 @@ export const userApi = {
       });
   },
   register: (params: RegisterInput) => {
-    // console.log(API);
     return axios
       .post(`${API}/register`, {
         username: params.username,

@@ -1,11 +1,12 @@
 import { LoginInput } from 'constants/AccountTypes';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Space, Typography } from 'antd';
+import { message, Space, Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.scss';
-import { useAppDispatch } from 'app/hooks';
-import { authLogin } from 'features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { authLogin, removeError } from 'features/auth/authSlice';
 import { useEffect } from 'react';
+import { selectLoadingAuth, selectErrorAuth } from 'features/auth/authSlice';
 
 const { Text } = Typography;
 
@@ -13,11 +14,10 @@ const Login = () => {
   let history = useHistory();
   useEffect(() => {
     let isAuthenticated = Boolean(localStorage.getItem('access_token'));
-    if(isAuthenticated) {
+    if (isAuthenticated) {
       history.push('/t');
     }
-  })
-
+  });
 
   const dispatch = useAppDispatch();
   const {
@@ -26,6 +26,26 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginInput>();
   const onSubmit: SubmitHandler<LoginInput> = (data) => dispatch(authLogin(data));
+
+  const loading = useAppSelector(selectLoadingAuth);
+  const error = useAppSelector(selectErrorAuth);
+
+
+
+  let key = 'login'
+  useEffect(() => {
+    if (error) {
+      message.error({ content: `${error}`, key, duration: 2 });
+      dispatch(removeError());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
+  useEffect(() => {
+    if(loading) {
+      message.loading({ content: 'Loading...', key });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading])
 
   return (
     <div className="login-layout">

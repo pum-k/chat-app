@@ -2,10 +2,16 @@ import React, { useEffect } from 'react';
 import './Register.scss';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterInput } from 'constants/AccountTypes';
-import { Typography } from 'antd';
+import { message, Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
-import { useAppDispatch } from 'app/hooks';
-import { authRegister } from 'features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import {
+  authRegister,
+  removeError,
+  selectErrorAuth,
+  selectIsSuccess,
+  selectLoadingAuth,
+} from 'features/auth/authSlice';
 
 const { Text } = Typography;
 
@@ -13,10 +19,10 @@ const Register = () => {
   let history = useHistory();
   useEffect(() => {
     let isAuthenticated = Boolean(localStorage.getItem('access_token'));
-    if(isAuthenticated) {
+    if (isAuthenticated) {
       history.push('/t');
     }
-  })
+  });
   const dispatch = useAppDispatch();
   const {
     register,
@@ -24,6 +30,30 @@ const Register = () => {
     formState: { errors },
   } = useForm<RegisterInput>();
   const onSubmit: SubmitHandler<RegisterInput> = (data) => dispatch(authRegister(data));
+
+  const loading = useAppSelector(selectLoadingAuth);
+  const error = useAppSelector(selectErrorAuth);
+  const isSuccess = useAppSelector(selectIsSuccess);
+  
+  let key = 'register'
+  useEffect(() => {
+    if (error) {
+      message.error({ content: `${error}`, key, duration: 2 });
+      dispatch(removeError());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
+  useEffect(() => {
+    if(loading) {
+      message.loading({ content: 'Loading...', key });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading])
+  useEffect(() => {
+    if(isSuccess) message.success({ content: 'Register successfully', key, duration: 2 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
+
   return (
     <div className="register-layout">
       <div className="register">
@@ -48,6 +78,7 @@ const Register = () => {
                 type="text"
                 className="register__content__input"
                 {...register('username', { required: true, minLength: 6 })}
+                autoComplete="off"
               />
             </section>
             <section>
@@ -66,6 +97,8 @@ const Register = () => {
                 type="number"
                 className="register__content__input"
                 {...register('phoneNumber', { required: true, minLength: 10 })}
+                autoComplete="off"
+
               />
             </section>
             <section>
