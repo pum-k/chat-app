@@ -6,6 +6,7 @@ const upload = require("../public/db/functionForDB/upload");
 const { v4: uuidv4 } = require("uuid");
 let PORT = process.env.PORT || "http://localhost:4000";
 const moment = require("moment");
+
 router.post("/addfriend", async (req, res) => {
   let newFriendAdd = req.body;
   let findFriend = await user
@@ -101,6 +102,7 @@ router.post("/editUserInfo", async (req, res) => {
     } catch (e) {}
   }
 });
+
 router.post("/setAvater", upload.single("file"), async (req, res) => {
   let request = req.body;
   if (req.file === undefined) return res.send("you must select a file.");
@@ -113,7 +115,11 @@ router.post("/setAvater", upload.single("file"), async (req, res) => {
         $set: {
           avatar: imgUrl,
         },
-    
+      },
+      (err) => {
+        if (!err) {
+          res.send({ isSuccess: true });
+        }
       }
     );
   } catch (e) {}
@@ -130,7 +136,11 @@ router.post("/setCoverImage", upload.single("file"), async (req, res) => {
         $set: {
           cover_image: imgUrl,
         },
-    
+      },
+      (err) => {
+        if (!err) {
+          res.send({ isSuccess: true });
+        }
       }
     );
   } catch (e) {}

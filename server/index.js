@@ -1,21 +1,16 @@
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
-
+const connection = require("./public/db/configmongoose");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const chatroom = require("./router/chatFunction");
-const login = require("./router/login");
-const register = require("./router/register");
-const user = require("./router/user");
+const chatroom_router = require("./router/chatFunction");
+const login_router = require("./router/login");
+const register_router = require("./router/register");
+const user_router = require("./router/user");
 const friend = require("./router/friend");
-var cors = require("cors");
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+const photo_router = require("./router/photo");
+
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -29,27 +24,18 @@ app.use(
     cookie: { expires: 100000 * 60 },
   })
 );
+connection();
 
-
-mongoose
-  .connect("mongodb+srv://administrator:administrator@chatdb.oyaqd.mongodb.net/chatdb?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .catch((err) => console.log(err));
-mongoose.connection.on("connected", () => {
-  console.log("Mongoose connected successfully");
-});
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.set('socketio', io);
-app.use("/chat", chatroom);
-app.use("/login", login);
-app.use("/register", register);
-app.use('/user' , user)
+app.set("socketio", io);
+app.use("/chat", chatroom_router);
+app.use("/login", login_router);
+app.use("/register", register_router);
+app.use("/photo", photo_router);
+app.use("/user", user_router);
 
 io.on("connection", function (socket) {
- 
   socket.on("join_room", (data) => {
     socket.join(data.room_id);
     console.log("1 nguoi vua join vao room " + data.room_id);
