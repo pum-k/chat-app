@@ -5,7 +5,6 @@ const storage = new GridFsStorage({
   url:
     process.env.MONGODB_URL ||
     "mongodb+srv://administrator:administrator@chatdb.oyaqd.mongodb.net/chatdb?retryWrites=true&w=majority",
-    // "mongodb://localhost:27017/chat-app",
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
     const match = ["image/png", "image/jpeg"];

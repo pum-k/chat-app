@@ -34,7 +34,6 @@ app.use(
 );
 connection();
 
-
 app.set("socketio", io);
 app.use("/chat", chatroom_router);
 app.use("/login", login_router);

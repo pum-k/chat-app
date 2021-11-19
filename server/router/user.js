@@ -7,38 +7,54 @@ const { v4: uuidv4 } = require("uuid");
 let PORT = process.env.PORT || "http://localhost:4000";
 const moment = require("moment");
 
-router.post("/addfriend", async (req, res) => {
+router.post("/acceptAddFriend", async (req, res) => {
   let newFriendAdd = req.body;
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
-  if (findFriend) {
-    await user.findByIdAndUpdate(
+  // console.log(findFriend);
+  if (findFriend.length > 0) {
+    await user.updateOne(
       { _id: newFriendAdd.owners },
       { $push: { friends: findFriend[0]._id } }
     );
-    await user.findByIdAndUpdate(
+    console.log("nguoi dong y acceptAddFriend: " + newFriendAdd.owners);
+    console.log("Duoc chap nhan: " + findFriend[0]._id);
+    await user.updateOne(
+      { _id: newFriendAdd.owners },
+      { $pull: { peddingRequests: findFriend[0]._id } }
+    );
+
+    //////
+    await user.updateOne(
       { _id: findFriend[0]._id },
       { $push: { friends: newFriendAdd.owners } }
     );
+
+    await user.updateOne(
+      { _id: findFriend[0]._id },
+      { $pull: { requestAddFriends: newFriendAdd.owners } }
+    );
+
     let newRoom = new RoomChat({
       RoomName: "room vua ket ban",
       SocketId: uuidv4(),
     });
+    // tao phong khi 2 nguoi ban
     await newRoom.save(async (err) => {
       if (err) {
         console.log(err);
       } else {
-        await user.findByIdAndUpdate(
+        await user.updateOne(
           { _id: newFriendAdd.owners },
           { $push: { RoomChatId: newRoom._id } }
         );
-        await user.findByIdAndUpdate(
+        await user.updateOne(
           { _id: findFriend[0]._id },
           { $push: { RoomChatId: newRoom._id } }
         );
-        await RoomChat.findByIdAndUpdate(
+        await RoomChat.updateOne(
           { _id: newRoom._id },
           {
             $push: {
@@ -54,9 +70,62 @@ router.post("/addfriend", async (req, res) => {
     res.send({ error: "khong tim thay voi username nay" });
   }
 });
+router.post("/allRequestAddFriend", async (req, res) => {
+  let request = req.body;
+  console.log(request);
+  let RequestAddFriend = [];
+  let findInfo = await user.find({ _id: request.owners }).lean().exec();
+  if (findInfo.length > 0) {
+    let AllRequest = findInfo[0].requestAddFriends;
+    for (let i = 0; i < AllRequest.length; i++) {
+      let eachUser = await user.find({ _id: AllRequest[i] }).lean().exec();
+      RequestAddFriend.push({
+        username: eachUser[0].username,
+        displayName: eachUser[0].displayName,
+        avatar: eachUser[0].avatar,
+      });
+    }
+    res.send(RequestAddFriend);
+  } else {
+    res.send({ isSuccess: false });
+  }
+});
+router.post("/denyAcceptAddFriend", async (req, res) => {
+  let newFriendAdd = req.body;
+  let findFriend = await user
+    .find({ phoneNumber: newFriendAdd.phoneNumber })
+    .lean()
+    .exec();
+  if (findFriend.length > 0) {
+    await user.updateOne(
+      { _id: findFriend[0]._id },
+      { $pull: { requestAddFriends: newFriendAdd.owners } }
+    );
+    await user.updateOne(
+      { _id: newFriendAdd.owners },
+      { $pull: { peddingRequests: findFriend[0]._id } }
+    );
+  }
+});
+// router.post("/acceptAddFriend", async (req, res) => {
+//   let request = req.body;
+//   let findInfo = user.find({
+//     _id: request.owners,
+//     requestAddFriends: request.AcceptTo,
+//   });
+//   console.log(findInfo);
+//   // await user.updateOne(
+//   //   { _id: request.owners },
+//   //   { $pull: { requestAddFriends: request.AcceptTo } }
+//   // );
+//   // await user.updateOne(
+//   //   { _id: AcceptTo.AcceptTo },
+//   //   { $pull: { peddingRequest: request.owners } }
+//   // );
+// });
+
 router.post("/findFriend", async (req, res) => {
   let newFriendAdd = req.body;
-
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
@@ -70,9 +139,7 @@ router.post("/getInfoUser", async (req, res) => {
 });
 router.post("/editUserInfo", async (req, res) => {
   let request = req.body;
-
   let infoUser = await user.findById({ _id: request.owners }).lean().exec();
-
   if (infoUser) {
     let edit_User = await {
       id: infoUser._id,
@@ -145,5 +212,22 @@ router.post("/setCoverImage", upload.single("file"), async (req, res) => {
     );
   } catch (e) {}
 });
-
+router.post("/sendRequest", async (req, res) => {
+  let request = req.body;
+  let findFriend = await user
+    .find({ phoneNumber: request.sendTo })
+    .lean()
+    .exec();
+  if (findFriend) {
+    await user.updateOne(
+      { _id: findFriend[0]._id },
+      { $push: { requestAddFriends: request.owners } }
+    );
+    await user.updateOne(
+      { _id: request.owners },
+      { $push: { peddingRequests: findFriend[0]._id } }
+    );
+  }
+  res.send({ isSuccess: true });
+});
 module.exports = router;
