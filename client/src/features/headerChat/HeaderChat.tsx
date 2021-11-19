@@ -6,7 +6,7 @@ import './HeaderChat.scss';
 import { useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const HeaderChat = () => {
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
@@ -48,6 +48,24 @@ const HeaderChat = () => {
     </Menu>
   );
 
+  const menuNotification = (
+    <Menu>
+      <Menu.Item key="0">
+        <Space>
+          <Text>
+            <b>pum-k</b> wants to be friends with you
+          </Text>
+          <Space>
+            <Button type="primary" size="small">
+              Accept
+            </Button>
+            <Button size="small">Deny</Button>
+          </Space>
+        </Space>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <AccountModal
@@ -63,24 +81,26 @@ const HeaderChat = () => {
           </Title>
           <Space>
             <Space size="large">
-              <Badge count={1} offset={[-5, 5]}>
-                <Avatar
-                  size={50}
-                  src={
-                    <Image
-                      preview={false}
-                      src={InfoUser.user_avatar ? InfoUser.user_avatar : 'error'}
-                      fallback="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
-                    />
-                  }
-                  style={{ border: '1px solid #fff' }}
-                />
-              </Badge>
+              <Dropdown overlay={menuNotification} trigger={['click']}>
+                <Badge count={1} offset={[-5, 5]}>
+                  <Avatar
+                    size={50}
+                    src={
+                      <Image
+                        preview={false}
+                        src={InfoUser.user_avatar ? InfoUser.user_avatar : 'error'}
+                        fallback="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
+                      />
+                    }
+                    style={{ border: '1px solid #fff', cursor: 'pointer' }}
+                  />
+                </Badge>
+              </Dropdown>
               <section>
                 <Title level={5} style={{ marginBottom: '0px', color: 'white' }}>
                   {InfoUser.user_display_name || InfoUser.user_name}
                 </Title>
-                <Badge color={'#54ff00'} text={'Available'} style={{ color: '#fff' }} />
+                <Badge color={'#54ff00'} text={'Online'} style={{ color: '#fff' }} />
               </section>
               <Dropdown overlay={menu} trigger={['click']}>
                 <MoreOutlined style={{ fontSize: '1.5rem', cursor: 'pointer' }} />
