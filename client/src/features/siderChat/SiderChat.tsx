@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
-import { Avatar, Badge, Space, List, Tooltip, Button, Input, Empty } from 'antd';
+import { Avatar, Space, List, Tooltip, Button, Input, Empty } from 'antd';
 import { UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
@@ -131,7 +131,6 @@ const SiderChat: FC<Props> = (props) => {
                       title={<p>{item.friend_name}</p>}
                       description="Ant Design, a design language for background applications, is refined by Ant UED Team, Ant Design, a design language for background applications, is refined by Ant UED Team Ant Design, a design language for background applications, is refined by Ant UED Team"
                     />
-                    <Badge count={1} style={{ marginLeft: '1rem' }} />
                   </Link>
                 </List.Item>
               )}
