@@ -14,13 +14,14 @@ import {
   Input,
   Divider,
   Skeleton,
+  Upload,
 } from 'antd';
 import {
   BellOutlined,
   SendOutlined,
   StopOutlined,
   PhoneFilled,
-  VideoCameraFilled,
+  FileImageOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
@@ -31,7 +32,6 @@ import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
 const { Title } = Typography;
-const { TextArea } = Input;
 const { Panel } = Collapse;
 const socket = io('http://localhost:4000');
 const ContentChat = () => {
@@ -56,12 +56,15 @@ const ContentChat = () => {
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
-    const newMessage = {
-      createAt: Date.now(),
-      line_text: value.message,
-      user_name: localStorage.getItem('access_token') || '',
-    };
-    dispatch(sendMessageAsync(newMessage));
+    if (value.message.match(/[a-z]/i)) {
+      const newMessage = {
+        createAt: Date.now(),
+        line_text: value.message,
+        user_name: localStorage.getItem('access_token') || '',
+      };
+
+      dispatch(sendMessageAsync(newMessage));
+    }
   };
   // <---------------------------REDUX
 
@@ -117,7 +120,6 @@ const ContentChat = () => {
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
-      console.log(`dispatch(renderMessageAsync())`);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -125,6 +127,17 @@ const ContentChat = () => {
   // <-----------------------------SOCKET.IO
 
   // console.log(window.localStorage.getItem('room_id') + ' | ' +  roomIdRef.current);
+
+  // UPLOAD IMG------------------------------->
+  // -> action
+  const dummyRequest = ({ file, onSuccess }: any) => {
+    console.log(file);
+    
+    setTimeout(() => {
+      onSuccess('ok');
+    }, 0);
+  };
+  // <----------------------------------UPLOAD IMG
 
   return (
     <div className="content-chat">
@@ -145,16 +158,9 @@ const ContentChat = () => {
             </Space>
           </section>
           <section className="content-chat__2nd__header__feature">
-            <Space size="large">
-              <Tooltip title="Call now">
-                <PhoneFilled style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }} />
-              </Tooltip>
-              <Tooltip title="Video call">
-                <VideoCameraFilled
-                  style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }}
-                />
-              </Tooltip>
-            </Space>
+            <Tooltip title="Call now">
+              <PhoneFilled style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }} />
+            </Tooltip>
           </section>
         </div>
         <div className="content-chat__2nd__chat-box" id="scrollableDiv">
@@ -226,13 +232,23 @@ const ContentChat = () => {
           >
             <Space size="small" style={{ width: '100%' }}>
               <Form.Item name="message" style={{ width: '100%' }}>
-                <TextArea
+                <Input
+                  size="large"
                   placeholder="Chat now..."
-                  autoSize={{ maxRows: 3 }}
                   onKeyPress={(e: any) => {
                     chatEnterSubmit(e);
                   }}
                   autoFocus
+                  maxLength={200}
+                  suffix={
+                    <Upload
+                      name="image"
+                      showUploadList={false}
+                      customRequest={dummyRequest}
+                    >
+                      <FileImageOutlined />
+                    </Upload>
+                  }
                 />
               </Form.Item>
               <Form.Item>

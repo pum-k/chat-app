@@ -38,17 +38,50 @@
       width: 100%;
       height: 15%;
       padding: 1rem;
-      flex: 1;
-
+      flex: 1 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: center;
 
       &__form {
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
+
+        & .ant-form-item {
+          margin: 0;
+
+          & .ant-input-affix-wrapper {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: none;
+
+            &-focused {
+              box-shadow: 0 0 5px hsla(331, 90%, 65%, 0.5);
+            }
+
+            & svg {
+              font-size: 1.5rem;
+              cursor: pointer;
+              color: #666;
+            }
+          }
+
+          & input {
+            padding: 0.5rem 1rem !important;
+            background-color: transparent;
+          }
+
+          & input:focus {
+            border-color: transparent;
+            box-shadow: transparent;
+          }
+
+          & input:hover {
+            border-color: transparent;
+          }
+        }
       }
 
       & .ant-space-item:first-child {
@@ -70,7 +103,7 @@
       &__btn-send {
         width: 10%;
         height: 100%;
-        background-color: hsla(331, 92%, 66%) !important;
+        background-color: #f859a6 !important;
         border: none !important;
       }
     }
