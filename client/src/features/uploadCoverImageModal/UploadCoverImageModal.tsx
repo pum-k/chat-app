@@ -69,6 +69,7 @@ const UploadCoverImageModal: FC<Props> = (prop) => {
 
   useEffect(() => {
     setImageUrl(undefined);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalVisible===false])
 
   return (
