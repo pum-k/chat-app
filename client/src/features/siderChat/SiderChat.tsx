@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import CreateGroup from 'features/createGroup/CreateGroup';
-import { Avatar, Space, List, Tooltip, Button, Input, Empty } from 'antd';
+import { Avatar, Space, List, Tooltip, Button, Typography, Empty } from 'antd';
 import { UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
 
-const { Search } = Input;
+const { Title } = Typography;
 
 interface Props {
   onLoading: () => void;
@@ -51,10 +51,6 @@ const SiderChat: FC<Props> = (props) => {
     setIsModalVisibleCreateGroup(false);
   };
 
-  const onSearch = (value: any) => {
-    console.log(value);
-  };
-
   useEffect(() => {
     dispatch(fetchListRoom());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,14 +81,10 @@ const SiderChat: FC<Props> = (props) => {
       />
       <section className="sider-chat">
         <div className="sider-chat__header">
-          <Search
-            placeholder="input search text"
-            onSearch={onSearch}
-            className="sider-chat__header__search"
-            size="large"
-            enterButton
-          />
           <Space>
+            <Title level={4} style={{ margin: '0' }}>
+              Chat now with your friends or
+            </Title>
             <Tooltip title="Add friend">
               <Button
                 type="text"
