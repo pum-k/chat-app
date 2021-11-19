@@ -1,0 +1,24 @@
+// gui loi moi ket ban
+http://localhost:4000/user/sendRequest
+body: {
+    {
+    "owners": "6194960be5a2eea549d5aed3",
+    "sendTo": "0912312387"
+}
+
+
+// chap nhan loi moi ket ban
+http://localhost:4000/user/acceptAddFriend
+
+body {
+    "owners": "6194960be5a2eea549d5aed3",
+    "phoneNumber": "0912312387"
+}
+
+// liet ke cac loi voi ket ban
+http://localhost:4000/user/allRequestAddFriend
+
+body 
+{
+    "owners" : "61949946a7c0f76b433e238b"
+}

@@ -28,8 +28,10 @@ router.post("/", async (req, res) => {
     if (user && user.password == userRequest.password) {
       res.send({ id: user.ID });
     } else {
-      res.send({ error: "Invalid username or password" });
+      res.send({ error: "Invalid password" });
     }
+  } else {
+    res.send({ error: "username not found" });
   }
 });
 // passport.use(
