@@ -139,7 +139,8 @@ const AccountModal: FC<ModalProps> = (props) => {
 
             <Image
               width={520}
-              src="https://cover-talk.zadn.vn/6/7/9/0/5/b1c672818fc133d72cb8685a850c578c.jpg"
+              src={user.user_cover_image ? user.user_cover_image : 'error'}
+              fallback="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU"
               className="modal-account__cover-image"
             />
           </div>
@@ -163,7 +164,10 @@ const AccountModal: FC<ModalProps> = (props) => {
               <Avatar
                 size={100}
                 src={
-                  <Image src="https://s120-ava-talk.zadn.vn/d/9/9/1/6/120/b1c672818fc133d72cb8685a850c578c.jpg" />
+                  <Image
+                    src={user.user_avatar ? user.user_avatar : 'error'}
+                    fallback="https://app.sabangcollege.ac.in/faculty_image/default.jpg"
+                  />
                 }
                 className="modal-account__avatar"
               />
