@@ -1,7 +1,7 @@
 import AccountModal from 'features/accountModal/AccountModal';
 import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import {  useState } from 'react';
+import { useState } from 'react';
 import './HeaderChat.scss';
 import { useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
@@ -23,6 +23,7 @@ const HeaderChat = () => {
   };
   const InfoUser = useAppSelector(selectUserModal);
   const loading = useAppSelector(selectUserUpdate);
+  console.log(InfoUser);
 
   const menu = (
     <Menu>
@@ -67,6 +68,7 @@ const HeaderChat = () => {
                   size={50}
                   src={
                     <Image
+                      preview={false}
                       src={InfoUser.user_avatar ? InfoUser.user_avatar : 'error'}
                       fallback="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
                     />
@@ -76,7 +78,7 @@ const HeaderChat = () => {
               </Badge>
               <section>
                 <Title level={5} style={{ marginBottom: '0px', color: 'white' }}>
-                  { InfoUser.user_display_name || InfoUser.user_name}
+                  {InfoUser.user_display_name || InfoUser.user_name}
                 </Title>
                 <Badge color={'#54ff00'} text={'Available'} style={{ color: '#fff' }} />
               </section>
