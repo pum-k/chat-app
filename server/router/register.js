@@ -13,17 +13,26 @@ router.post("/", async (req, res) => {
     .find({ username: InfoUser.username })
     .lean()
     .exec();
+  let checkPhoneNumber = await user.find({phoneNumber:InfoUser.phoneNumber}).lean().exec();
+
   if (checkUser.length == 0) {
-    let User = new user({...req.body , gender: 'male'});
-    await User.save(function (err, result) {
-      if (!err) {
-        res.send({ isSuccess: true });
-      } else {
-        res.send({ error: "Register fail", isSuccess: false });
-      }
-    });
+    if(checkPhoneNumber.length ==0 ){
+      let User = new user({...req.body , gender: 'male'});
+      await User.save(function (err, result) {
+        if (!err) {
+          res.send({ isSuccess: true });
+        } else {
+          res.send({ error: "Register fail", isSuccess: false });
+        }
+      });
+    }
+    else{
+      res.send({error: "Phone number is existed"})
+    }
+
+
   } else {
-    res.send({ error: "Username is exist" });
+    res.send({ error: "Username is existed" });
   }
 });
 module.exports = router;

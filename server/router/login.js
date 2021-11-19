@@ -13,6 +13,7 @@ router.get("/", functionAutho.checkNotAuthenticated, (req, res) => {
 //   res.send({ id: user.ID});
 // });
 
+
 router.post("/", async (req, res) => {
   let userRequest = req.body;
   let DBfindUser = await login
@@ -28,8 +29,10 @@ router.post("/", async (req, res) => {
     if (user && user.password == userRequest.password) {
       res.send({ id: user.ID });
     } else {
-      res.send({ error: "Invalid username or password" });
+      res.send({ error: "Invalid password" });
     }
+  } else {
+    res.send({ error: "Username or password is not correct" });
   }
 });
 // passport.use(

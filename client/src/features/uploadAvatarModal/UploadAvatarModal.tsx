@@ -53,7 +53,6 @@ const UploadAvatarModal: FC<Props> = (prop) => {
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setLoading(false);
         setImageUrl(imageUrl);

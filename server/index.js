@@ -10,7 +10,15 @@ const register_router = require("./router/register");
 const user_router = require("./router/user");
 const friend = require("./router/friend");
 const photo_router = require("./router/photo");
-
+var cors = require("cors");
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -26,8 +34,7 @@ app.use(
 );
 connection();
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+
 app.set("socketio", io);
 app.use("/chat", chatroom_router);
 app.use("/login", login_router);
