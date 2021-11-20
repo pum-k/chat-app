@@ -1,14 +1,18 @@
 import AccountModal from 'features/accountModal/AccountModal';
 import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './HeaderChat.scss';
-import { useAppSelector } from 'app/hooks';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
+import { acceptRequest, denyRequest, fetchListRequest } from './headerChatSlice';
+import { time } from 'console';
 
 const { Title, Text } = Typography;
 
 const HeaderChat = () => {
+  const dispatch = useAppDispatch();
+
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
   const showModalAccount = () => {
     setIsModalVisibleAccount(true);
@@ -23,7 +27,14 @@ const HeaderChat = () => {
   };
   const InfoUser = useAppSelector(selectUserModal);
   const loading = useAppSelector(selectUserUpdate);
-  console.log(InfoUser);
+  const listRequest: Array<{
+    avatar: string;
+    phoneNumber: string;
+    username: string;
+  }> = useAppSelector((state) => state.headerChat.listRequest);
+  useEffect(() => {
+    dispatch(fetchListRequest());
+  }, []);
 
   const menu = (
     <Menu>
@@ -50,19 +61,30 @@ const HeaderChat = () => {
 
   const menuNotification = (
     <Menu>
-      <Menu.Item key="0">
-        <Space>
-          <Text>
-            <b>pum-k</b> wants to be friends with you
-          </Text>
-          <Space>
-            <Button type="primary" size="small">
-              Accept
-            </Button>
-            <Button size="small">Deny</Button>
-          </Space>
-        </Space>
-      </Menu.Item>
+      {listRequest &&
+        listRequest.map((item, index) => {
+          return (
+            <Menu.Item key="0">
+              <Space>
+                <Text>
+                  <b>{item.username}</b> wants to be friends with you
+                </Text>
+                <Space>
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => dispatch(acceptRequest(item.phoneNumber))}
+                  >
+                    Accept
+                  </Button>
+                  <Button size="small" onClick={() => dispatch(denyRequest(item.phoneNumber))}>
+                    Deny
+                  </Button>
+                </Space>
+              </Space>
+            </Menu.Item>
+          );
+        })}
     </Menu>
   );
 
@@ -82,7 +104,7 @@ const HeaderChat = () => {
           <Space>
             <Space size="large">
               <Dropdown overlay={menuNotification} trigger={['click']}>
-                <Badge count={1} offset={[-5, 5]}>
+                <Badge count={listRequest.length} offset={[-5, 5]}>
                   <Avatar
                     size={50}
                     src={

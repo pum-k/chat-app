@@ -1,4 +1,4 @@
-import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, message  } from 'antd';
+import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, message } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import './AddFriendModal.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -11,8 +11,6 @@ interface ModalProps {
   handleCancel: () => void | undefined;
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-
 
 const AddFriendModal: FC<ModalProps> = (props) => {
   const { isModalVisible, setIsModalVisible, handleOk, handleCancel } = props;
@@ -39,13 +37,21 @@ const AddFriendModal: FC<ModalProps> = (props) => {
     if (!isModalVisible) setShowSearchResult(false);
   }, [isModalVisible]);
 
-  const key = 'updatable';
+  const key = 'addfriend';
+  const isSuccessAddFriend = useAppSelector((state) => state.friend.isSuccess);
   const openMessage = () => {
     message.loading({ content: ' Wait a minute...', key });
-    setTimeout(() => {
-      message.success({ content: ' Make friends successfully!', key, duration: 2 });
-      setIsModalVisible(false);
-    }, 1000);
+    if (isSuccessAddFriend) {
+      setTimeout(() => {
+        message.success({ content: 'Friend request sent successfully!', key, duration: 2 });
+        setIsModalVisible(false);
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        message.error({ content: 'Something is wrong. Please try again!', key, duration: 2 });
+        setIsModalVisible(false);
+      }, 1000);
+    }
   };
 
   return (
@@ -63,7 +69,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                 <Button
                   type="text"
                   onClick={() => {
-                    setIsModalVisible(true);
+                    setIsModalVisible(false);
                   }}
                   size="large"
                 >

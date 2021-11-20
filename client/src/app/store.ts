@@ -4,13 +4,15 @@ import authReducer from 'features/auth/authSlice';
 import siderChatReducer from 'features/siderChat/siderChatSlice'
 import friendReducer from '../features/addFriendModal/AddFriendSlice'
 import accountModalReducer from 'features/accountModal/accountModalSlice'
+import headerChatReducer from 'features/headerChat/headerChatSlice'
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     contentChat: contentChatReducer,
     friend: friendReducer,
     siderChat: siderChatReducer,
-    accountModal: accountModalReducer
+    accountModal: accountModalReducer,
+    headerChat: headerChatReducer
   },
 });
 
