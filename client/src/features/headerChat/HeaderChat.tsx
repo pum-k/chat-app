@@ -103,7 +103,7 @@ const HeaderChat = () => {
           </Title>
           <Space>
             <Space size="large">
-              <Dropdown overlay={menuNotification} trigger={['click']}>
+              <Dropdown overlay={menuNotification} trigger={['click']} disabled={listRequest.length === 0} >
                 <Badge count={listRequest.length} offset={[-5, 5]}>
                   <Avatar
                     size={50}
