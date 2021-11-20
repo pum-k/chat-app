@@ -4,4 +4,5 @@ export type FriendTypes = {
   gender: string;
   birthday: String;
   loadding: boolean;
+  isSuccess: boolean;
 };

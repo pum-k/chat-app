@@ -9,6 +9,7 @@ const initialState: FriendTypes = {
   gender: 'male',
   birthday: '',
   loadding: false,
+  isSuccess: false,
 };
 export const FindFriend = createAsyncThunk('friend/FindFriend', async (number: FriendTypes) => {
   const response: any = await friendApi.findFriend(number);
@@ -45,6 +46,7 @@ export const AddFriendSlice = createSlice({
     });
     builder.addCase(addFriend.fulfilled, (state, action) => {
       state.loadding = false;
+      state.isSuccess = action.payload.isSuccess;
     });
   },
 });

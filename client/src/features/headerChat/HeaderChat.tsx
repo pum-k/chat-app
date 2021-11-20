@@ -1,14 +1,18 @@
 import AccountModal from 'features/accountModal/AccountModal';
 import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import {  useState } from 'react';
+import { useEffect, useState } from 'react';
 import './HeaderChat.scss';
-import { useAppSelector } from 'app/hooks';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
+import { acceptRequest, denyRequest, fetchListRequest } from './headerChatSlice';
+import { time } from 'console';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const HeaderChat = () => {
+  const dispatch = useAppDispatch();
+
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
   const showModalAccount = () => {
     setIsModalVisibleAccount(true);
@@ -23,6 +27,14 @@ const HeaderChat = () => {
   };
   const InfoUser = useAppSelector(selectUserModal);
   const loading = useAppSelector(selectUserUpdate);
+  const listRequest: Array<{
+    avatar: string;
+    phoneNumber: string;
+    username: string;
+  }> = useAppSelector((state) => state.headerChat.listRequest);
+  useEffect(() => {
+    dispatch(fetchListRequest());
+  }, []);
 
   const menu = (
     <Menu>
@@ -47,6 +59,35 @@ const HeaderChat = () => {
     </Menu>
   );
 
+  const menuNotification = (
+    <Menu>
+      {listRequest &&
+        listRequest.map((item, index) => {
+          return (
+            <Menu.Item key="0">
+              <Space>
+                <Text>
+                  <b>{item.username}</b> wants to be friends with you
+                </Text>
+                <Space>
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => dispatch(acceptRequest(item.phoneNumber))}
+                  >
+                    Accept
+                  </Button>
+                  <Button size="small" onClick={() => dispatch(denyRequest(item.phoneNumber))}>
+                    Deny
+                  </Button>
+                </Space>
+              </Space>
+            </Menu.Item>
+          );
+        })}
+    </Menu>
+  );
+
   return (
     <>
       <AccountModal
@@ -62,23 +103,26 @@ const HeaderChat = () => {
           </Title>
           <Space>
             <Space size="large">
-              <Badge count={1} offset={[-5, 5]}>
-                <Avatar
-                  size={50}
-                  src={
-                    <Image
-                      src={InfoUser.user_avatar ? InfoUser.user_avatar : 'error'}
-                      fallback="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
-                    />
-                  }
-                  style={{ border: '1px solid #fff' }}
-                />
-              </Badge>
+              <Dropdown overlay={menuNotification} trigger={['click']}>
+                <Badge count={listRequest.length} offset={[-5, 5]}>
+                  <Avatar
+                    size={50}
+                    src={
+                      <Image
+                        preview={false}
+                        src={InfoUser.user_avatar ? InfoUser.user_avatar : 'error'}
+                        fallback="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
+                      />
+                    }
+                    style={{ border: '1px solid #fff', cursor: 'pointer' }}
+                  />
+                </Badge>
+              </Dropdown>
               <section>
                 <Title level={5} style={{ marginBottom: '0px', color: 'white' }}>
-                  { InfoUser.user_display_name || InfoUser.user_name}
+                  {InfoUser.user_display_name || InfoUser.user_name}
                 </Title>
-                <Badge color={'#54ff00'} text={'Available'} style={{ color: '#fff' }} />
+                <Badge color={'#54ff00'} text={'Online'} style={{ color: '#fff' }} />
               </section>
               <Dropdown overlay={menu} trigger={['click']}>
                 <MoreOutlined style={{ fontSize: '1.5rem', cursor: 'pointer' }} />
