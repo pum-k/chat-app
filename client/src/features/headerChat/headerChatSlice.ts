@@ -30,7 +30,6 @@ const headerChatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchListRequest.fulfilled, (state, action) => {
-      console.log(action.payload)
       state.listRequest = action.payload
     });
     builder.addCase(acceptRequest.fulfilled, (state, action) => {
