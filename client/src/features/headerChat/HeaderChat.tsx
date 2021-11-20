@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import './HeaderChat.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
-import { acceptRequest, denyRequest, fetchListRequest } from './headerChatSlice';
+import { acceptRequest, denyRequest, fetchListRequest, removeRequest } from './headerChatSlice';
 import { time } from 'console';
 
 const { Title, Text } = Typography;
@@ -34,6 +34,7 @@ const HeaderChat = () => {
   }> = useAppSelector((state) => state.headerChat.listRequest);
   useEffect(() => {
     dispatch(fetchListRequest());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const menu = (
@@ -73,11 +74,20 @@ const HeaderChat = () => {
                   <Button
                     type="primary"
                     size="small"
-                    onClick={() => dispatch(acceptRequest(item.phoneNumber))}
+                    onClick={() => {
+                      dispatch(acceptRequest(item.phoneNumber));
+                      dispatch(removeRequest(index));
+                    }}
                   >
                     Accept
                   </Button>
-                  <Button size="small" onClick={() => dispatch(denyRequest(item.phoneNumber))}>
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      dispatch(denyRequest(item.phoneNumber));
+                      dispatch(removeRequest(index));
+                    }}
+                  >
                     Deny
                   </Button>
                 </Space>
@@ -103,7 +113,11 @@ const HeaderChat = () => {
           </Title>
           <Space>
             <Space size="large">
-              <Dropdown overlay={menuNotification} trigger={['click']} disabled={listRequest.length === 0} >
+              <Dropdown
+                overlay={menuNotification}
+                trigger={['click']}
+                disabled={listRequest.length === 0}
+              >
                 <Badge count={listRequest.length} offset={[-5, 5]}>
                   <Avatar
                     size={50}

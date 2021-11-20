@@ -23,9 +23,14 @@ export const denyRequest = createAsyncThunk('friend/deny-request', async (params
 const headerChatSlice = createSlice({
   name: 'headerChatSlice',
   initialState,
-  reducers: {},
+  reducers: {
+    removeRequest: (state, action) => {
+      state.listRequest.splice(action.payload, 1);
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchListRequest.fulfilled, (state, action) => {
+      console.log(action.payload)
       state.listRequest = action.payload
     });
     builder.addCase(acceptRequest.fulfilled, (state, action) => {
@@ -39,3 +44,4 @@ const headerChatSlice = createSlice({
 
 
 export default headerChatSlice.reducer;
+export const {removeRequest} = headerChatSlice.actions;
