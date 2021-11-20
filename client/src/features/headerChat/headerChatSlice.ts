@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { message } from 'antd';
 import { friendApi } from 'api/friendAPI';
 const initialState = {
   listRequest: [],
@@ -27,6 +28,12 @@ const headerChatSlice = createSlice({
     builder.addCase(fetchListRequest.fulfilled, (state, action) => {
       state.listRequest = action.payload
     });
+    builder.addCase(acceptRequest.fulfilled, (state, action) => {
+      if(action.payload.isSuccess) message.success("Add successfully!");
+    })
+    builder.addCase(denyRequest.fulfilled, (state, action) => {
+      if(action.payload.isSuccess) message.success("Deny successfully!");
+    })
   },
 });
 
