@@ -19,8 +19,7 @@ router.post("/acceptAddFriend", async (req, res) => {
       { _id: newFriendAdd.owners },
       { $push: { friends: findFriend[0]._id } }
     );
-    console.log("nguoi dong y acceptAddFriend: " + newFriendAdd.owners);
-    console.log("Duoc chap nhan: " + findFriend[0]._id);
+
     await user.updateOne(
       { _id: newFriendAdd.owners },
       { $pull: { peddingRequests: findFriend[0]._id } }
@@ -96,16 +95,18 @@ router.post("/denyAcceptAddFriend", async (req, res) => {
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
+  console.log(findFriend);
   if (findFriend.length > 0) {
     await user.updateOne(
       { _id: findFriend[0]._id },
-      { $pull: { requestAddFriends: newFriendAdd.owners } }
+      { $pull: { peddingRequests: newFriendAdd.owners } }
     );
     await user.updateOne(
       { _id: newFriendAdd.owners },
-      { $pull: { peddingRequests: findFriend[0]._id } }
+      { $pull: { requestAddFriends: findFriend[0]._id } }
     );
   }
+  res.send({ isSuccess: true });
 });
 // router.post("/acceptAddFriend", async (req, res) => {
 //   let request = req.body;
@@ -218,6 +219,7 @@ router.post("/sendRequest", async (req, res) => {
     .find({ phoneNumber: request.sendTo })
     .lean()
     .exec();
+  console.log(findFriend);
   if (findFriend) {
     await user.updateOne(
       { _id: findFriend[0]._id },
