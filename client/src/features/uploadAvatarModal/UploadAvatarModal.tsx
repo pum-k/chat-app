@@ -2,6 +2,7 @@ import { message, Modal, Upload } from 'antd';
 import { FC, useEffect, useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import './UploadAvatarModal.scss';
+import { userApi } from 'api/userApi';
 
 interface Props {
   isModalVisible: boolean;
@@ -14,7 +15,6 @@ const UploadAvatarModal: FC<Props> = (prop) => {
   const [imageUrl, setImageUrl] = useState();
   const handleOk = () => {
     setIsModalVisibleClose();
-    console.log(imageUrl)
   };
 
   const handleCancel = () => {
@@ -49,13 +49,13 @@ const UploadAvatarModal: FC<Props> = (prop) => {
   const handleChange = (info: any) => {
     if (info.file.status === 'uploading') {
       setLoading(true);
-
       return;
     }
     if (info.file.status === 'done') {
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setLoading(false);
         setImageUrl(imageUrl);
+        userApi.updateImage(info);
       });
     }
   };
@@ -85,6 +85,7 @@ const UploadAvatarModal: FC<Props> = (prop) => {
         listType="picture-card"
         className="avatar-uploader"
         customRequest={dummyRequest}
+        // action='http://localhost:4000/user/setAvater'
         showUploadList={false}
         beforeUpload={beforeUpload}
         onChange={handleChange}
