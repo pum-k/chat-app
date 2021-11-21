@@ -71,7 +71,6 @@ router.post("/acceptAddFriend", async (req, res) => {
 });
 router.post("/allRequestAddFriend", async (req, res) => {
   let request = req.body;
-  console.log(request);
   let RequestAddFriend = [];
   let findInfo = await user.find({ _id: request.owners }).lean().exec();
   if (findInfo.length > 0) {

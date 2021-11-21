@@ -2,8 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { FriendTypes } from 'constants/FriendTypes';
 import { RootState } from 'app/store';
 import { friendApi } from 'api/friendAPI';
+import { message } from 'antd';
 
 const initialState: FriendTypes = {
+  displayName: '',
   phoneNumber: '',
   username: '',
   gender: 'male',
@@ -33,13 +35,18 @@ export const AddFriendSlice = createSlice({
     });
     builder.addCase(FindFriend.fulfilled, (state, action) => {
       state.loadding = false;
-      if(action.payload){
-        state.username = action.payload[0].username
-        state.phoneNumber = action.payload[0].phoneNumber
+      if (action.payload.length > 0) {
+        console.log(action.payload);
+        state.displayName = action.payload[0].displayName || '';
+        state.username = action.payload[0].username;
+        state.phoneNumber = action.payload[0].phoneNumber;
+        state.birthday = action.payload[0].dateOfBirth;
+        state.gender = action.payload[0].gender;
       }
     });
     builder.addCase(addFriend.pending, (state) => {
       state.loadding = true;
+      message.loading({ content: ' Wait a minute...', key: 'addfriend' });
     });
     builder.addCase(addFriend.rejected, (state) => {
       state.loadding = false;
@@ -47,6 +54,11 @@ export const AddFriendSlice = createSlice({
     builder.addCase(addFriend.fulfilled, (state, action) => {
       state.loadding = false;
       state.isSuccess = action.payload.isSuccess;
+      message.success({
+        content: 'Friend request sent successfully!',
+        key: 'addfriend',
+        duration: 2,
+      });
     });
   },
 });

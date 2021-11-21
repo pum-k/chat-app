@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from 'react';
 import './AddFriendModal.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { FindFriend, selectFriend, addFriend } from './AddFriendSlice';
+import moment from 'moment';
 const { Title, Text } = Typography;
 
 interface ModalProps {
@@ -36,23 +37,6 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   useEffect(() => {
     if (!isModalVisible) setShowSearchResult(false);
   }, [isModalVisible]);
-
-  const key = 'addfriend';
-  const isSuccessAddFriend = useAppSelector((state) => state.friend.isSuccess);
-  const openMessage = () => {
-    message.loading({ content: ' Wait a minute...', key });
-    if (isSuccessAddFriend) {
-      setTimeout(() => {
-        message.success({ content: 'Friend request sent successfully!', key, duration: 2 });
-        setIsModalVisible(false);
-      }, 1000);
-    } else {
-      setTimeout(() => {
-        message.error({ content: 'Something is wrong. Please try again!', key, duration: 2 });
-        setIsModalVisible(false);
-      }, 1000);
-    }
-  };
 
   return (
     <>
@@ -108,13 +92,13 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                 className="modal-add-friend__avatar"
               />
 
-              <Title level={4}>{friend.username || ''}</Title>
+              <Title level={4}>{friend.displayName || friend.username}</Title>
 
               <Button
                 type="primary"
                 onClick={() => {
                   dispatch(addFriend(friend));
-                  openMessage();
+                  setIsModalVisible(false);
                 }}
               >
                 Add friend
@@ -124,7 +108,10 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                 <Text>Username: {friend.username || ''}</Text>
                 <Text>Phone number: {friend.phoneNumber || 'Not updated yet'}</Text>
                 <Text>Gender: {friend.gender ? 'Male' : 'Female'}</Text>
-                <Text>Birthday: {friend.birthday || 'Not updated yet'}</Text>
+                <Text>
+                  Birthday:{' '}
+                  {moment(String(friend.birthday)).format('YYYY-MM-DD') || 'Not updated yet'}
+                </Text>
               </Space>
             </Space>
           </>

@@ -15,6 +15,8 @@ import {
   Divider,
   Skeleton,
   Upload,
+  Row,
+  Col,
 } from 'antd';
 import {
   BellOutlined,
@@ -25,7 +27,13 @@ import {
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
-import { joinRoom, renderMessageAsync, selectMessages, sendMessageAsync } from './contentChatSlice';
+import {
+  joinRoom,
+  renderMessageAsync,
+  selectMessages,
+  sendImage,
+  sendMessageAsync,
+} from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
@@ -62,7 +70,6 @@ const ContentChat = () => {
         line_text: value.message,
         user_name: localStorage.getItem('access_token') || '',
       };
-
       dispatch(sendMessageAsync(newMessage));
     }
   };
@@ -93,13 +100,17 @@ const ContentChat = () => {
     if (messages) {
       setMessRender([...messages].reverse().splice(0, Number(elementTh)));
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  useEffect(() => {
     if (messRender && messRender.length < 11) {
       setHasMoreLoad(false);
     } else {
       setHasMoreLoad(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages]);
+  }, [messRender]);
 
   // <---------------------------------Load more
   // HANDLE SEND MESSAGE------------------>
@@ -119,7 +130,7 @@ const ContentChat = () => {
   useEffect(() => {
     // -> when new message
     socket.on('newMessages', () => {
-      dispatch(renderMessageAsync());
+      // dispatch(renderMessageAsync());
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -129,14 +140,41 @@ const ContentChat = () => {
   // console.log(window.localStorage.getItem('room_id') + ' | ' +  roomIdRef.current);
 
   // UPLOAD IMG------------------------------->
-  // -> action
+  const [imageUrl, setImageUrl] = useState();
+
+  function getBase64(img: any, callback: any) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
   const dummyRequest = ({ file, onSuccess }: any) => {
-    console.log(file);
-    
     setTimeout(() => {
       onSuccess('ok');
     }, 0);
   };
+
+  const handleChangeUpload = (info: any) => {
+    if (info.file.status === 'uploading') {
+      return;
+    }
+    if (info.file.status === 'done') {
+      getBase64(info.file.originFileObj, (imageUrl: any) => {
+        const newMessage: messageStructure = {
+          createAt: Date.now(),
+          line_text: String(imageUrl),
+          user_name: 'You',
+          type: 'img',
+        };
+
+        dispatch(sendImage(newMessage));
+      });
+    }
+  };
+
+  // -> check share media have image or not
+  const [flagimg, setFlagimg] = useState(false);
+
   // <----------------------------------UPLOAD IMG
 
   return (
@@ -174,15 +212,50 @@ const ContentChat = () => {
             endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
             scrollableTarget="scrollableDiv"
           >
-            {messRender && messRender.length > 0 ? (
+            {messRender && messRender.length > 0 && messRender[0] !== undefined ? (
               messRender.map((item, index) => {
-                if (item.user_name !== 'owner')
+                if (item.type === 'img')
                   return (
                     <Comment
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={<b>{item.user_name}</b>}
+                      author={
+                        <b>
+                          {item.user_name === localStorage.getItem('owners')
+                            ? 'You'
+                            : item.user_name}
+                        </b>
+                      }
+                      avatar={
+                        <Avatar
+                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                          alt="Han Solo"
+                        />
+                      }
+                      content={
+                        <img style={{ maxWidth: '1135px' }} src={item.line_text} alt="upload" />
+                      }
+                      datetime={
+                        <Tooltip title={moment(item.createAt).format('YYYY-MM-DD HH:mm:ss')}>
+                          <span>{moment(item.createAt).fromNow()}</span>
+                        </Tooltip>
+                      }
+                    />
+                  );
+                else
+                  return (
+                    <Comment
+                      style={{ width: '100%' }}
+                      key={index}
+                      actions={[]}
+                      author={
+                        <b>
+                          {item.user_name === localStorage.getItem('owners')
+                            ? 'You'
+                            : item.user_name}
+                        </b>
+                      }
                       avatar={
                         <Avatar
                           src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -196,22 +269,6 @@ const ContentChat = () => {
                         </Tooltip>
                       }
                     />
-                  );
-                else
-                  return (
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Space direction="vertical" style={{ width: '40%', alignItems: 'flex-end' }}>
-                        <Space>
-                          <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                            <span style={{ color: '#ccc', fontSize: '12px' }}>
-                              {moment().fromNow()}
-                            </span>
-                          </Tooltip>
-                          <b style={{ color: '#00000073', fontSize: '12px' }}>{item.user_name}</b>
-                        </Space>
-                        <p style={{ textAlign: 'right' }}>{item.line_text}</p>
-                      </Space>
-                    </div>
                   );
               })
             ) : (
@@ -245,6 +302,7 @@ const ContentChat = () => {
                       name="image"
                       showUploadList={false}
                       customRequest={dummyRequest}
+                      onChange={handleChangeUpload}
                     >
                       <FileImageOutlined />
                     </Upload>
@@ -279,11 +337,24 @@ const ContentChat = () => {
               <p>Unfriend this user</p>
             </button>
           </Panel>
-          <Panel header="Shared files" key="2">
-            <Empty />
-          </Panel>
-          <Panel header="Shared media" key="3">
-            <Empty />
+          <Panel
+            header="Shared media"
+            key="2"
+            style={{ height: 'auto', maxHeight: '760px', overflow: 'auto' }}
+          >
+            <Row justify="start">
+              {messages.map((item) => {
+                if (item.type === 'img') {
+                  if(!flagimg) setFlagimg(true);
+                  return (
+                    <Col className="gutter-row" span={8}>
+                      <Image width={75} height={75} src={item.line_text} />
+                    </Col>
+                  );
+                }
+              })}
+              {!flagimg && <Empty style={{margin: '0 auto'}} />}
+            </Row>
           </Panel>
         </Collapse>
       </section>

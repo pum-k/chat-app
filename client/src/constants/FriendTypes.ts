@@ -1,4 +1,5 @@
 export type FriendTypes = {
+  displayName: string;
   phoneNumber: String;
   username: '';
   gender: string;

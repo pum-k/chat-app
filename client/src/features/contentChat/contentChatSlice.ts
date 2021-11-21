@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { chatApi } from 'api/chatAPI';
 import { RootState } from 'app/store';
 import { ChatState, messageStructure } from 'constants/ChatTypes';
+import moment from 'moment';
 
 const initialState: ChatState = {
   messages: [],
@@ -31,6 +32,10 @@ export const contentChatSlice = createSlice({
         userInfo: localStorage.getItem('access_token'),
       });
     },
+    sendImage: (state, action) => {
+      state.messages.push(action.payload);
+      
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
@@ -49,7 +54,7 @@ export const contentChatSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(renderMessageAsync.fulfilled, (state, action) => {
-      if (action.payload) {
+      if (action.payload.ListMessages) {
         state.messages = action.payload.ListMessages;
       }
     });
@@ -57,5 +62,5 @@ export const contentChatSlice = createSlice({
 });
 
 export default contentChatSlice.reducer;
-export const { joinRoom } = contentChatSlice.actions;
+export const { joinRoom, sendImage } = contentChatSlice.actions;
 export const selectMessages = (state: RootState) => state.contentChat.messages;
