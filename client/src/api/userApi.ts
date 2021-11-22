@@ -60,4 +60,22 @@ export const userApi = {
         console.log(error);
       });
   },
+  updateImage: (params: any) => {
+    const req = {
+      file: params.file,
+      owners: localStorage.getItem('access_token'),
+    };
+
+    return axios
+      .post(`${API}/user/setAvater`, {
+        file: params.file,
+        owners: localStorage.getItem('access_token'),
+      })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
 };

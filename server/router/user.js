@@ -175,6 +175,7 @@ router.post("/editUserInfo", async (req, res) => {
 
 router.post("/setAvater", upload.single("file"), async (req, res) => {
   let request = req.body;
+  console.log(req.body.file);
   if (req.file === undefined) return res.send("you must select a file.");
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
   let userInfo = await user.find({ _id: request.owners }).lean().exec();
