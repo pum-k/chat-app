@@ -4,6 +4,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import './UploadAvatarModal.scss';
 import { userApi } from 'api/userApi';
 
+
 interface Props {
   isModalVisible: boolean;
   setIsModalVisibleClose: () => void;
@@ -55,21 +56,32 @@ const UploadAvatarModal: FC<Props> = (prop) => {
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setLoading(false);
         setImageUrl(imageUrl);
-        userApi.updateImage(info);
       });
     }
   };
 
   const dummyRequest = ({ file, onSuccess }: any) => {
+    const newFile = {
+      lastModified: file.lastModified,
+      lastModifiedDate: file.lastModifiedDate,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      webkitRelativePath: file.webkitRelativePath,
+    };
+    userApi.updateImage(newFile)
+    
     setTimeout(() => {
       onSuccess('ok');
     }, 0);
   };
 
+
+
   useEffect(() => {
     setImageUrl(undefined);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalVisible===false])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalVisible === false]);
 
   return (
     <Modal
@@ -79,13 +91,13 @@ const UploadAvatarModal: FC<Props> = (prop) => {
       onCancel={handleCancel}
       className="modal-upload-img"
       width={450}
+      footer={null}
     >
       <Upload
         name="avatar"
         listType="picture-card"
         className="avatar-uploader"
         customRequest={dummyRequest}
-        // action='http://localhost:4000/user/setAvater'
         showUploadList={false}
         beforeUpload={beforeUpload}
         onChange={handleChange}
