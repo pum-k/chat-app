@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { chatApi } from 'api/chatAPI';
 import { RootState } from 'app/store';
 import { ChatState, messageStructure } from 'constants/ChatTypes';
-import moment from 'moment';
 
 const initialState: ChatState = {
   messages: [],
