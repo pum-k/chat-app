@@ -61,15 +61,11 @@ export const userApi = {
       });
   },
   updateImage: (params: any) => {
-    const req = {
-      file: params.file,
-      owners: localStorage.getItem('access_token'),
-    };
-
+    console.log(params);
     return axios
-      .post(`${API}/user/setAvater`, {
-        file: params.file,
-        owners: localStorage.getItem('access_token'),
+      .post(`http://localhost:4000/user/setAvater`, {
+        file: params,
+        owners: localStorage.getItem('access_token')
       })
       .then((response) => {
         return response;

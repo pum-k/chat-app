@@ -174,8 +174,11 @@ const ContentChat = () => {
 
   // -> check share media have image or not
   const [flagimg, setFlagimg] = useState(false);
-
   // <----------------------------------UPLOAD IMG
+
+  // BLOCK USER ------------------------>
+  const isBlockUser = true;
+  // <------------------------ BLOCK USER
 
   return (
     <div className="content-chat">
@@ -291,7 +294,12 @@ const ContentChat = () => {
               <Form.Item name="message" style={{ width: '100%' }}>
                 <Input
                   size="large"
-                  placeholder="Chat now..."
+                  placeholder={
+                    isBlockUser
+                      ? "You have been blocked by this user. You can't text now!"
+                      : 'Chat now...'
+                  }
+                  disabled={isBlockUser}
                   onKeyPress={(e: any) => {
                     chatEnterSubmit(e);
                   }}
@@ -303,6 +311,7 @@ const ContentChat = () => {
                       showUploadList={false}
                       customRequest={dummyRequest}
                       onChange={handleChangeUpload}
+                      disabled={isBlockUser}
                     >
                       <FileImageOutlined />
                     </Upload>
@@ -328,7 +337,7 @@ const ContentChat = () => {
       <section className="content-chat__3th">
         <Collapse expandIconPosition="right">
           <Panel header="Privacy settings" key="1">
-            <button className="content-chat__3th__btn">
+            <button className="content-chat__3th__btn" disabled={isBlockUser}>
               <BellOutlined />
               <p>Block user</p>
             </button>
@@ -345,7 +354,7 @@ const ContentChat = () => {
             <Row justify="start">
               {messages.map((item) => {
                 if (item.type === 'img') {
-                  if(!flagimg) setFlagimg(true);
+                  if (!flagimg) setFlagimg(true);
                   return (
                     <Col className="gutter-row" span={8}>
                       <Image width={75} height={75} src={item.line_text} />
@@ -353,7 +362,7 @@ const ContentChat = () => {
                   );
                 }
               })}
-              {!flagimg && <Empty style={{margin: '0 auto'}} />}
+              {!flagimg && <Empty style={{ margin: '0 auto' }} />}
             </Row>
           </Panel>
         </Collapse>
