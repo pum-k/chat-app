@@ -137,7 +137,6 @@ const ContentChat = () => {
 
   // <-----------------------------SOCKET.IO
 
-  // console.log(window.localStorage.getItem('room_id') + ' | ' +  roomIdRef.current);
 
   // UPLOAD IMG------------------------------->
   const [imageUrl, setImageUrl] = useState();
