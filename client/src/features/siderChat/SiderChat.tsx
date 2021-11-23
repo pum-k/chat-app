@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
-import CreateGroup from 'features/createGroup/CreateGroup';
 import { Avatar, Space, List, Tooltip, Button, Typography, Empty } from 'antd';
 import { UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -37,20 +36,6 @@ const SiderChat: FC<Props> = (props) => {
     setIsModalVisibleAddFriend(false);
   };
 
-  const [isModalVisibleCreateGroup, setIsModalVisibleCreateGroup] = useState(false);
-
-  const showModalCreateGroup = () => {
-    setIsModalVisibleCreateGroup(true);
-  };
-
-  const handleOkCreateGroup = () => {
-    setIsModalVisibleCreateGroup(false);
-  };
-
-  const handleCancelCreateGroup = () => {
-    setIsModalVisibleCreateGroup(false);
-  };
-
   useEffect(() => {
     dispatch(fetchListRoom());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,12 +58,6 @@ const SiderChat: FC<Props> = (props) => {
         handleOk={handleOkAddFriend}
         handleCancel={handleCancelAddFriend}
       />
-      <CreateGroup
-        isModalVisible={isModalVisibleCreateGroup}
-        setIsModalVisible={setIsModalVisibleCreateGroup}
-        handleOk={handleOkCreateGroup}
-        handleCancel={handleCancelCreateGroup}
-      />
       <section className="sider-chat">
         <div className="sider-chat__header">
           <Space>
@@ -91,15 +70,6 @@ const SiderChat: FC<Props> = (props) => {
                 shape="circle"
                 icon={<UserAddOutlined />}
                 onClick={() => showModalAddFriend()}
-              />
-            </Tooltip>
-
-            <Tooltip title="Add group chat">
-              <Button
-                type="text"
-                shape="circle"
-                icon={<UsergroupAddOutlined />}
-                onClick={() => showModalCreateGroup()}
               />
             </Tooltip>
           </Space>
