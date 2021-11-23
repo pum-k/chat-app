@@ -11,7 +11,7 @@ router.post("/sendMessage", async (req, res) => {
     message: req.body.line_text,
     user_name: people.username,
     create_at: people.createAt,
-    user_Id: people._id
+    user_Id: people._id,
   };
   io.to(req.body.room_id).emit("newMessages", newMessage);
   await RoomChat.findByIdAndUpdate(
@@ -36,10 +36,10 @@ router.post("/listMessages", async (req, res) => {
       .lean()
       .exec();
     // console.log(ListMessages);
-      if (ListMessages[0].textChat.length > 0) {
+    if (ListMessages[0].textChat.length > 0) {
       res.send({ ListMessages: ListMessages[0].textChat });
     } else {
-      res.send({ ListMessages: null })
+      res.send({ ListMessages: null });
     }
   }
   console.log(req.body.chatRoom);
@@ -53,7 +53,7 @@ router.post("/listChatPage", async (req, res) => {
   if (ListRoomChat.length > 0) {
     for (let i = 0; i < ListRoomChat.length; i++) {
       let eachRoomChat = await RoomChat.find({ _id: ListRoomChat[i] });
-      let RoomName = "";
+      let RoomName = [];
       if (i == 0 && ListRoomChat[i]) {
         ChatMessageFirstRoom = eachRoomChat[0].textChat;
       }
@@ -63,16 +63,23 @@ router.post("/listChatPage", async (req, res) => {
             .findById({ _id: eachRoomChat[0].MemberName[j] })
             .lean()
             .exec();
-          RoomName += name.username;
-          name.username = "";
+          RoomName.push({
+            username: name.username,
+            displayName: name.displayName || name.username ,
+            avatar: name.avatar || "",
+          });
+          // name.username = "";
         }
       }
       infoAllRoomChat.push({
-        friend_name: RoomName,
+        friend_name: RoomName[0].username,
+        displayName : RoomName[0].displayName,
+        avatar: RoomName[0].avatar,
         room_id: eachRoomChat[0]._id,
       });
+      RoomName=[]
     }
   }
-  res.send({ infoAllRoomChat, ChatMessageFirstRoom });
+  res.send({ infoAllRoomChat });
 });
 module.exports = router;

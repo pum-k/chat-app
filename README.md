@@ -1,17 +1,13 @@
 # All Feature in The Chat App
 
-1. Registration Page ---
-2. Add Contact ---
-3. Profile Customization
-4. Messaging
-5. Chat History
-6. Quick Search Option
-7. Voice Messaging Feature
-8. Video Calling
-9. Voice Calling
-10. Media Sharing
-11. Privacy
-12. Push Notifications
+1. Registration Page ✔
+2. Add Contact ⚡
+3. Profile Customization ✔
+4. Messaging ⚡
+5. Voice Calling 👁‍🗨
+6. Media Sharing ⚡
+7. Privacy ⚡
+8. Push Notifications 👁‍🗨
 
 # UI
 

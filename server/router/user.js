@@ -235,4 +235,30 @@ router.post("/sendRequest", async (req, res) => {
   }
   res.send({ isSuccess: true });
 });
+
+router.post("/listFriend", async (req, res) => {
+  let request = req.body;
+  let infoUser = await user.find({ _id: request.owners });
+  let friends = [];
+  if (infoUser.length > 0) {
+    for (var i = 0; i < infoUser[0].friends.length; i++) {
+      var eachfriend = infoUser[0].friends[i];
+      let infoOfEachFriend = await user.find({ _id: eachfriend }).lean().exec();
+      friends.push({
+        _id: infoOfEachFriend[0]._id,
+        phoneNumber: infoOfEachFriend[0].phoneNumber,
+        avatar: infoOfEachFriend[0].avatar || '', 
+        displayName: infoOfEachFriend[0].displayName || infoOfEachFriend[0].username,
+      });
+    }
+  }
+  if (friends.length > 0) {
+    res.send(friends);
+  } else {
+    res.send({ isSuccess: false });
+  }
+});
+
+
+
 module.exports = router;
