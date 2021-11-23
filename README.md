@@ -1,13 +1,13 @@
 # All Feature in The Chat App
 
-1. Registration Page ---
-2. Add Contact ---
-3. Profile Customization ---
-4. Messaging
-5. Voice Calling
-6. Media Sharing
-7. Privacy
-8. Push Notifications
+1. Registration Page ⚡
+2. Add Contact ⚡
+3. Profile Customization ✔
+4. Messaging ⚡
+5. Voice Calling 👁‍🗨
+6. Media Sharing ⚡
+7. Privacy ⚡
+8. Push Notifications 👁‍🗨
 
 # UI
 
