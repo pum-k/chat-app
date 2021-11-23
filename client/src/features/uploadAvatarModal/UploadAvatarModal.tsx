@@ -3,6 +3,8 @@ import { FC, useEffect, useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import './UploadAvatarModal.scss';
 import { userApi } from 'api/userApi';
+import { useAppDispatch } from 'app/hooks';
+import { uploadAvatar } from 'features/headerChat/headerChatSlice';
 
 interface Props {
   isModalVisible: boolean;
@@ -20,6 +22,8 @@ const UploadAvatarModal: FC<Props> = (prop) => {
   const handleCancel = () => {
     setIsModalVisibleClose();
   };
+
+  const dispatch = useAppDispatch();
 
   const uploadButton = (
     <div>
@@ -55,21 +59,22 @@ const UploadAvatarModal: FC<Props> = (prop) => {
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setLoading(false);
         setImageUrl(imageUrl);
+        message.success('Upload your avatar successfully!');
+        dispatch(uploadAvatar(imageUrl));
+        setIsModalVisibleClose();
       });
     }
   };
 
   const dummyRequest = ({ file, onSuccess }: any) => {
-    
     let data = new FormData();
     data.append('file', file);
     data.append('owners', localStorage.getItem('access_token') || '');
     userApi.updateImage(data);
     
-
     setTimeout(() => {
       onSuccess('ok');
-    }, 0);
+    }, 500);
   };
 
   useEffect(() => {

@@ -13,6 +13,8 @@ const { Title, Text } = Typography;
 const HeaderChat = () => {
   const dispatch = useAppDispatch();
 
+  const avatarUrl = useAppSelector(state => state.headerChat.avatar);
+
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
   const showModalAccount = () => {
     setIsModalVisibleAccount(true);
@@ -124,8 +126,8 @@ const HeaderChat = () => {
                     src={
                       <Image
                         preview={false}
-                        src={InfoUser.user_avatar ? InfoUser.user_avatar : 'error'}
-                        fallback="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
+                        src={avatarUrl || InfoUser.user_avatar || 'error'}
+                        fallback="https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg"
                       />
                     }
                     style={{ border: '1px solid #fff', cursor: 'pointer' }}

@@ -3,6 +3,8 @@ import { message } from 'antd';
 import { friendApi } from 'api/friendAPI';
 const initialState = {
   listRequest: [],
+  avatar: '',
+  cover: ''
 };
 
 export const fetchListRequest = createAsyncThunk('friend/list-request', async () => {
@@ -26,6 +28,12 @@ const headerChatSlice = createSlice({
   reducers: {
     removeRequest: (state, action) => {
       state.listRequest.splice(action.payload, 1);
+    },
+    uploadAvatar: (state, action) => {
+      state.avatar = action.payload;
+    },
+    uploadCover: (state, action) => {
+      state.cover = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -43,4 +51,4 @@ const headerChatSlice = createSlice({
 
 
 export default headerChatSlice.reducer;
-export const {removeRequest} = headerChatSlice.actions;
+export const {removeRequest, uploadAvatar, uploadCover } = headerChatSlice.actions;

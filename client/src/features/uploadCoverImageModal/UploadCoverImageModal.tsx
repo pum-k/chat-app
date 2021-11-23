@@ -2,6 +2,9 @@ import { message, Modal, Upload } from 'antd';
 import { FC, useEffect, useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import './UploadCoverImageModal.scss';
+import { userApi } from 'api/userApi';
+import { useAppDispatch } from 'app/hooks';
+import { uploadCover } from 'features/headerChat/headerChatSlice';
 
 interface Props {
   isModalVisible: boolean;
@@ -9,12 +12,12 @@ interface Props {
 }
 
 const UploadCoverImageModal: FC<Props> = (prop) => {
+  const dispatch = useAppDispatch();
   const { isModalVisible, setIsModalVisibleClose } = prop;
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const handleOk = () => {
     setIsModalVisibleClose();
-    console.log(imageUrl)
   };
 
   const handleCancel = () => {
@@ -49,22 +52,28 @@ const UploadCoverImageModal: FC<Props> = (prop) => {
   const handleChange = (info: any) => {
     if (info.file.status === 'uploading') {
       setLoading(true);
-
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setLoading(false);
         setImageUrl(imageUrl);
+        message.success('Upload your avatar successfully!');
+        dispatch(uploadCover(imageUrl));
+        setIsModalVisibleClose();
       });
     }
   };
 
   const dummyRequest = ({ file, onSuccess }: any) => {
+    let data = new FormData();
+    data.append('file', file);
+    data.append('owners', localStorage.getItem('access_token') || '');
+    userApi.updateCover(data);
+
     setTimeout(() => {
       onSuccess('ok');
-    }, 0);
+    }, 500);
   };
 
   useEffect(() => {

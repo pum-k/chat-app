@@ -36,6 +36,8 @@ const AccountModal: FC<ModalProps> = (props) => {
   const [form] = Form.useForm();
 
   const [isModalVisibleUploadAvatar, setIsModalVisibleUploadAvatar] = useState(false);
+  const avatarUrl = useAppSelector(state => state.headerChat.avatar);
+  const coverUrl = useAppSelector(state => state.headerChat.cover);
   const [isModalVisibleUploadCoverImage, setIsModalVisibleUploadCoverImage] = useState(false);
 
   // fetch user
@@ -46,7 +48,6 @@ const AccountModal: FC<ModalProps> = (props) => {
 
   // get user from state
   const user = useAppSelector(selectUserModal);
-
   // handle form
   const onFinish = (values: any) => {
     setIsEditDisplayName(false);
@@ -139,7 +140,7 @@ const AccountModal: FC<ModalProps> = (props) => {
 
             <Image
               width={520}
-              src={user.user_cover_image ? user.user_cover_image : 'error'}
+              src={coverUrl || user.user_cover_image || 'error'}
               fallback="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU"
               className="modal-account__cover-image"
             />
@@ -165,7 +166,7 @@ const AccountModal: FC<ModalProps> = (props) => {
                 size={100}
                 src={
                   <Image
-                    src={user.user_avatar ? user.user_avatar : 'error'}
+                    src={avatarUrl || user.user_avatar || 'error'}
                     fallback="https://app.sabangcollege.ac.in/faculty_image/default.jpg"
                   />
                 }
