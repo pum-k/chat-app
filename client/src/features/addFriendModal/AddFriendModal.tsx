@@ -76,7 +76,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
           <>
             <Image
               width={400}
-              src="error"
+              src={friend.cover || 'error'}
               fallback="http://aimory.vn/wp-content/uploads/2017/10/no-image.png"
               className="modal-add-friend__cover-image"
             />
@@ -85,8 +85,8 @@ const AddFriendModal: FC<ModalProps> = (props) => {
                 size={100}
                 src={
                   <Image
-                    src="error"
-                    fallback="http://aimory.vn/wp-content/uploads/2017/10/no-image.png"
+                    src={friend.avatar || 'error'}
+                    fallback="https://app.sabangcollege.ac.in/faculty_image/default.jpg"
                   />
                 }
                 className="modal-add-friend__avatar"
@@ -121,14 +121,17 @@ const AddFriendModal: FC<ModalProps> = (props) => {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
-            style={{ padding: '1rem' }}
+            style={{ padding: '1rem 1rem 0 1rem' }}
+            layout="vertical"
+
           >
             <Form.Item
+              label="Your friend's phone number"
               name="phoneNumber"
               rules={[{ required: true, message: 'Please input friend username!' }]}
             >
               <Input
-                placeholder="username, Ex: pumk1206"
+                placeholder="0123456789"
                 className="modal-add-friend__search"
                 size="large"
                 onKeyPress={(e: any) => {

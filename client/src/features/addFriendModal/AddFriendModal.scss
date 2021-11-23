@@ -3,9 +3,7 @@
     padding: 0;
   }
   &__search {
-    border: none !important;
-    border-bottom: 1px solid #eee !important;
-
+    border-radius: 5px;
     &:focus {
       box-shadow: none !important;
     }
