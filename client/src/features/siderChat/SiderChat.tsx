@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import { Avatar, Space, List, Tooltip, Button, Typography, Empty } from 'antd';
-import { UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
+import { UserOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
 import { fetchListRoom, selectListRoom, selectListRoomLoading } from './siderChatSlice';
@@ -88,10 +88,12 @@ const SiderChat: FC<Props> = (props) => {
                   >
                     <List.Item.Meta
                       avatar={
-                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                        <Avatar src={item.avatar || 'error'} 
+                        icon={!item.avatar && <UserOutlined />}
+                        />
                       }
-                      title={<p>{item.friend_name}</p>}
-                      description="Ant Design, a design language for background applications, is refined by Ant UED Team, Ant Design, a design language for background applications, is refined by Ant UED Team Ant Design, a design language for background applications, is refined by Ant UED Team"
+                      title={<p>{item.displayName}</p>}
+                      description={item.last_message || `Say hello to ${item.displayName} now!`}
                     />
                   </Link>
                 </List.Item>

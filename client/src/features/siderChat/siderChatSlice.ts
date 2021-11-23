@@ -26,6 +26,7 @@ export const siderChatSlice = createSlice({
     });
     builder.addCase(fetchListRoom.fulfilled, (state, action) => {
       if (action.payload.infoAllRoomChat) {
+        console.log(action.payload)
         state.data = action.payload.infoAllRoomChat;
         state.loading = false;
       }

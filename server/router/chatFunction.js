@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 var users = require("../public/db/schema/User_Schema");
 var RoomChat = require("../public/db/schema/chatroom_Schema");
-
+var moment = require("moment")
 router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
   console.log(req.body);
@@ -53,9 +53,9 @@ router.post("/listChatPage", async (req, res) => {
     for (let i = 0; i < ListRoomChat.length; i++) {
       let eachRoomChat = await RoomChat.find({ _id: ListRoomChat[i] });
       let RoomName = [];
-      let AlltextChat = eachRoomChat[0].textChat
+      let AlltextChat = eachRoomChat[0].textChat;
       // console.log();
-    
+      // let lastMessage = 
       for (let j = 0; j < eachRoomChat[0].MemberName.length; j++) {
         if (eachRoomChat[0].MemberName[j] != user.owners) {
           let name = await users
@@ -74,8 +74,8 @@ router.post("/listChatPage", async (req, res) => {
         friend_name: RoomName[0].username,
         displayName : RoomName[0].displayName,
         avatar: RoomName[0].avatar,
-        room_id: eachRoomChat[0]._id,
-        last_message: AlltextChat[0] != undefined ? AlltextChat[0].line_text : "",
+        room_id: eachRoomChat[0]._id, 
+        last_message: AlltextChat[0] != undefined ? AlltextChat[AlltextChat.length - 1].line_text + " • " + moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow()  : ""
       });
       RoomName=[]
     }
@@ -83,3 +83,4 @@ router.post("/listChatPage", async (req, res) => {
   res.send({ infoAllRoomChat });
 });
 module.exports = router;
+

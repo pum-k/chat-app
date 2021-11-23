@@ -33,8 +33,7 @@ export const contentChatSlice = createSlice({
     },
     sendImage: (state, action) => {
       state.messages.push(action.payload);
-      
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
@@ -55,6 +54,9 @@ export const contentChatSlice = createSlice({
     builder.addCase(renderMessageAsync.fulfilled, (state, action) => {
       if (action.payload.ListMessages) {
         state.messages = action.payload.ListMessages;
+      }
+      if (action.payload.ListMessages === null) {
+        state.messages = [];
       }
     });
   },

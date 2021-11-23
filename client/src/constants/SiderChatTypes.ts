@@ -6,7 +6,7 @@ export type ListRoomChat =  {
 
 export type RoomChatRender = {
     room_id: string;
-    friend_name: string;
-    friend_avatar: any;
+    displayName: string;
+    avatar: any;
     last_message: string;
 }
