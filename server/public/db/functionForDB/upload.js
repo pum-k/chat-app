@@ -7,6 +7,7 @@ const storage = new GridFsStorage({
     "mongodb+srv://administrator:administrator@chatdb.oyaqd.mongodb.net/chatdb?retryWrites=true&w=majority",
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
+    console.log(file);
     const match = ["image/png", "image/jpeg"];
     if (match.indexOf(file.mimetype) === -1) {
       const filename = `${Date.now()}-DuongHuuThang-${file.originalname}`;

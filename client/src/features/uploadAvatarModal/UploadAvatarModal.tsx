@@ -4,7 +4,6 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import './UploadAvatarModal.scss';
 import { userApi } from 'api/userApi';
 
-
 interface Props {
   isModalVisible: boolean;
   setIsModalVisibleClose: () => void;
@@ -61,22 +60,17 @@ const UploadAvatarModal: FC<Props> = (prop) => {
   };
 
   const dummyRequest = ({ file, onSuccess }: any) => {
-    const newFile = {
-      lastModified: file.lastModified,
-      lastModifiedDate: file.lastModifiedDate,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      webkitRelativePath: file.webkitRelativePath,
-    };
-    userApi.updateImage(newFile)
     
+    let data = new FormData();
+    data.append('file', file);
+    data.append('owners', localStorage.getItem('access_token') || '');
+    userApi.updateImage(data);
+    
+
     setTimeout(() => {
       onSuccess('ok');
     }, 0);
   };
-
-
 
   useEffect(() => {
     setImageUrl(undefined);
