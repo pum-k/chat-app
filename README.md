@@ -1,6 +1,6 @@
 # All Feature in The Chat App
 
-1. Registration Page ⚡
+1. Registration Page ✔
 2. Add Contact ⚡
 3. Profile Customization ✔
 4. Messaging ⚡
