@@ -18,7 +18,7 @@ function App() {
   return (
     <div className="App">
       <Suspense fallback={<Spin spinning={loading} tip="Loading..." size="large" />}>
-        <Spin spinning={loading} tip="Loading..." size="large">
+        {/* <Spin spinning={loading} tip="Loading..." size="large"> */}
           <Redirect to="/t" />
           <Switch>
             <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
@@ -48,7 +48,7 @@ function App() {
               <NotFound />
             </Route>
           </Switch>
-        </Spin>
+        {/* </Spin> */}
       </Suspense>
     </div>
     // <UploadAvatarModal isModalVisible={true} setIsModalVisibleClose={() => {}} />

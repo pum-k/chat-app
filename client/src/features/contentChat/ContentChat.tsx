@@ -40,6 +40,7 @@ import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
+import { fetchListRoom } from 'features/siderChat/siderChatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const socket = io('http://localhost:4000');
@@ -186,6 +187,7 @@ const ContentChat = () => {
   useEffect(() => {
     let interval = setInterval(() => {
       dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
       setTime(!time);
     }, 60000);
     return () => {
