@@ -23,6 +23,7 @@ import {
   SendOutlined,
   StopOutlined,
   PhoneFilled,
+  UserOutlined,
   FileImageOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -49,18 +50,22 @@ const ContentChat = () => {
 
   // -> Fetch data
   let location = useLocation();
+  const roomId = location.pathname.slice(3);
   useEffect(() => {
-    const roomId = location.pathname.slice(3);
     localStorage.setItem('room_id', roomId);
     dispatch(joinRoom(socket)); // Join room by id_room
     dispatch(renderMessageAsync());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // ????
-
   // -> get store messages
   const messages = useAppSelector(selectMessages);
+  // -> Info chat box
+  const owner = useAppSelector((state) => state.accountModal.user);
+  const owner_avatar = useAppSelector((state) => state.headerChat.avatar);
+  const your_friend = useAppSelector((state) => state.siderChat.data).filter(
+    (item) => item.room_id === roomId
+  );
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
@@ -78,7 +83,6 @@ const ContentChat = () => {
   // Load more---------------------------------->
   const [elementTh, setElementTh] = useState(11);
   const [hasMoreLoad, setHasMoreLoad] = useState(true);
-
   const [messRender, setMessRender] = useState<Array<messageStructure>>();
 
   const handleLoadMore = async () => {
@@ -137,7 +141,6 @@ const ContentChat = () => {
 
   // <-----------------------------SOCKET.IO
 
-
   // UPLOAD IMG------------------------------->
   const [imageUrl, setImageUrl] = useState();
 
@@ -188,11 +191,14 @@ const ContentChat = () => {
               <Avatar
                 size={40}
                 src={
-                  <Image src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                  <Image
+                    src={your_friend[0].avatar ? your_friend[0].avatar : 'error'}
+                    fallback="https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg"
+                  />
                 }
               />
               <Title level={5} style={{ margin: '0' }}>
-                My friend
+                {your_friend[0].displayName}
               </Title>
               <Badge color={'red'} text={'Offline'} size="small" />
             </Space>
@@ -222,17 +228,11 @@ const ContentChat = () => {
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={
-                        <b>
-                          {item.user_name === localStorage.getItem('owners')
-                            ? 'You'
-                            : item.user_name}
-                        </b>
-                      }
+                      author={<b>{item.user_name === owner.user_name ? 'You' : item.user_name}</b>}
                       avatar={
                         <Avatar
-                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                          alt="Han Solo"
+                          src={item.user_name === owner.user_name ? owner_avatar : item.avatar}
+                          icon={!owner_avatar || !item.avatar ? <UserOutlined /> : null}
                         />
                       }
                       content={
@@ -251,17 +251,15 @@ const ContentChat = () => {
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={
-                        <b>
-                          {item.user_name === localStorage.getItem('owners')
-                            ? 'You'
-                            : item.user_name}
-                        </b>
-                      }
+                      author={<b>{item.user_name === owner.user_name ? 'You' : item.user_name}</b>}
                       avatar={
                         <Avatar
-                          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                          alt="Han Solo"
+                          src={
+                            item.user_name === owner.user_name
+                              ? owner_avatar || owner.user_avatar
+                              : your_friend[0].avatar
+                          }
+                          icon={<UserOutlined />}
                         />
                       }
                       content={<p>{item.line_text}</p>}
