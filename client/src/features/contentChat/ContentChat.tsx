@@ -134,7 +134,7 @@ const ContentChat = () => {
   useEffect(() => {
     // -> when new message
     socket.on('newMessages', () => {
-      // dispatch(renderMessageAsync());
+      dispatch(renderMessageAsync());
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -179,8 +179,20 @@ const ContentChat = () => {
   // <----------------------------------UPLOAD IMG
 
   // BLOCK USER ------------------------>
-  const isBlockUser = true;
+  const isBlockUser = false;
   // <------------------------ BLOCK USER
+  const [time, setTime] = useState(false);
+
+  useEffect(() => {
+    let interval = setInterval(() => {
+      dispatch(renderMessageAsync());
+      setTime(!time);
+    }, 60000);
+    return () => {
+      clearInterval(interval);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time]);
 
   return (
     <div className="content-chat">
