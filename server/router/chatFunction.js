@@ -30,19 +30,18 @@ router.post("/sendMessage", async (req, res) => {
   console.log(newMessage);
 });
 router.post("/listMessages", async (req, res) => {
-  console.log(req.body);
   if (req.body.chatRoom) {
     let ListMessages = await RoomChat.find({ _id: req.body.chatRoom })
       .lean()
       .exec();
     // console.log(ListMessages);
+    // let ortherUser = await  
     if (ListMessages[0].textChat.length > 0) {
       res.send({ ListMessages: ListMessages[0].textChat });
     } else {
       res.send({ ListMessages: null });
     }
   }
-  console.log(req.body.chatRoom);
 });
 router.post("/listChatPage", async (req, res) => {
   let user = req.body;
@@ -54,9 +53,9 @@ router.post("/listChatPage", async (req, res) => {
     for (let i = 0; i < ListRoomChat.length; i++) {
       let eachRoomChat = await RoomChat.find({ _id: ListRoomChat[i] });
       let RoomName = [];
-      if (i == 0 && ListRoomChat[i]) {
-        ChatMessageFirstRoom = eachRoomChat[0].textChat;
-      }
+      let AlltextChat = eachRoomChat[0].textChat
+      // console.log();
+    
       for (let j = 0; j < eachRoomChat[0].MemberName.length; j++) {
         if (eachRoomChat[0].MemberName[j] != user.owners) {
           let name = await users
@@ -76,6 +75,7 @@ router.post("/listChatPage", async (req, res) => {
         displayName : RoomName[0].displayName,
         avatar: RoomName[0].avatar,
         room_id: eachRoomChat[0]._id,
+        last_message: AlltextChat[0] != undefined ? AlltextChat[0].line_text : "",
       });
       RoomName=[]
     }
