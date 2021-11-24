@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { message } from 'antd';
 import { userApi } from 'api/userApi';
 import { RootState } from 'app/store';
 import { AccountModal } from 'constants/accountModalTypes';
@@ -64,6 +65,7 @@ export const accountModalSlice = createSlice({
     });
     builder.addCase(updateUserModal.fulfilled, (state, action) => {
       if (action.payload) {
+        message.success('Update infomation successfully!')
         let user = {
           user_cover_image: action.payload.data.cover_image || state.user.user_cover_image,
           user_avatar: action.payload.data.user_avatar || state.user.user_avatar,

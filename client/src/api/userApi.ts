@@ -70,4 +70,14 @@ export const userApi = {
         console.log(error);
       });
   },
+  updateCover: (params: any) => {
+    return axios
+      .post(`http://localhost:4000/user/setCoverImage`, params)
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
 };

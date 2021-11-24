@@ -6,4 +6,6 @@ export type FriendTypes = {
   birthday: String;
   loadding: boolean;
   isSuccess: boolean;
+  avatar: string;
+  cover: string;
 };
