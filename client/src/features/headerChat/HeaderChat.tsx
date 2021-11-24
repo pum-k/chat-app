@@ -5,7 +5,13 @@ import { useEffect, useState } from 'react';
 import './HeaderChat.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
-import { acceptRequest, denyRequest, fetchListPending, fetchListRequest, removeRequest } from './headerChatSlice';
+import {
+  acceptRequest,
+  denyRequest,
+  fetchListPending,
+  fetchListRequest,
+  removeRequest,
+} from './headerChatSlice';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 
 const { Title, Text } = Typography;
@@ -61,7 +67,16 @@ const HeaderChat = () => {
     dispatch(fetchListPending());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(listPending);
+
+  const [numberOfNotifications, setNumberOfNotifications] = useState(0);
+  useEffect(() => {
+    if(listPending.length > 0 || listRequest.length > 0) setNumberOfNotifications(listPending.length + listRequest.length);
+    console.log(listPending)
+  }, [listRequest,listPending ])
+
+  const offNumberOfNotifications = () => {
+    if (numberOfNotifications !== 0) setNumberOfNotifications(0);
+  };
 
   const menu = (
     <Menu>
@@ -96,9 +111,9 @@ const HeaderChat = () => {
       {listRequest &&
         listRequest.map((item, index) => {
           return (
-            <Menu.Item key="0">
+            <Menu.Item>
               <Space>
-                <Avatar src={item.avatar} icon={<UserOutlined />}/>
+                <Avatar src={item.avatar} icon={<UserOutlined />} />
                 <Text>
                   <b>{item.displayName || item.username}</b> wants to be friends with you
                 </Text>
@@ -123,6 +138,20 @@ const HeaderChat = () => {
                     Deny
                   </Button>
                 </Space>
+              </Space>
+            </Menu.Item>
+          );
+        })}
+      {listPending &&
+        listPending.map((item) => {
+          return (
+            <Menu.Item>
+              <Space>
+                <Avatar src={item.avatar} icon={<UserOutlined />} />
+                <Text>
+                  <b>{item.displayName || item.username}</b> has accepted your friend request, let
+                  them agree!
+                </Text>
               </Space>
             </Menu.Item>
           );
@@ -154,21 +183,23 @@ const HeaderChat = () => {
               <Dropdown
                 overlay={menuNotification}
                 trigger={['click']}
-                disabled={listRequest.length === 0}
+                disabled={!listRequest && !listPending}
               >
-                <Badge count={listRequest.length} offset={[-5, 5]}>
-                  <Avatar
-                    size={50}
-                    src={
-                      <Image
-                        preview={false}
-                        src={avatarUrl || InfoUser.user_avatar || 'error'}
-                        fallback="https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg"
-                      />
-                    }
-                    style={{ border: '1px solid #fff', cursor: 'pointer' }}
-                  />
-                </Badge>
+                <div onClick={() => offNumberOfNotifications()}>
+                  <Badge count={numberOfNotifications} offset={[-5, 5]}>
+                    <Avatar
+                      size={50}
+                      src={
+                        <Image
+                          preview={false}
+                          src={avatarUrl || InfoUser.user_avatar || 'error'}
+                          fallback="https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg"
+                        />
+                      }
+                      style={{ border: '1px solid #fff', cursor: 'pointer' }}
+                    />
+                  </Badge>
+                </div>
               </Dropdown>
               <section>
                 <Title level={5} style={{ marginBottom: '0px', color: 'white' }}>

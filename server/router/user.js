@@ -90,6 +90,27 @@ router.post("/allRequestAddFriend", async (req, res) => {
     res.send({ isSuccess: false });
   }
 });
+router.post("/allPendingFriend", async (req, res) => {
+  let request = req.body;
+  let PendingAddFriend = [];
+  let findInfo = await user.find({ _id: request.owners }).lean().exec();
+  if (findInfo.length > 0) {
+    let AllRequest = findInfo[0].peddingRequests;
+    if (AllRequest)
+      for (let i = 0; i < AllRequest.length; i++) {
+        let eachUser = await user.find({ _id: AllRequest[i] }).lean().exec();
+        PendingAddFriend.push({
+          username: eachUser[0].username,
+          displayName: eachUser[0].displayName,
+          avatar: eachUser[0].avatar,
+          phoneNumber: eachUser[0].phoneNumber,
+        });
+      }
+    res.send(PendingAddFriend);
+  } else {
+    res.send({ isSuccess: false });
+  }
+});
 router.post("/denyAcceptAddFriend", async (req, res) => {
   let newFriendAdd = req.body;
   console.log(newFriendAdd);

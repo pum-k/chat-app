@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { message } from 'antd';
 import { friendApi } from 'api/friendAPI';
 const initialState = {
+  listPending: [],
   listRequest: [],
   avatar: '',
   cover: ''
@@ -9,6 +10,10 @@ const initialState = {
 
 export const fetchListRequest = createAsyncThunk('friend/list-request', async () => {
   const response: any = await friendApi.listRequest();
+  return response.data;
+});
+export const fetchListPending = createAsyncThunk('friend/list-Pending', async () => {
+  const response: any = await friendApi.listPending();
   return response.data;
 });
 
@@ -39,6 +44,9 @@ const headerChatSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchListRequest.fulfilled, (state, action) => {
       state.listRequest = action.payload
+    });
+    builder.addCase(fetchListPending.fulfilled, (state, action) => {
+      state.listPending = action.payload
     });
     builder.addCase(acceptRequest.fulfilled, (state, action) => {
       if(action.payload.isSuccess) message.success("Add successfully!");

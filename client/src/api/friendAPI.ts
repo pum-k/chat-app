@@ -43,6 +43,18 @@ export const friendApi = {
         console.log(error);
       });
   },
+  listPending: () => {
+    return axios
+      .post(`http://localhost:4000/user/allPendingFriend`, {
+        owners: localStorage.getItem('access_token')
+      })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
   acceptRequest: (params: string  ) => {
     return axios
       .post(`http://localhost:4000/user/acceptAddFriend`, {
