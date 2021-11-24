@@ -59,21 +59,6 @@ const SiderChat: FC<Props> = (props) => {
         handleCancel={handleCancelAddFriend}
       />
       <section className="sider-chat">
-        <div className="sider-chat__header">
-          <Space>
-            <Title level={4} style={{ margin: '0' }}>
-              Chat now with your friends or
-            </Title>
-            <Tooltip title="Add friend">
-              <Button
-                type="text"
-                shape="circle"
-                icon={<UserAddOutlined />}
-                onClick={() => showModalAddFriend()}
-              />
-            </Tooltip>
-          </Space>
-        </div>
         <div className="sider-chat__list-chater">
           {rooms.length > 0 ? (
             <List

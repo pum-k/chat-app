@@ -1,19 +1,19 @@
 import AccountModal from 'features/accountModal/AccountModal';
 import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
-import { MoreOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { MoreOutlined, UserOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import './HeaderChat.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
-import { acceptRequest, denyRequest, fetchListRequest, removeRequest } from './headerChatSlice';
-import { time } from 'console';
+import { acceptRequest, denyRequest, fetchListPending, fetchListRequest, removeRequest } from './headerChatSlice';
+import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 
 const { Title, Text } = Typography;
 
 const HeaderChat = () => {
   const dispatch = useAppDispatch();
 
-  const avatarUrl = useAppSelector(state => state.headerChat.avatar);
+  const avatarUrl = useAppSelector((state) => state.headerChat.avatar);
 
   const [isModalVisibleAccount, setIsModalVisibleAccount] = useState(false);
   const showModalAccount = () => {
@@ -27,20 +27,49 @@ const HeaderChat = () => {
   const handleCancelAccount = () => {
     setIsModalVisibleAccount(false);
   };
+
+  const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
+
+  const showModalAddFriend = () => {
+    setIsModalVisibleAddFriend(true);
+  };
+
+  const handleOkAddFriend = () => {
+    setIsModalVisibleAddFriend(false);
+  };
+
+  const handleCancelAddFriend = () => {
+    setIsModalVisibleAddFriend(false);
+  };
+
   const InfoUser = useAppSelector(selectUserModal);
   const loading = useAppSelector(selectUserUpdate);
   const listRequest: Array<{
     avatar: string;
     phoneNumber: string;
     username: string;
+    displayName: string;
   }> = useAppSelector((state) => state.headerChat.listRequest);
+  const listPending: Array<{
+    avatar: string;
+    phoneNumber: string;
+    username: string;
+    displayName: string;
+  }> = useAppSelector((state) => state.headerChat.listPending);
   useEffect(() => {
     dispatch(fetchListRequest());
+    dispatch(fetchListPending());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  console.log(listPending);
 
   const menu = (
     <Menu>
+      <Menu.Item>
+        <Button type="text" icon={<UserAddOutlined />} onClick={() => showModalAddFriend()}>
+          Add new friend
+        </Button>
+      </Menu.Item>
       <Menu.Item>
         <Button type="text" icon={<UserOutlined />} onClick={() => showModalAccount()}>
           Account
@@ -69,8 +98,9 @@ const HeaderChat = () => {
           return (
             <Menu.Item key="0">
               <Space>
+                <Avatar src={item.avatar} icon={<UserOutlined />}/>
                 <Text>
-                  <b>{item.username}</b> wants to be friends with you
+                  <b>{item.displayName || item.username}</b> wants to be friends with you
                 </Text>
                 <Space>
                   <Button
@@ -102,6 +132,12 @@ const HeaderChat = () => {
 
   return (
     <>
+      <AddFriendModal
+        isModalVisible={isModalVisibleAddFriend}
+        setIsModalVisible={setIsModalVisibleAddFriend}
+        handleOk={handleOkAddFriend}
+        handleCancel={handleCancelAddFriend}
+      />
       <AccountModal
         isModalVisible={isModalVisibleAccount}
         setIsModalVisible={setIsModalVisibleAccount}

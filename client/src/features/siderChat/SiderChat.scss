@@ -25,32 +25,8 @@
       white-space: nowrap;
     }
   }
-
-  &__header {
-    width: 100%;
-    height: 10%;
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    &__search {
-      width: 70% !important;
-
-      & button {
-        background-color: #f857a6;
-        border-color: #f857a6;
-
-        &:hover {
-          background-color: #f857a5cc;
-          border-color: #f857a5cc;
-        }
-      }
-    }
-  }
   &__list-chater {
-    height: 90%;
+    height: 100%;
     width: 100%;
     overflow: auto;
     position: relative;
