@@ -74,8 +74,9 @@ router.post("/listChatPage", async (req, res) => {
         friend_name: RoomName[0].username,
         displayName : RoomName[0].displayName,
         avatar: RoomName[0].avatar,
-        room_id: eachRoomChat[0]._id, 
-        last_message: AlltextChat[0] != undefined ? AlltextChat[AlltextChat.length - 1].line_text + " • " + moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow()  : ""
+        room_id: eachRoomChat[0]._id,
+        time: moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow(),
+        last_message:  AlltextChat[0] != undefined ? RoomName[0].displayName +': ' + AlltextChat[AlltextChat.length - 1].line_text  : ""
       });
       RoomName=[]
     }

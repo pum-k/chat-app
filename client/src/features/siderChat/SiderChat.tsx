@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface Props {
   onLoading: () => void;
@@ -73,12 +73,31 @@ const SiderChat: FC<Props> = (props) => {
                   >
                     <List.Item.Meta
                       avatar={
-                        <Avatar src={item.avatar || 'error'} 
-                        icon={!item.avatar && <UserOutlined />}
+                        <Avatar
+                          src={item.avatar || 'error'}
+                          icon={!item.avatar && <UserOutlined />}
                         />
                       }
-                      title={<p>{item.displayName}</p>}
-                      description={item.last_message || `Say hello to ${item.displayName} now!`}
+                      title={<p>{`${item.displayName}`}</p>}
+                      description={
+                        item.last_message ? (
+                          <Space>
+                            <p
+                              style={{
+                                maxWidth: '165px',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {item.last_message}
+                            </p>
+                            <p>• {item.time}</p>
+                          </Space>
+                        ) : (
+                          `Say hello to ${item.displayName} now!`
+                        )
+                      }
                     />
                   </Link>
                 </List.Item>

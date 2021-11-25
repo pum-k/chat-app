@@ -9,4 +9,5 @@ export type RoomChatRender = {
     displayName: string;
     avatar: any;
     last_message: string;
+    time: string;
 }
