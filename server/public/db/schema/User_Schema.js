@@ -20,5 +20,4 @@ const User = new Schema(
   { collection: "users" }
 );
 
-// const DonHang = ;
 module.exports = mongoose.model("users", User);
