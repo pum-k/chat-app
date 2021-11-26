@@ -268,8 +268,9 @@ router.post("/listFriend", async (req, res) => {
       friends.push({
         _id: infoOfEachFriend[0]._id,
         phoneNumber: infoOfEachFriend[0].phoneNumber,
-        avatar: infoOfEachFriend[0].avatar || '', 
-        displayName: infoOfEachFriend[0].displayName || infoOfEachFriend[0].username,
+        avatar: infoOfEachFriend[0].avatar || "",
+        displayName:
+          infoOfEachFriend[0].displayName || infoOfEachFriend[0].username,
       });
     }
   }
@@ -279,7 +280,37 @@ router.post("/listFriend", async (req, res) => {
     res.send({ isSuccess: false });
   }
 });
+router.post("/unfriend", async (req, res) => {
+  let request = req.body;
+  await user.updateOne(
+    { _id: request.owners },
+    { $pull: { friends: request.nameUnfriend } }
+  );
+  await user.updateOne(
+    { _id: request.nameUnfriend },
+    { $pull: { friends: request.owners } }
+  );
 
+  let result = await RoomChat.find({
+    $and: [
+      { MemberName: { $in: [request.owners] } },
+      { MemberName: { $in: [request.nameUnfriend] } },
+    ],
+  });
+  if (result.length > 0) {
+    await user.updateOne(
+      { _id: request.owners },
+      { $pull: { RoomChatId: result[0]._id } }
+    );
+    await user.updateOne(
+      { _id: request.nameUnfriend },
+      { $pull: { RoomChatId: result[0]._id } }
+    );
+    await RoomChat.deleteOne({ _id: result[0]._id });
+  }
+  res.send({ isSuccess: true });
+});
 
+router.post("");
 
 module.exports = router;
