@@ -51,7 +51,7 @@ function App() {
         {/* </Spin> */}
       </Suspense>
     </div>
-    // <UploadAvatarModal isModalVisible={true} setIsModalVisibleClose={() => {}} />
+    
   );
 }
 
