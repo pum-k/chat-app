@@ -2,7 +2,9 @@ var express = require("express");
 var router = express.Router();
 var users = require("../public/db/schema/User_Schema");
 var RoomChat = require("../public/db/schema/chatroom_Schema");
+var upload = require("../public/db/functionForDB/upload")
 var moment = require("moment")
+let PORT = process.env.PORT || "http://localhost:4000";
 router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
   console.log(req.body);
@@ -22,13 +24,42 @@ router.post("/sendMessage", async (req, res) => {
           line_text: req.body.line_text,
           user_name: people.username,
           createAt: Date.now(),
+          type: "text"
         },
       },
     }
   );
   res.send({ sendSuccess: true });
   console.log(newMessage);
-});
+}); 
+router.post("/sendImage", upload.single("file") , async (req, res) => {
+  var io = req.app.get("socketio");
+  let people = await users.findById({ _id: req.body.id });
+  if (req.file === undefined) return res.send({isSuccess: false});
+  const imgUrl = `${PORT}/photo/${req.file.filename}`;
+  let newMessage = {
+    message: imgUrl,
+    user_name: people.username,
+    create_at: people.createAt,
+    user_Id: people._id,
+  };
+  io.to(req.body.room_id).emit("newMessages", newMessage);
+  await RoomChat.findByIdAndUpdate(
+    { _id: req.body.room_id },
+    {
+      $push: {
+        textChat: {
+          line_text: imgUrl,
+          user_name: people.username,
+          createAt: Date.now(),
+          type: "image"
+        },
+      },
+    }
+  );
+  res.send({ sendSuccess: true });
+  console.log(newMessage);
+}); 
 router.post("/listMessages", async (req, res) => {
   if (req.body.chatRoom) {
     let ListMessages = await RoomChat.find({ _id: req.body.chatRoom })
