@@ -1,11 +1,11 @@
 import { LoginInput } from 'constants/AccountTypes';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { message, Space, Typography } from 'antd';
+import { message, Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { authLogin, removeError } from 'features/auth/authSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { selectLoadingAuth, selectErrorAuth } from 'features/auth/authSlice';
 
 const { Text } = Typography;
@@ -30,22 +30,20 @@ const Login = () => {
   const loading = useAppSelector(selectLoadingAuth);
   const error = useAppSelector(selectErrorAuth);
 
-
-
-  let key = 'login'
+  let key = 'login';
   useEffect(() => {
     if (error) {
       message.error({ content: `${error}`, key, duration: 2 });
       dispatch(removeError());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
   useEffect(() => {
-    if(loading) {
+    if (loading) {
       message.loading({ content: 'Loading...', key });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   return (
     <div className="login-layout">
@@ -91,9 +89,6 @@ const Login = () => {
                 className="login__content__input"
                 autoComplete="off"
               />
-              <Space>
-                <Link to="/forgot-password">Forgot your password?</Link>
-              </Space>
             </section>
 
             <input type="submit" value="Login" className="login__content__btn" />
