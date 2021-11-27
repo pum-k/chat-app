@@ -1,7 +1,7 @@
 import AccountModal from 'features/accountModal/AccountModal';
 import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import './HeaderChat.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
@@ -12,11 +12,15 @@ import {
   fetchListRequest,
   removeRequest,
 } from './headerChatSlice';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
+import { Socket } from 'socket.io-client';
 
 const { Title, Text } = Typography;
 
-const HeaderChat = () => {
+const HeaderChat:FC<{socket:Socket<DefaultEventsMap, DefaultEventsMap> }> = (props) => {
+  const {socket} = props; 
+  console.log(socket);
   const dispatch = useAppDispatch();
 
   const avatarUrl = useAppSelector((state) => state.headerChat.avatar);
@@ -50,7 +54,7 @@ const HeaderChat = () => {
 
   const InfoUser = useAppSelector(selectUserModal);
   const loading = useAppSelector(selectUserUpdate);
-  
+
   const listRequest: Array<{
     avatar: string;
     phoneNumber: string;
@@ -72,7 +76,6 @@ const HeaderChat = () => {
   const [numberOfNotifications, setNumberOfNotifications] = useState(0);
   useEffect(() => {
     if(listPending.length > 0 || listRequest.length > 0) setNumberOfNotifications(listPending.length + listRequest.length);
-    console.log(listPending)
   }, [listRequest,listPending ])
 
   const offNumberOfNotifications = () => {

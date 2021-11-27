@@ -21,39 +21,35 @@ function App() {
     <div className="App">
       <Suspense fallback={<Spin spinning={loading} tip="Loading..." size="large" />}>
         {/* <Spin spinning={loading} tip="Loading..." size="large"> */}
-          <Redirect to="/t" />
-          <Switch>
-            <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
-              <HeaderChat />
-              <div style={{ display: 'flex', width: '100%' }}>
-                <SiderChat
-                  onLoading={() => setLoading(true)}
-                  offLoading={() => setLoading(false)}
-                />
-                <Switch>
-                  <Route path="/t/:room">
-                    <ContentChat socket={socket}/>
-                  </Route>
-                </Switch>
-              </div>
-            </PrivateRoute>
+        <Redirect to="/t" />
+        <Switch>
+          <PrivateRoute isAuthenticated={isAuthenticated} authenticationPath="/login" path="/t">
+            <HeaderChat socket={socket} />
+            <div style={{ display: 'flex', width: '100%' }}>
+              <SiderChat onLoading={() => setLoading(true)} offLoading={() => setLoading(false)} />
+              <Switch>
+                <Route path="/t/:room">
+                  <ContentChat socket={socket} />
+                </Route>
+              </Switch>
+            </div>
+          </PrivateRoute>
 
-            <Route path="/login">
-              <Login />
-            </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
 
-            <Route path="/register">
-              <Register />
-            </Route>
+          <Route path="/register">
+            <Register />
+          </Route>
 
-            <Route path="*">
-              <NotFound />
-            </Route>
-          </Switch>
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
         {/* </Spin> */}
       </Suspense>
     </div>
-    
   );
 }
 

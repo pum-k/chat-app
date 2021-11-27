@@ -35,7 +35,6 @@ import {
   selectMessages,
   sendImage,
   sendMessageAsync,
-  unFriendAsync,
 } from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
@@ -46,6 +45,7 @@ import {
   blockUserAsync,
   fetchListRoom,
   unBlockUserAsync,
+  unFriendAsync,
   updateBlock,
 } from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
@@ -199,8 +199,6 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
           user_name: 'You',
           type: 'image',
         };
-        console.log(newMessage);
-
         dispatch(sendImage(newMessage));
       });
     }
@@ -212,18 +210,18 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
 
   // BLOCK USER ------------------------>
 
-  const isBlockUser = false;
+  const isBlockUser = useAppSelector(state => state.siderChat.data.filter(item => item.room_id === roomId)[0].isBlock);
   const handleBlockUser = () => {
     const params = {
       owners: localStorage.getItem('access_token'),
       room_id: roomId,
     };
     if (!isBlockUser) {
-      // dispatch(blockUserAsync(params));
-      dispatch(updateBlock(roomId));
+      dispatch(blockUserAsync(params));
+      
     } else {
-      // dispatch(unBlockUserAsync(params));
-      dispatch(updateBlock(roomId));
+      dispatch(unBlockUserAsync(params));
+   
     }
   };
   // <------------------------ BLOCK USER
@@ -249,13 +247,14 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   const handleUnfriend = () => {
     const owners = localStorage.getItem('access_token');
     const nameUnfriend = siderData.filter((item) => item.room_id === roomId)[0].friend_name;
-
+    const indexRoom = siderData.findIndex((item) => item.room_id === roomId)
     const params = {
       owners,
       nameUnfriend,
+      indexRoom
     };
 
-    dispatch(unFriendAsync(params));
+    // dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
 
@@ -371,7 +370,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
                       ? "You have been blocked by this user. You can't text now!"
                       : 'Chat now...'
                   }
-                  disabled={isBlockUser}
+                  disabled={Boolean(isBlockUser)}
                   onKeyPress={(e: any) => {
                     chatEnterSubmit(e);
                   }}
@@ -383,7 +382,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
                       showUploadList={false}
                       customRequest={dummyRequest}
                       onChange={handleChangeUpload}
-                      disabled={isBlockUser}
+                      disabled={Boolean(isBlockUser)}
                       beforeUpload={beforeUpload}
                     >
                       <FileImageOutlined />
