@@ -210,7 +210,9 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
 
   // BLOCK USER ------------------------>
 
-  const isBlockUser = useAppSelector(state => state.siderChat.data.filter(item => item.room_id === roomId)[0].isBlock);
+  const isBlockUser = useAppSelector(
+    (state) => state.siderChat.data.filter((item) => item.room_id === roomId)[0].isBlock
+  );
   const handleBlockUser = () => {
     const params = {
       owners: localStorage.getItem('access_token'),
@@ -218,10 +220,8 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
     };
     if (!isBlockUser) {
       dispatch(blockUserAsync(params));
-      
     } else {
       dispatch(unBlockUserAsync(params));
-   
     }
   };
   // <------------------------ BLOCK USER
@@ -247,14 +247,12 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   const handleUnfriend = () => {
     const owners = localStorage.getItem('access_token');
     const nameUnfriend = siderData.filter((item) => item.room_id === roomId)[0].friend_name;
-    const indexRoom = siderData.findIndex((item) => item.room_id === roomId)
     const params = {
       owners,
       nameUnfriend,
-      indexRoom
     };
 
-    // dispatch(unFriendAsync(params));
+    dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
 

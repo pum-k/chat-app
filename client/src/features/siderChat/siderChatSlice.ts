@@ -33,7 +33,7 @@ export const unBlockUserAsync = createAsyncThunk(
 
 export const unFriendAsync = createAsyncThunk(
   'user/un-friend-user',
-  async (params: { owners: string | null, nameUnfriend: string, indexRoom: number}) => {
+  async (params: { owners: string | null, nameUnfriend: string}) => {
     const response: any = await userApi.unFriend(params);
     return response.data;
   }
@@ -109,7 +109,7 @@ export const siderChatSlice = createSlice({
       if (action.payload.isSuccess) {
         setTimeout(() => {
           message.success('Unfriend successfully!');
-          window.location.reload();
+          window.location.href ="http://localhost:3000/t";
         }, 500);
       }
     });
