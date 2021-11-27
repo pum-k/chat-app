@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -30,26 +30,31 @@ import {
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
 import {
-  blockUserAsync,
   joinRoom,
   renderMessageAsync,
   selectMessages,
   sendImage,
   sendMessageAsync,
-  unBlockUserAsync,
   unFriendAsync,
 } from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
-import { fetchListRoom } from 'features/siderChat/siderChatSlice';
+import {
+  blockUserAsync,
+  fetchListRoom,
+  unBlockUserAsync,
+  updateBlock,
+} from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title } = Typography;
 const { Panel } = Collapse;
-const socket = io('http://localhost:4000');
-const ContentChat = () => {
+const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (props) => {
+  const { socket } = props;
+
   // REDUX--------------------------->
   // -> Declare
   const dispatch = useAppDispatch();
@@ -143,10 +148,9 @@ const ContentChat = () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoom());
     });
-    socket.on('addFriendRequest', (data:any)=> {
+    socket.on('addFriendRequest', (data: any) => {
       console.log(data);
-      
-    })
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -208,15 +212,19 @@ const ContentChat = () => {
 
   // BLOCK USER ------------------------>
 
-  const isBlockUser = useAppSelector((state) => state.contentChat.isBlock);
+  const isBlockUser = false;
   const handleBlockUser = () => {
-    console.log(`run`);
     const params = {
       owners: localStorage.getItem('access_token'),
       room_id: roomId,
     };
-    if (!isBlockUser) dispatch(blockUserAsync(params));
-    else dispatch(unBlockUserAsync(params));
+    if (!isBlockUser) {
+      // dispatch(blockUserAsync(params));
+      dispatch(updateBlock(roomId));
+    } else {
+      // dispatch(unBlockUserAsync(params));
+      dispatch(updateBlock(roomId));
+    }
   };
   // <------------------------ BLOCK USER
 

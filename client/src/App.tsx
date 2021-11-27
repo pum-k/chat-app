@@ -8,12 +8,14 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import { Spin } from 'antd';
 import { lazy, Suspense, useState } from 'react';
+import { io } from 'socket.io-client';
 
 const ContentChat = lazy(() => import('./features/contentChat/ContentChat'));
 
 function App() {
   const isAuthenticated = Boolean(localStorage.getItem('access_token'));
   const [loading, setLoading] = useState(false);
+  const socket = io('http://localhost:4000');
 
   return (
     <div className="App">
@@ -30,7 +32,7 @@ function App() {
                 />
                 <Switch>
                   <Route path="/t/:room">
-                    <ContentChat />
+                    <ContentChat socket={socket}/>
                   </Route>
                 </Switch>
               </div>
