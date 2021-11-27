@@ -50,6 +50,7 @@ const HeaderChat = () => {
 
   const InfoUser = useAppSelector(selectUserModal);
   const loading = useAppSelector(selectUserUpdate);
+  
   const listRequest: Array<{
     avatar: string;
     phoneNumber: string;

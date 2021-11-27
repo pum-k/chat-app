@@ -7,14 +7,15 @@ var moment = require("moment");
 let PORT = process.env.PORT || "http://localhost:4000";
 router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
-  console.log(req.body);
   let people = await users.findById({ _id: req.body.id });
   let newMessage = {
     message: req.body.line_text,
+    displayName: people.displayName,
     user_name: people.username,
     create_at: people.createAt,
     user_Id: people._id,
   };
+  console.log(people);
   io.to(req.body.room_id).emit("newMessages", newMessage);
   await RoomChat.findByIdAndUpdate(
     { _id: req.body.room_id },
@@ -22,6 +23,7 @@ router.post("/sendMessage", async (req, res) => {
       $push: {
         textChat: {
           line_text: req.body.line_text,
+          displayName: people.displayName,
           user_name: people.username,
           createAt: Date.now(),
           type: "text",
@@ -34,12 +36,14 @@ router.post("/sendMessage", async (req, res) => {
 });
 router.post("/sendImage", upload.single("file"), async (req, res) => {
   var io = req.app.get("socketio");
+  console.log(req.body.id);
   let people = await users.findById({ _id: req.body.id });
   if (req.file === undefined) return res.send({ isSuccess: false });
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
   let newMessage = {
     message: imgUrl,
     user_name: people.username,
+    displayName: people.displayName,
     create_at: people.createAt,
     user_Id: people._id,
   };
@@ -50,6 +54,7 @@ router.post("/sendImage", upload.single("file"), async (req, res) => {
       $push: {
         textChat: {
           line_text: imgUrl,
+          displayName: people.displayName,
           user_name: people.username,
           createAt: Date.now(),
           type: "image",
@@ -68,7 +73,9 @@ router.post("/listMessages", async (req, res) => {
     // console.log(ListMessages);
     // let ortherUser = await
     if (ListMessages[0].textChat.length > 0) {
-      res.send({ ListMessages: ListMessages[0].textChat });
+      res.send({ ListMessages: ListMessages[0].textChat ,
+        isBlock : ListMessages[0].isBlock,
+      });
     } else {
       res.send({ ListMessages: null });
     }
@@ -100,20 +107,22 @@ router.post("/listChatPage", async (req, res) => {
           });
         }
       }
+      console.log(AlltextChat[AlltextChat.length - 1]);
       infoAllRoomChat.push({
         friend_name: RoomName[0].username,
         displayName: RoomName[0].displayName,
         avatar: RoomName[0].avatar,
         room_id: eachRoomChat[0]._id,
         isBlock: eachRoomChat[0].isBlock,
-        time: moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow(),
+        time:   AlltextChat[0] != undefined && moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow() ,
         last_message:
           AlltextChat[0] != undefined
-            ? RoomName[0].displayName +
+            ? AlltextChat[AlltextChat.length - 1].displayName + ": " + AlltextChat[AlltextChat.length - 1].line_text || AlltextChat[0].user_name+
               ": " +
               AlltextChat[AlltextChat.length - 1].line_text
             : "",
       });
+
       RoomName = [];
     }
   }
@@ -150,7 +159,6 @@ router.post("/unBlockRoom", async (req, res) => {
           if (!err) {
             res.send({ isSuccess: true });
           }
-        
         }
       );
     }

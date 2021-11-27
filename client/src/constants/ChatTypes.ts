@@ -11,6 +11,7 @@ export interface ChatState {
   messages: Array<messageStructure>,
   loading: boolean,
   listRoomChat: Array<RoomChatStructure>,
+  isBlock: boolean;
 }
 
 export interface RoomChatStructure {

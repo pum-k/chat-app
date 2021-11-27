@@ -80,4 +80,44 @@ export const userApi = {
         console.log(error);
       });
   },
+  blockUser: (params: any) => {
+    return axios
+      .post(`http://localhost:4000/chat/blockRoom`, params)
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  unBlockUser: (params: any) => {
+    return axios
+      .post(`http://localhost:4000/chat/unBlockRoom`, params)
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  unFriend: (params: {owners: string | null, nameUnfriend: string}) => {
+    return axios
+      .post(`http://localhost:4000/user/unfriend`, params)
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  sendImage: (params: any) => {
+    return axios
+      .post(`http://localhost:4000/chat/sendImage`, params)
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 };

@@ -137,6 +137,10 @@
 
       transition: 0.3s;
 
+      &--block {
+        color: red;
+      }
+
       & > p {
         margin: 0 1rem;
       }

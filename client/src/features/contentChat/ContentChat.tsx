@@ -17,6 +17,7 @@ import {
   Upload,
   Row,
   Col,
+  message,
 } from 'antd';
 import {
   BellOutlined,
@@ -29,11 +30,14 @@ import {
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
 import {
+  blockUserAsync,
   joinRoom,
   renderMessageAsync,
   selectMessages,
   sendImage,
   sendMessageAsync,
+  unBlockUserAsync,
+  unFriendAsync,
 } from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
@@ -41,6 +45,7 @@ import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
 import { fetchListRoom } from 'features/siderChat/siderChatSlice';
+import { userApi } from 'api/userApi';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const socket = io('http://localhost:4000');
@@ -136,14 +141,18 @@ const ContentChat = () => {
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
     });
+    socket.on('addFriendRequest', (data:any)=> {
+      console.log(data);
+      
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // <-----------------------------SOCKET.IO
 
   // UPLOAD IMG------------------------------->
-  const [imageUrl, setImageUrl] = useState();
 
   function getBase64(img: any, callback: any) {
     const reader = new FileReader();
@@ -151,7 +160,24 @@ const ContentChat = () => {
     reader.readAsDataURL(img);
   }
 
+  function beforeUpload(file: any) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  }
+
   const dummyRequest = ({ file, onSuccess }: any) => {
+    let data = new FormData();
+    data.append('file', file);
+    data.append('id', localStorage.getItem('access_token') || '');
+    data.append('room_id', roomId);
+    userApi.sendImage(data);
     setTimeout(() => {
       onSuccess('ok');
     }, 0);
@@ -167,8 +193,9 @@ const ContentChat = () => {
           createAt: Date.now(),
           line_text: String(imageUrl),
           user_name: 'You',
-          type: 'img',
+          type: 'image',
         };
+        console.log(newMessage);
 
         dispatch(sendImage(newMessage));
       });
@@ -180,8 +207,20 @@ const ContentChat = () => {
   // <----------------------------------UPLOAD IMG
 
   // BLOCK USER ------------------------>
-  const isBlockUser = false;
+
+  const isBlockUser = useAppSelector((state) => state.contentChat.isBlock);
+  const handleBlockUser = () => {
+    console.log(`run`);
+    const params = {
+      owners: localStorage.getItem('access_token'),
+      room_id: roomId,
+    };
+    if (!isBlockUser) dispatch(blockUserAsync(params));
+    else dispatch(unBlockUserAsync(params));
+  };
   // <------------------------ BLOCK USER
+
+  // Real-time moment ------------------->
   const [time, setTime] = useState(false);
 
   useEffect(() => {
@@ -193,8 +232,24 @@ const ContentChat = () => {
     return () => {
       clearInterval(interval);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
+  // <--------------------------Real-time moment
+
+  // Unfriend --------------------->
+  const siderData = useAppSelector((state) => state.siderChat.data);
+  const handleUnfriend = () => {
+    const owners = localStorage.getItem('access_token');
+    const nameUnfriend = siderData.filter((item) => item.room_id === roomId)[0].friend_name;
+
+    const params = {
+      owners,
+      nameUnfriend,
+    };
+
+    dispatch(unFriendAsync(params));
+  };
+  // <----------------------- Unfriend
 
   return (
     <div className="content-chat">
@@ -236,7 +291,7 @@ const ContentChat = () => {
           >
             {messRender && messRender.length > 0 && messRender[0] !== undefined ? (
               messRender.map((item, index) => {
-                if (item.type === 'img')
+                if (item.type === 'image')
                   return (
                     <Comment
                       style={{ width: '100%' }}
@@ -249,9 +304,7 @@ const ContentChat = () => {
                           icon={!owner_avatar || !item.avatar ? <UserOutlined /> : null}
                         />
                       }
-                      content={
-                        <img style={{ maxWidth: '1135px' }} src={item.line_text} alt="upload" />
-                      }
+                      content={<Image width={300} src={item.line_text} />}
                       datetime={
                         <Tooltip title={moment(item.createAt).format('YYYY-MM-DD HH:mm:ss')}>
                           <span>{moment(item.createAt).fromNow()}</span>
@@ -259,7 +312,7 @@ const ContentChat = () => {
                       }
                     />
                   );
-                else
+                else if (item.type === 'text')
                   return (
                     <Comment
                       style={{ width: '100%' }}
@@ -323,6 +376,7 @@ const ContentChat = () => {
                       customRequest={dummyRequest}
                       onChange={handleChangeUpload}
                       disabled={isBlockUser}
+                      beforeUpload={beforeUpload}
                     >
                       <FileImageOutlined />
                     </Upload>
@@ -348,11 +402,18 @@ const ContentChat = () => {
       <section className="content-chat__3th">
         <Collapse expandIconPosition="right">
           <Panel header="Privacy settings" key="1">
-            <button className="content-chat__3th__btn" disabled={isBlockUser}>
+            <button
+              className={
+                !isBlockUser
+                  ? 'content-chat__3th__btn'
+                  : 'content-chat__3th__btn content-chat__3th__btn--block'
+              }
+              onClick={handleBlockUser}
+            >
               <BellOutlined />
-              <p>Block user</p>
+              <p>{!isBlockUser ? 'Block user' : 'Unblock user'}</p>
             </button>
-            <button className="content-chat__3th__btn">
+            <button className="content-chat__3th__btn" onClick={handleUnfriend}>
               <StopOutlined />
               <p>Unfriend this user</p>
             </button>
@@ -364,14 +425,14 @@ const ContentChat = () => {
           >
             <Row justify="start">
               {messages.map((item) => {
-                if (item.type === 'img') {
+                if (item.type === 'image') {
                   if (!flagimg) setFlagimg(true);
                   return (
                     <Col className="gutter-row" span={8}>
                       <Image width={75} height={75} src={item.line_text} />
                     </Col>
                   );
-                }
+                } else return null;
               })}
               {!flagimg && <Empty style={{ margin: '0 auto' }} />}
             </Row>

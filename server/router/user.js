@@ -243,7 +243,9 @@ router.post("/sendRequest", async (req, res) => {
     .find({ phoneNumber: request.sendTo })
     .lean()
     .exec();
-  console.log(findFriend);
+  let owner = await user.find({_id : request.owners}).lean().exec()
+  var io = req.app.get("socketio");
+  io.to(request.sendTo).emit('addFriendRequest' , owner)
   if (findFriend) {
     await user.updateOne(
       { _id: findFriend[0]._id },
@@ -282,19 +284,21 @@ router.post("/listFriend", async (req, res) => {
 });
 router.post("/unfriend", async (req, res) => {
   let request = req.body;
+  let NameFriend = await user.find({username: request.nameUnfriend}).lean().exec()
+  console.log();
   await user.updateOne(
     { _id: request.owners },
-    { $pull: { friends: request.nameUnfriend } }
+    { $pull: { friends: NameFriend[0]._id } }
   );
   await user.updateOne(
-    { _id: request.nameUnfriend },
+    { _id: NameFriend[0]._id },
     { $pull: { friends: request.owners } }
   );
 
   let result = await RoomChat.find({
     $and: [
       { MemberName: { $in: [request.owners] } },
-      { MemberName: { $in: [request.nameUnfriend] } },
+      { MemberName: { $in: [NameFriend[0]._id] } },
     ],
   });
   if (result.length > 0) {
@@ -303,7 +307,7 @@ router.post("/unfriend", async (req, res) => {
       { $pull: { RoomChatId: result[0]._id } }
     );
     await user.updateOne(
-      { _id: request.nameUnfriend },
+      { _id: NameFriend[0]._id },
       { $pull: { RoomChatId: result[0]._id } }
     );
     await RoomChat.deleteOne({ _id: result[0]._id });

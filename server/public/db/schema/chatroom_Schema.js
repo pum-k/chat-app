@@ -9,6 +9,7 @@ const chatroom = new Schema(
     id_user_block: { type: Schema.Types.ObjectId, ref: "users" },
     textChat: [
       {
+        displayName:{ type: String},
         line_text: { type: String, required: true },
         user_name: { type: String, required: true },
         createAt: { type: Date, default: Date.now },

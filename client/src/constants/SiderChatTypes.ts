@@ -10,4 +10,6 @@ export type RoomChatRender = {
     avatar: any;
     last_message: string;
     time: string;
+    friend_name: string;
+    isBlock: boolean;
 }

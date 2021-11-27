@@ -1,15 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
-import { Avatar, Space, List, Tooltip, Button, Typography, Empty } from 'antd';
-import { UserOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Avatar, Space, List, Button, Typography, Empty } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
 import { fetchListRoom, selectListRoom, selectListRoomLoading } from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
-
-const { Title, Text } = Typography;
 
 interface Props {
   onLoading: () => void;
@@ -23,11 +21,7 @@ const SiderChat: FC<Props> = (props) => {
   const rooms = useAppSelector(selectListRoom);
 
   const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
-
-  const showModalAddFriend = () => {
-    setIsModalVisibleAddFriend(true);
-  };
-
+  
   const handleOkAddFriend = () => {
     setIsModalVisibleAddFriend(false);
   };
@@ -84,7 +78,7 @@ const SiderChat: FC<Props> = (props) => {
                           <Space>
                             <p
                               style={{
-                                maxWidth: '165px',
+                                maxWidth: '145px',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
