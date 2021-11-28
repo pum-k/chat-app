@@ -4,7 +4,12 @@ import { Avatar, Space, List, Button, Empty, Badge, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
-import { fetchListRoom, increaseNumberNotSeen, removeNotSeen, selectListRoom } from './siderChatSlice';
+import {
+  fetchListRoom,
+  increaseNumberNotSeen,
+  removeNotSeen,
+  selectListRoom,
+} from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
@@ -54,7 +59,9 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
               dataSource={rooms}
               renderItem={(item, index) => (
                 <List.Item onClick={() => dispatch(removeNotSeen(item.room_id))}>
-                  {index === 0 && history.location.pathname.length < 3 && history.push(`/t/${item.room_id}`)}
+                  {index === 0 &&
+                    history.location.pathname.length < 3 &&
+                    history.push(`/t/${item.room_id}`)}
                   <Link
                     to={`/t/${item.room_id}`}
                     style={{ width: '100%', height: '100%', display: 'flex' }}
@@ -63,7 +70,7 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
                       avatar={
                         <Badge count={item.numberNotSeen}>
                           <Avatar
-                            style={{ border: '1px solid black' }}
+                            style={{ border: '1px solid #999' }}
                             shape="circle"
                             src={item.avatar || 'error'}
                             icon={!item.avatar && <UserOutlined />}
@@ -82,7 +89,7 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
                                 textOverflow: 'ellipsis',
                               }}
                             >
-                              {item.last_message}
+                              {item.last_message.slice(-3) === 'png' ? item.last_message.slice(0, item.last_message.indexOf(":")+1) + ' image' : item.last_message}
                             </p>
                             <p>• {item.time}</p>
                           </Space>

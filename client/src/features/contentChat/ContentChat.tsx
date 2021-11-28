@@ -31,7 +31,7 @@ import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
 import { joinRoom, renderMessageAsync, sendImage, sendMessageAsync } from './contentChatSlice';
 import './ContentChat.scss';
-import { useLocation , useHistory} from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
@@ -41,6 +41,7 @@ import {
   unBlockUserAsync,
   unFriendAsync,
   removeNotSeen,
+  fetchListRoom,
 } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
 const { Title } = Typography;
@@ -83,7 +84,7 @@ const ContentChat = () => {
         line_text: value.message,
         user_name: localStorage.getItem('access_token') || '',
       };
-      dispatch(removeNotSeen(roomId));
+      dispatch(fetchListRoom());
       dispatch(sendMessageAsync(newMessage));
     }
   };
@@ -142,6 +143,7 @@ const ContentChat = () => {
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -190,6 +192,7 @@ const ContentChat = () => {
           type: 'image',
         };
         dispatch(sendImage(newMessage));
+        dispatch(fetchListRoom());
       });
     }
   };
@@ -252,7 +255,7 @@ const ContentChat = () => {
       owners,
       nameUnfriend,
     };
-    history.push('/t')
+    history.push('/t');
     dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
@@ -303,7 +306,13 @@ const ContentChat = () => {
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={<b>{item.user_name === owner.user_name ? 'You' : item.displayName || item.user_name}</b>}
+                      author={
+                        <b>
+                          {item.user_name === owner.user_name
+                            ? 'You'
+                            : item.displayName || item.user_name}
+                        </b>
+                      }
                       avatar={
                         <Avatar
                           src={
@@ -330,7 +339,13 @@ const ContentChat = () => {
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={<b>{item.user_name === owner.user_name ? 'You' : item.displayName || item.user_name}</b>}
+                      author={
+                        <b>
+                          {item.user_name === owner.user_name
+                            ? 'You'
+                            : item.displayName || item.user_name}
+                        </b>
+                      }
                       avatar={
                         <Avatar
                           src={
@@ -372,6 +387,7 @@ const ContentChat = () => {
             <Space size="small" style={{ width: '100%' }}>
               <Form.Item name="message" style={{ width: '100%' }}>
                 <Input
+                  className={Boolean(isBlockUser) ? 'block-input' : undefined}
                   onClick={() => dispatch(removeNotSeen(roomId))}
                   size="large"
                   placeholder={
