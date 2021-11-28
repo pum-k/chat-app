@@ -7,7 +7,7 @@ var moment = require("moment");
 let PORT = process.env.PORT || "http://localhost:4000";
 router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
-  var users = req.app.get("users");
+ 
   let people = await users.findById({ _id: req.body.id });
   let newMessage = {
     message: req.body.line_text,
@@ -16,9 +16,13 @@ router.post("/sendMessage", async (req, res) => {
     create_at: people.createAt,
     user_Id: people._id,
   };
-  let index = users.findIndex((user) => user.idUser == people._id);
-
+  var userSocket = req.app.get("users");
+  let index = userSocket.findIndex((user) => user.idUser == people._id);
+  if(userSocket[index].socketId != undefined) {
+    io.to(userSocket[index].socketId).emit('newMessageComming', {Room: req.body.room_id})
+  }
   io.to(req.body.room_id).emit("newMessages", newMessage);
+
   
   await RoomChat.findByIdAndUpdate(
     { _id: req.body.room_id },
@@ -50,6 +54,11 @@ router.post("/sendImage", upload.single("file"), async (req, res) => {
     create_at: people.createAt,
     user_Id: people._id,
   };
+  var userSocket = req.app.get("users");
+  let index = userSocket.findIndex((user) => user.idUser == people._id);
+  if(userSocket[index].socketId != undefined) {
+    io.to(userSocket[index].socketId).emit('newMessageComming', {Room: req.body.room_id})
+  }
   io.to(req.body.room_id).emit("newMessages", newMessage);
   await RoomChat.findByIdAndUpdate(
     { _id: req.body.room_id },

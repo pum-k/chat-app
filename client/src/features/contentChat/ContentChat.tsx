@@ -55,10 +55,9 @@ import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-// const socket = io('http://localhost:4000');
+const socket = io('http://localhost:4000');
 
-const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({socket}) => {
-  console.log(`run`)
+const ContentChat = () => {
   // REDUX--------------------------->
   // -> Declare
   const dispatch = useAppDispatch();
@@ -74,7 +73,7 @@ const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({
   }, [location.pathname]);
 
   // -> get store messages
-  const messages = useAppSelector(state => state.contentChat.messages);
+  const messages = useAppSelector((state) => state.contentChat.messages);
   // -> Info chat box
   const owner = useAppSelector((state) => state.accountModal.user);
   const owner_avatar = useAppSelector((state) => state.headerChat.avatar);
@@ -89,6 +88,8 @@ const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({
       setYourFriend(getYourFriend);
     }
   }, []);
+  console.log(owner_avatar);
+
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
@@ -121,7 +122,6 @@ const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({
       }, 1000);
     }
   };
-
   // when send a new message
   useEffect(() => {
     if (messages) {
@@ -322,7 +322,13 @@ const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({
                       author={<b>{item.user_name === owner.user_name ? 'You' : item.user_name}</b>}
                       avatar={
                         <Avatar
-                          src={item.user_name === owner.user_name ? owner_avatar : item.avatar}
+                          src={
+                            item.user_name === owner.user_name
+                              ? owner_avatar || owner.user_avatar
+                              : yourFriend
+                              ? yourFriend[0].avatar
+                              : 'undefined'
+                          }
                           icon={!owner_avatar || !item.avatar ? <UserOutlined /> : null}
                         />
                       }
