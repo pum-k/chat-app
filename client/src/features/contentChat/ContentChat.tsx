@@ -41,13 +41,13 @@ import { useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
-import {
-  blockUserAsync,
-  fetchListRoom,
-  unBlockUserAsync,
-  unFriendAsync,
-  updateBlock,
-} from 'features/siderChat/siderChatSlice';
+// import {
+//   blockUserAsync,
+//   fetchListRoom,
+//   unBlockUserAsync,
+//   unFriendAsync,
+//   updateBlock,
+// } from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title } = Typography;
@@ -146,7 +146,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
+      // dispatch(fetchListRoom());
     });
     socket.on('addFriendRequest', (data: any) => {
       console.log(data);
@@ -232,7 +232,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   useEffect(() => {
     let interval = setInterval(() => {
       dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
+      // dispatch(fetchListRoom());
       setTime(!time);
     }, 60000);
     return () => {

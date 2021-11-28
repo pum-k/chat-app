@@ -40,8 +40,22 @@ app.use("/login", login_router);
 app.use("/register", register_router);
 app.use("/photo", photo_router);
 app.use("/user", user_router);
-
+let users = [];
+app.set("users", users);
 io.on("connection", function (socket) {
+  socket.on("user_connection", (data) => {
+    let index = users.findIndex((user) => user.idUser === data.id);
+    if (index == -1) {
+      users.push({
+        socketId: socket.id,
+        idUser: data.id,
+        username: data.username,
+      });
+    } else {
+      users[index].socketId = socket.id;
+    }
+  });
+
   socket.on("join_room", (data) => {
     socket.join(data.room_id);
     console.log("1 nguoi vua join vao room " + data.room_id);
@@ -49,8 +63,16 @@ io.on("connection", function (socket) {
   socket.on("sendMessage", (message) => {
     io.to(message.room_id).emit("newMessages", message);
   });
-  socket.on("disconnect", function () {
-    console.log("user disconnected");
+  socket.on("disconnect", async () => {
+    let index = await users.findIndex((user) => user.idUser === socket.idUser);
+    await users[
+      ({
+        ...users.slice(0, index),
+      },
+      {
+        ...users.slice(index + 1),
+      })
+    ];
   });
 });
 
