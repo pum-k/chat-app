@@ -13,7 +13,6 @@ router.post("/acceptAddFriend", async (req, res) => {
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
-  // console.log(findFriend);
   if (findFriend.length > 0) {
     await user.updateOne(
       { _id: newFriendAdd.owners },
@@ -24,8 +23,6 @@ router.post("/acceptAddFriend", async (req, res) => {
       { _id: newFriendAdd.owners },
       { $pull: { peddingRequests: findFriend[0]._id } }
     );
-
-    //////
     await user.updateOne(
       { _id: findFriend[0]._id },
       { $push: { friends: newFriendAdd.owners } }
@@ -40,7 +37,6 @@ router.post("/acceptAddFriend", async (req, res) => {
       RoomName: "room vua ket ban",
       SocketId: uuidv4(),
     });
-    // tao phong khi 2 nguoi ban
     await newRoom.save(async (err) => {
       if (err) {
         console.log(err);
@@ -118,7 +114,6 @@ router.post("/denyAcceptAddFriend", async (req, res) => {
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
-  console.log(findFriend);
   if (findFriend.length > 0) {
     await user.updateOne(
       { _id: findFriend[0]._id },
@@ -243,9 +238,13 @@ router.post("/sendRequest", async (req, res) => {
     .find({ phoneNumber: request.sendTo })
     .lean()
     .exec();
-  let owner = await user.find({_id : request.owners}).lean().exec()
+  let owner = await user.find({ _id: request.owners }).lean().exec();
   var io = req.app.get("socketio");
-  io.to(request.sendTo).emit('addFriendRequest' , owner)
+  var users = req.app.get("users");
+  let index = users.findIndex((user) => user.idUser == findFriend[0]._id);
+  if (users[index].socketId != undefined) {
+    io.to(users[index].socketId).emit("addFriendRequest", owner);
+  }
   if (findFriend) {
     await user.updateOne(
       { _id: findFriend[0]._id },
@@ -284,7 +283,10 @@ router.post("/listFriend", async (req, res) => {
 });
 router.post("/unfriend", async (req, res) => {
   let request = req.body;
-  let NameFriend = await user.find({username: request.nameUnfriend}).lean().exec()
+  let NameFriend = await user
+    .find({ username: request.nameUnfriend })
+    .lean()
+    .exec();
   console.log();
   await user.updateOne(
     { _id: request.owners },
@@ -314,7 +316,5 @@ router.post("/unfriend", async (req, res) => {
   }
   res.send({ isSuccess: true });
 });
-
-router.post("");
 
 module.exports = router;

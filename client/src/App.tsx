@@ -7,15 +7,17 @@ import SiderChat from 'features/siderChat/SiderChat';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import { Spin } from 'antd';
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
 const ContentChat = lazy(() => import('./features/contentChat/ContentChat'));
-
+const socket = io('http://localhost:4000');
 function App() {
   const isAuthenticated = Boolean(localStorage.getItem('access_token'));
   const [loading, setLoading] = useState(false);
-  const socket = io('http://localhost:4000');
+  useEffect(() => {
+    socket.emit('user_connection', { id: localStorage.getItem('access_token') , username: localStorage.getItem('username')});
+  }, []);
 
   return (
     <div className="App">

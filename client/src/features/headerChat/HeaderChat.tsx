@@ -18,9 +18,14 @@ import { Socket } from 'socket.io-client';
 
 const { Title, Text } = Typography;
 
-const HeaderChat:FC<{socket:Socket<DefaultEventsMap, DefaultEventsMap> }> = (props) => {
-  const {socket} = props; 
-  console.log(socket);
+const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({ socket }) => {
+
+  useEffect(() => {
+    socket.on('addFriendRequest', () => {
+      console.log('co nguoi vua add friend');
+    });
+  });
+
   const dispatch = useAppDispatch();
 
   const avatarUrl = useAppSelector((state) => state.headerChat.avatar);
@@ -75,8 +80,9 @@ const HeaderChat:FC<{socket:Socket<DefaultEventsMap, DefaultEventsMap> }> = (pro
 
   const [numberOfNotifications, setNumberOfNotifications] = useState(0);
   useEffect(() => {
-    if(listPending.length > 0 || listRequest.length > 0) setNumberOfNotifications(listPending.length + listRequest.length);
-  }, [listRequest,listPending ])
+    if (listPending.length > 0 || listRequest.length > 0)
+      setNumberOfNotifications(listPending.length + listRequest.length);
+  }, [listRequest, listPending]);
 
   const offNumberOfNotifications = () => {
     if (numberOfNotifications !== 0) setNumberOfNotifications(0);

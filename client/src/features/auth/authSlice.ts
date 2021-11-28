@@ -46,6 +46,7 @@ export const authSlice = createSlice({
       if (action.payload.error) state.error = action.payload.error;
       if (action.payload.id) {
         localStorage.setItem('access_token', action.payload.id);
+        localStorage.setItem('username', action.payload.username);
         window.location.href = 'http://localhost:3000/t';
       }
     });
