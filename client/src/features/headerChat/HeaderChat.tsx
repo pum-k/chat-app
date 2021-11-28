@@ -23,6 +23,9 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
     socket.on('addFriendRequest', () => {
       dispatch(fetchListRequest());
     });
+    socket.on('acceptAddFriend', (data: any) => {
+      console.log(data);
+    });
   });
 
   const dispatch = useAppDispatch();
