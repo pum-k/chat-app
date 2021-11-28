@@ -88,7 +88,7 @@ const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({
     if (getYourFriend.length > 0) {
       setYourFriend(getYourFriend);
     }
-  }, [getYourFriend]);
+  }, []);
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
@@ -220,15 +220,15 @@ const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({
 
   const [isBlockUser, setIsBlockUser] = useState<boolean>(false);
 
-  // const infoRoom = useAppSelector((state) =>
-  //   state.siderChat.data.filter((item) => item.room_id === roomId)
-  // );
+  const infoRoom = useAppSelector((state) =>
+    state.siderChat.data.filter((item) => item.room_id === roomId)
+  );
 
-  // useEffect(() => {
-  //   if (infoRoom.length > 0) {
-  //     setIsBlockUser(infoRoom[0].isBlock);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (infoRoom.length > 0) {
+      setIsBlockUser(infoRoom[0].isBlock);
+    }
+  }, []);
 
   const handleBlockUser = () => {
     const params = {
