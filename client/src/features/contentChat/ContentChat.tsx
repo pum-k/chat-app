@@ -143,7 +143,6 @@ const ContentChat = () => {
   // <------------------HANDLE SEND MESSAGE
 
   // SOCKET.IO----------------------------->
-
   useEffect(() => {
     // -> when new message
     socket.on('newMessages', () => {
@@ -151,11 +150,9 @@ const ContentChat = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   // <-----------------------------SOCKET.IO
 
   // UPLOAD IMG------------------------------->
-
   function getBase64(img: any, callback: any) {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
@@ -214,12 +211,13 @@ const ContentChat = () => {
     state.siderChat.data.filter((item) => item.room_id === roomId)
   );
 
-  useEffect(() => {
-    if (infoRoom.length > 0) {
-      setIsBlockUser(infoRoom[0].isBlock);
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {
+    if (infoRoom.length > 0 && infoRoom[0].isBlock !== isBlockUser) {
+      setIsBlockUser(infoRoom[0].isBlock);
+      console.log(infoRoom[0].isBlock)
+    }
+  });
 
   const handleBlockUser = () => {
     const params = {

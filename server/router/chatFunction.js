@@ -7,7 +7,7 @@ var moment = require("moment");
 let PORT = process.env.PORT || "http://localhost:4000";
 router.post("/sendMessage", async (req, res) => {
   var io = req.app.get("socketio");
- 
+  let orther = "";
   let people = await users.findById({ _id: req.body.id });
   let newMessage = {
     message: req.body.line_text,
@@ -16,14 +16,24 @@ router.post("/sendMessage", async (req, res) => {
     create_at: people.createAt,
     user_Id: people._id,
   };
+  let room = await RoomChat.find({ _id: req.body.room_id }).lean().exec();
+  // if(room.length > 1){
+  let memberinRoom = room[0].MemberName;
+  let testIndex = await memberinRoom.findIndex(
+    (eachUser) => eachUser._id == people._id
+  );
+  orther = memberinRoom[testIndex == 1 ? 0 : 1];
+  // console.log(orther);
+  // }
+
   var userSocket = req.app.get("users");
-  let index = userSocket.findIndex((user) => user.idUser == people._id);
-  if(userSocket[index].socketId != undefined) {
-    io.to(userSocket[index].socketId).emit('newMessageComming', {Room: req.body.room_id})
+  let index = userSocket.findIndex((user) => user.idUser == orther);
+  if (userSocket[index].socketId != undefined) {
+    io.to(userSocket[index].socketId).emit("newMessageComming", {
+      Room: req.body.room_id,
+    });
   }
   io.to(req.body.room_id).emit("newMessages", newMessage);
-
-  
   await RoomChat.findByIdAndUpdate(
     { _id: req.body.room_id },
     {
@@ -39,11 +49,10 @@ router.post("/sendMessage", async (req, res) => {
     }
   );
   res.send({ sendSuccess: true });
-  console.log(newMessage);
+  // console.log(newMessage);
 });
 router.post("/sendImage", upload.single("file"), async (req, res) => {
   var io = req.app.get("socketio");
-  console.log(req.body.id);
   let people = await users.findById({ _id: req.body.id });
   if (req.file === undefined) return res.send({ isSuccess: false });
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
@@ -56,8 +65,10 @@ router.post("/sendImage", upload.single("file"), async (req, res) => {
   };
   var userSocket = req.app.get("users");
   let index = userSocket.findIndex((user) => user.idUser == people._id);
-  if(userSocket[index].socketId != undefined) {
-    io.to(userSocket[index].socketId).emit('newMessageComming', {Room: req.body.room_id})
+  if (userSocket[index].socketId != undefined) {
+    io.to(userSocket[index].socketId).emit("newMessageComming", {
+      Room: req.body.room_id,
+    });
   }
   io.to(req.body.room_id).emit("newMessages", newMessage);
   await RoomChat.findByIdAndUpdate(
@@ -85,8 +96,9 @@ router.post("/listMessages", async (req, res) => {
     // console.log(ListMessages);
     // let ortherUser = await
     if (ListMessages[0].textChat.length > 0) {
-      res.send({ ListMessages: ListMessages[0].textChat ,
-        isBlock : ListMessages[0].isBlock,
+      res.send({
+        ListMessages: ListMessages[0].textChat,
+        isBlock: ListMessages[0].isBlock,
       });
     } else {
       res.send({ ListMessages: null });
@@ -126,12 +138,17 @@ router.post("/listChatPage", async (req, res) => {
         avatar: RoomName[0].avatar,
         room_id: eachRoomChat[0]._id,
         isBlock: eachRoomChat[0].isBlock,
-        time:   AlltextChat[0] != undefined && moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow() ,
+        time:
+          AlltextChat[0] != undefined &&
+          moment(AlltextChat[AlltextChat.length - 1].createAt).fromNow(),
         last_message:
           AlltextChat[0] != undefined
-            ? AlltextChat[AlltextChat.length - 1].displayName + ": " + AlltextChat[AlltextChat.length - 1].line_text || AlltextChat[0].user_name+
-              ": " +
-              AlltextChat[AlltextChat.length - 1].line_text
+            ? AlltextChat[AlltextChat.length - 1].displayName +
+                ": " +
+                AlltextChat[AlltextChat.length - 1].line_text ||
+              AlltextChat[0].user_name +
+                ": " +
+                AlltextChat[AlltextChat.length - 1].line_text
             : "",
       });
 

@@ -17,16 +17,16 @@ export const fetchListRoom = createAsyncThunk('sider-chat/fetchListRoom', async 
 export const blockUserAsync = createAsyncThunk(
   'user/block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
-    param.dispatch(updateBlock(params.room_id));
     const response: any = await userApi.blockUser(params);
+    param.dispatch(updateBlock(params.room_id));
     return response.data;
   }
 );
 export const unBlockUserAsync = createAsyncThunk(
   'user/un-block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
-    param.dispatch(updateBlock(params.room_id));
     const response: any = await userApi.unBlockUser(params);
+    param.dispatch(updateBlock(params.room_id));
     return response.data;
   }
 );
@@ -61,7 +61,6 @@ export const siderChatSlice = createSlice({
       if (action.payload.infoAllRoomChat) {
         state.data = action.payload.infoAllRoomChat;
         state.loading = false;
-        console.log(action.payload.infoAllRoomChat);
       }
     });
     builder.addCase(blockUserAsync.pending, (state) => {

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
-import { Avatar, Space, List, Button, Empty } from 'antd';
+import { Avatar, Space, List, Button, Empty, Badge, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
@@ -8,14 +8,24 @@ import { fetchListRoom, selectListRoom } from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
+import { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
+const { Text } = Typography;
 
-const SiderChat = () => {
+const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({ socket }) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const rooms = useAppSelector(selectListRoom);
 
   const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
-  
+
+  const [numberNotSeen, setNumberNotSeen] = useState<number>(0);
+
+  useEffect(() => {
+    socket.on('newMessageComming', (data: any) => {
+      console.log(data);
+    });
+  }, []);
   const handleOkAddFriend = () => {
     setIsModalVisibleAddFriend(false);
   };
@@ -26,7 +36,7 @@ const SiderChat = () => {
 
   useEffect(() => {
     dispatch(fetchListRoom());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalVisibleAddFriend]);
 
   return (
@@ -52,12 +62,14 @@ const SiderChat = () => {
                   >
                     <List.Item.Meta
                       avatar={
-                        <Avatar
-                          src={item.avatar || 'error'}
-                          icon={!item.avatar && <UserOutlined />}
-                        />
+                        <Badge count={1}>
+                          <Avatar
+                            src={item.avatar || 'error'}
+                            icon={!item.avatar && <UserOutlined />}
+                          />
+                        </Badge>
                       }
-                      title={<p>{`${item.displayName}`}</p>}
+                      title={<Text strong>{`${item.displayName}`}</Text>}
                       description={
                         item.last_message ? (
                           <Space>
