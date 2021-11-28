@@ -1,22 +1,16 @@
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
-import { Avatar, Space, List, Button, Typography, Empty } from 'antd';
+import { Avatar, Space, List, Button, Empty } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
-import { fetchListRoom, selectListRoom, selectListRoomLoading } from './siderChatSlice';
+import { fetchListRoom, selectListRoom } from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
 
-interface Props {
-  onLoading: () => void;
-  offLoading: () => void;
-}
-
-const SiderChat: FC<Props> = (props) => {
+const SiderChat = () => {
   const history = useHistory();
-  const { onLoading, offLoading } = props;
   const dispatch = useDispatch();
   const rooms = useAppSelector(selectListRoom);
 
@@ -32,17 +26,7 @@ const SiderChat: FC<Props> = (props) => {
 
   useEffect(() => {
     dispatch(fetchListRoom());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalVisibleAddFriend]);
-  const loading = useAppSelector(selectListRoomLoading);
-  useEffect(() => {
-    if (loading) {
-      onLoading();
-    } else {
-      offLoading();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
+  }, [dispatch, isModalVisibleAddFriend]);
 
   return (
     <>
