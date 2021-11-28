@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -32,13 +32,12 @@ import moment from 'moment';
 import {
   joinRoom,
   renderMessageAsync,
-  selectMessages,
   sendImage,
   sendMessageAsync,
 } from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation } from 'react-router-dom';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
 // import {
@@ -51,7 +50,6 @@ import { messageStructure } from 'constants/ChatTypes';
 import { userApi } from 'api/userApi';
 import { blockUserAsync, unBlockUserAsync, unFriendAsync } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
-import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title } = Typography;
 const { Panel } = Collapse;
 
@@ -87,6 +85,7 @@ const ContentChat = () => {
     if (getYourFriend.length > 0) {
       setYourFriend(getYourFriend);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   console.log(owner_avatar);
 
@@ -228,6 +227,7 @@ const ContentChat = () => {
     if (infoRoom.length > 0) {
       setIsBlockUser(infoRoom[0].isBlock);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBlockUser = () => {
@@ -367,6 +367,7 @@ const ContentChat = () => {
                       }
                     />
                   );
+                else return null;
               })
             ) : (
               <div>
