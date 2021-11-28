@@ -1,5 +1,5 @@
 import AccountModal from 'features/accountModal/AccountModal';
-import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin } from 'antd';
+import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin, message } from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
 import { FC, useEffect, useState } from 'react';
 import './HeaderChat.scss';
@@ -15,6 +15,7 @@ import {
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import { Socket } from 'socket.io-client';
+import { fetchListRoom } from 'features/siderChat/siderChatSlice';
 
 const { Title, Text } = Typography;
 
@@ -24,7 +25,8 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
       dispatch(fetchListRequest());
     });
     socket.on('acceptAddFriend', (data: any) => {
-      console.log(data);
+      message.success(`${data.displayName} just agreed to be friends with you`);
+      dispatch(fetchListRoom());
     });
   });
 
