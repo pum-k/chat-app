@@ -19,10 +19,12 @@ import { Socket } from 'socket.io-client';
 const { Title, Text } = Typography;
 
 const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({ socket }) => {
-
   useEffect(() => {
     socket.on('addFriendRequest', () => {
       console.log('co nguoi vua add friend');
+    });
+    socket.on('acceptAddFriend', (data: any) => {
+      console.log(data);
     });
   });
 
