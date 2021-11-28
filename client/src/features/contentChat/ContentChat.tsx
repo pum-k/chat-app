@@ -51,6 +51,7 @@ import { messageStructure } from 'constants/ChatTypes';
 import { userApi } from 'api/userApi';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import { blockUserAsync, unBlockUserAsync, unFriendAsync } from 'features/siderChat/siderChatSlice';
+import { RoomChatRender } from 'constants/SiderChatTypes';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (props) => {
@@ -75,9 +76,17 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   // -> Info chat box
   const owner = useAppSelector((state) => state.accountModal.user);
   const owner_avatar = useAppSelector((state) => state.headerChat.avatar);
-  const your_friend = useAppSelector((state) => state.siderChat.data).filter(
+  const getYourFriend = useAppSelector((state) => state.siderChat.data).filter(
     (item) => item.room_id === roomId
   );
+
+  const [yourFriend, setYourFriend] = useState<RoomChatRender[]>();
+
+  useEffect(() => {
+    if (getYourFriend.length > 0) {
+      setYourFriend(getYourFriend);
+    }
+  }, [getYourFriend]);
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
@@ -211,18 +220,27 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
 
   // BLOCK USER ------------------------>
 
-  const isBlockUser = useAppSelector(
-    (state) => state.siderChat.data.filter((item) => item.room_id === roomId)[0].isBlock
+  const [isBlockUser, setIsBlockUser] = useState<boolean>(false);
+
+  const infoRoom = useAppSelector((state) =>
+    state.siderChat.data.filter((item) => item.room_id === roomId)
   );
+
+  useEffect(() => {
+    if (infoRoom.length > 0) {
+      setIsBlockUser(infoRoom[0].isBlock);
+    }
+  }, [infoRoom]);
+
   const handleBlockUser = () => {
     const params = {
       owners: localStorage.getItem('access_token'),
       room_id: roomId,
     };
     if (!isBlockUser) {
-      // dispatch(blockUserAsync(params));
+      dispatch(blockUserAsync(params));
     } else {
-      // dispatch(unBlockUserAsync(params));
+      dispatch(unBlockUserAsync(params));
     }
   };
   // <------------------------ BLOCK USER
@@ -267,13 +285,13 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
                 size={40}
                 src={
                   <Image
-                    src={your_friend[0].avatar ? your_friend[0].avatar : 'error'}
+                    src={yourFriend ? yourFriend[0].avatar : 'error'}
                     fallback="https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg"
                   />
                 }
               />
               <Title level={5} style={{ margin: '0' }}>
-                {your_friend[0].displayName}
+                {yourFriend && yourFriend[0].displayName}
               </Title>
               <Badge color={'red'} text={'Offline'} size="small" />
             </Space>
@@ -330,7 +348,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
                           src={
                             item.user_name === owner.user_name
                               ? owner_avatar || owner.user_avatar
-                              : your_friend[0].avatar
+                              : yourFriend ? yourFriend[0].avatar : 'undefined'
                           }
                           icon={<UserOutlined />}
                         />
