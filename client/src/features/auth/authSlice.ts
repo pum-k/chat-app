@@ -62,8 +62,8 @@ export const authSlice = createSlice({
       if (action.payload.error) state.error = action.payload.error;
       state.isSuccess = action.payload.isSuccess;
       if (action.payload.isSuccess) {
+        state.isSuccess = false;
         setTimeout(() => {
-          state.isSuccess = false;
           window.location.href = 'http://localhost:3000/login';
         }, 1000);
       }
