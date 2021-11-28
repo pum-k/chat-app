@@ -219,9 +219,9 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
       room_id: roomId,
     };
     if (!isBlockUser) {
-      // dispatch(blockUserAsync(params));
+      dispatch(blockUserAsync(params));
     } else {
-      // dispatch(unBlockUserAsync(params));
+      dispatch(unBlockUserAsync(params));
     }
   };
   // <------------------------ BLOCK USER
@@ -247,14 +247,12 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   const handleUnfriend = () => {
     const owners = localStorage.getItem('access_token');
     const nameUnfriend = siderData.filter((item) => item.room_id === roomId)[0].friend_name;
-    const indexRoom = siderData.findIndex((item) => item.room_id === roomId);
     const params = {
       owners,
       nameUnfriend,
-      indexRoom,
     };
 
-    // dispatch(unFriendAsync(params));
+    dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
 
