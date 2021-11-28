@@ -41,13 +41,13 @@ import { useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
-import {
-  blockUserAsync,
-  fetchListRoom,
-  unBlockUserAsync,
-  unFriendAsync,
-  updateBlock,
-} from 'features/siderChat/siderChatSlice';
+// import {
+//   blockUserAsync,
+//   fetchListRoom,
+//   unBlockUserAsync,
+//   unFriendAsync,
+//   updateBlock,
+// } from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title } = Typography;
@@ -146,7 +146,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
+      // dispatch(fetchListRoom());
     });
     socket.on('addFriendRequest', (data: any) => {
       console.log(data);
@@ -210,18 +210,18 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
 
   // BLOCK USER ------------------------>
 
-  const isBlockUser = useAppSelector(state => state.siderChat.data.filter(item => item.room_id === roomId)[0].isBlock);
+  const isBlockUser = useAppSelector(
+    (state) => state.siderChat.data.filter((item) => item.room_id === roomId)[0].isBlock
+  );
   const handleBlockUser = () => {
     const params = {
       owners: localStorage.getItem('access_token'),
       room_id: roomId,
     };
     if (!isBlockUser) {
-      dispatch(blockUserAsync(params));
-      
+      // dispatch(blockUserAsync(params));
     } else {
-      dispatch(unBlockUserAsync(params));
-   
+      // dispatch(unBlockUserAsync(params));
     }
   };
   // <------------------------ BLOCK USER
@@ -232,7 +232,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   useEffect(() => {
     let interval = setInterval(() => {
       dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
+      // dispatch(fetchListRoom());
       setTime(!time);
     }, 60000);
     return () => {
@@ -247,11 +247,11 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   const handleUnfriend = () => {
     const owners = localStorage.getItem('access_token');
     const nameUnfriend = siderData.filter((item) => item.room_id === roomId)[0].friend_name;
-    const indexRoom = siderData.findIndex((item) => item.room_id === roomId)
+    const indexRoom = siderData.findIndex((item) => item.room_id === roomId);
     const params = {
       owners,
       nameUnfriend,
-      indexRoom
+      indexRoom,
     };
 
     // dispatch(unFriendAsync(params));

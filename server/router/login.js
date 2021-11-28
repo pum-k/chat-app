@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
       password: DBfindUser[0].password,
     };
     if (user && user.password == userRequest.password) {
-      res.send({ id: user.ID });
+      res.send({ id: user.ID , username: user.username });
     } else {
       res.send({ error: "Invalid password" });
     }
