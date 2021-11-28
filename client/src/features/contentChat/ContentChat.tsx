@@ -219,9 +219,9 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
       room_id: roomId,
     };
     if (!isBlockUser) {
-      dispatch(blockUserAsync(params));
+      // dispatch(blockUserAsync(params));
     } else {
-      dispatch(unBlockUserAsync(params));
+      // dispatch(unBlockUserAsync(params));
     }
   };
   // <------------------------ BLOCK USER
@@ -252,7 +252,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
       nameUnfriend,
     };
 
-    dispatch(unFriendAsync(params));
+    // dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
 

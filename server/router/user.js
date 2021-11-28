@@ -9,10 +9,20 @@ const moment = require("moment");
 
 router.post("/acceptAddFriend", async (req, res) => {
   let newFriendAdd = req.body;
+
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
+  let owner = await user.find({_id : newFriendAdd.owners}).lean().exec()
+  var io = req.app.get("socketio");
+  var users = req.app.get("users");
+  
+  let index = users.findIndex((user) => user.idUser == findFriend[0]._id);
+  if(users[index].socketId){
+    io.to(users[index].socketId).emit('acceptAddFriend', {displayName: owner[0].displayName})
+  }
+
   if (findFriend.length > 0) {
     await user.updateOne(
       { _id: newFriendAdd.owners },

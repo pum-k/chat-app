@@ -40,7 +40,9 @@ app.use("/login", login_router);
 app.use("/register", register_router);
 app.use("/photo", photo_router);
 app.use("/user", user_router);
+
 let users = [];
+
 app.set("users", users);
 io.on("connection", function (socket) {
   socket.on("user_connection", (data) => {
@@ -52,6 +54,7 @@ io.on("connection", function (socket) {
         username: data.username,
       });
     } else {
+
       users[index].socketId = socket.id;
     }
   });
