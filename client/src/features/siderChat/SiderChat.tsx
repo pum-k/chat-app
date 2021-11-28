@@ -26,7 +26,8 @@ const SiderChat = () => {
 
   useEffect(() => {
     dispatch(fetchListRoom());
-  }, [dispatch, isModalVisibleAddFriend]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalVisibleAddFriend]);
 
   return (
     <>

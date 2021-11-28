@@ -27,7 +27,7 @@ const HomeChat = () => {
         <SiderChat />
         <Switch>
           <Route path="/t/:room">
-            <ContentChat socket={socket} />
+            <ContentChat socket={socket}/>
           </Route>
         </Switch>
       </div>
@@ -37,7 +37,7 @@ const HomeChat = () => {
 
 function App() {
   const isAuthenticated = Boolean(localStorage.getItem('access_token'));
-  
+
   return (
     <div className="App">
         <Redirect to="/t" />

@@ -49,14 +49,16 @@ import { messageStructure } from 'constants/ChatTypes';
 //   updateBlock,
 // } from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
-import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import { blockUserAsync, unBlockUserAsync, unFriendAsync } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title } = Typography;
 const { Panel } = Collapse;
-const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (props) => {
-  const { socket } = props;
 
+// const socket = io('http://localhost:4000');
+
+const ContentChat: FC<{socket: Socket<DefaultEventsMap, DefaultEventsMap>}> = ({socket}) => {
+  console.log(`run`)
   // REDUX--------------------------->
   // -> Declare
   const dispatch = useAppDispatch();
@@ -72,7 +74,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
   }, [location.pathname]);
 
   // -> get store messages
-  const messages = useAppSelector(selectMessages);
+  const messages = useAppSelector(state => state.contentChat.messages);
   // -> Info chat box
   const owner = useAppSelector((state) => state.accountModal.user);
   const owner_avatar = useAppSelector((state) => state.headerChat.avatar);
@@ -156,10 +158,6 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
-      // dispatch(fetchListRoom());
-    });
-    socket.on('addFriendRequest', (data: any) => {
-      console.log(data);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -222,15 +220,15 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
 
   const [isBlockUser, setIsBlockUser] = useState<boolean>(false);
 
-  const infoRoom = useAppSelector((state) =>
-    state.siderChat.data.filter((item) => item.room_id === roomId)
-  );
+  // const infoRoom = useAppSelector((state) =>
+  //   state.siderChat.data.filter((item) => item.room_id === roomId)
+  // );
 
-  useEffect(() => {
-    if (infoRoom.length > 0) {
-      setIsBlockUser(infoRoom[0].isBlock);
-    }
-  }, [infoRoom]);
+  // useEffect(() => {
+  //   if (infoRoom.length > 0) {
+  //     setIsBlockUser(infoRoom[0].isBlock);
+  //   }
+  // }, []);
 
   const handleBlockUser = () => {
     const params = {
@@ -271,7 +269,7 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
       nameUnfriend,
     };
 
-    // dispatch(unFriendAsync(params));
+    dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
 
@@ -348,7 +346,9 @@ const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = 
                           src={
                             item.user_name === owner.user_name
                               ? owner_avatar || owner.user_avatar
-                              : yourFriend ? yourFriend[0].avatar : 'undefined'
+                              : yourFriend
+                              ? yourFriend[0].avatar
+                              : 'undefined'
                           }
                           icon={<UserOutlined />}
                         />

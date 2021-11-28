@@ -17,16 +17,16 @@ export const fetchListRoom = createAsyncThunk('sider-chat/fetchListRoom', async 
 export const blockUserAsync = createAsyncThunk(
   'user/block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
-    const response: any = await userApi.blockUser(params);
     param.dispatch(updateBlock(params.room_id));
+    const response: any = await userApi.blockUser(params);
     return response.data;
   }
 );
 export const unBlockUserAsync = createAsyncThunk(
   'user/un-block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
-    const response: any = await userApi.unBlockUser(params);
     param.dispatch(updateBlock(params.room_id));
+    const response: any = await userApi.unBlockUser(params);
     return response.data;
   }
 );
