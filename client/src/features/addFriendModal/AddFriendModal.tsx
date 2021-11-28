@@ -107,7 +107,7 @@ const AddFriendModal: FC<ModalProps> = (props) => {
               <Space direction="vertical">
                 <Text>Username: {friend.username || ''}</Text>
                 <Text>Phone number: {friend.phoneNumber || 'Not updated yet'}</Text>
-                <Text>Gender: {friend.gender ? 'Male' : 'Female'}</Text>
+                <Text>Gender: {friend.gender === 'Male' ? 'Male' : 'Female'}</Text>
                 <Text>
                   Birthday:{' '}
                   {moment(String(friend.birthday)).format('YYYY-MM-DD') || 'Not updated yet'}
