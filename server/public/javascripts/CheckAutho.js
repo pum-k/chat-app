@@ -1,9 +1,9 @@
 function checkAuthentica(req, res, next) {
   if (req.isAuthenticated()) {
-    console.log("auth thanh cong");
+    console.log("Authenticated!");
     return next();
   } else {
-    console.log("auth that bai");
+    console.log("Unauthenticated!");
     res.send({ redirect: "/login" });
   }
 }

@@ -4,7 +4,7 @@ import { Avatar, Space, List, Button, Empty, Badge, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
-import { fetchListRoom, selectListRoom } from './siderChatSlice';
+import { fetchListRoom, increaseNumberNotSeen, removeNotSeen, selectListRoom } from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
@@ -19,12 +19,11 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
 
   const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
 
-  const [numberNotSeen, setNumberNotSeen] = useState<number>(0);
-
   useEffect(() => {
     socket.on('newMessageComming', (data: any) => {
-      console.log(data);
+      dispatch(increaseNumberNotSeen(data));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleOkAddFriend = () => {
     setIsModalVisibleAddFriend(false);
@@ -54,16 +53,18 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
               itemLayout="horizontal"
               dataSource={rooms}
               renderItem={(item, index) => (
-                <List.Item>
-                  {index === 0 && history.push(`/t/${item.room_id}`)}
+                <List.Item onClick={() => dispatch(removeNotSeen(item.room_id))}>
+                  {index === 0 && history.location.pathname.length < 3 && history.push(`/t/${item.room_id}`)}
                   <Link
                     to={`/t/${item.room_id}`}
                     style={{ width: '100%', height: '100%', display: 'flex' }}
                   >
                     <List.Item.Meta
                       avatar={
-                        <Badge count={1}>
+                        <Badge count={item.numberNotSeen}>
                           <Avatar
+                            style={{ border: '1px solid black' }}
+                            shape="circle"
                             src={item.avatar || 'error'}
                             icon={!item.avatar && <UserOutlined />}
                           />

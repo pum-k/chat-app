@@ -5,6 +5,7 @@ export interface messageStructure {
   user_name: string;
   type?:string;
   avatar?:string;
+  displayName?: string;
 }
 
 export interface ChatState {

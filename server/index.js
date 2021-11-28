@@ -61,7 +61,7 @@ io.on("connection", function (socket) {
 
   socket.on("join_room", (data) => {
     socket.join(data.room_id);
-    console.log("1 nguoi vua join vao room " + data.room_id);
+    console.log("A user has just joined the room: " + data.room_id);
   });
   socket.on("sendMessage", (message) => {
     io.to(message.room_id).emit("newMessages", message);
@@ -79,4 +79,4 @@ io.on("connection", function (socket) {
   });
 });
 
-server.listen(4000, () => console.log("Server is running at port 4000"));
+server.listen(4000, () => console.log("Server is running at http://localhost:4000/"));

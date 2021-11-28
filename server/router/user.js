@@ -20,7 +20,7 @@ router.post("/acceptAddFriend", async (req, res) => {
   
   let index = users.findIndex((user) => user.idUser == findFriend[0]._id);
   if(users[index].socketId){
-    io.to(users[index].socketId).emit('acceptAddFriend', {displayName: owner[0].displayName})
+    io.to(users[index].socketId).emit('acceptAddFriend', owner[0].displayName || owner[0].user_name )
   }
 
   if (findFriend.length > 0) {
@@ -119,7 +119,6 @@ router.post("/allPendingFriend", async (req, res) => {
 });
 router.post("/denyAcceptAddFriend", async (req, res) => {
   let newFriendAdd = req.body;
-  console.log(newFriendAdd);
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
@@ -201,7 +200,6 @@ router.post("/editUserInfo", async (req, res) => {
 
 router.post("/setAvater", upload.single("file"), async (req, res) => {
   let request = req.body;
-  console.log(request.file);
   if (req.file === undefined) return res.send("you must select a file.");
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
   let userInfo = await user.find({ _id: request.owners }).lean().exec();
@@ -297,7 +295,6 @@ router.post("/unfriend", async (req, res) => {
     .find({ username: request.nameUnfriend })
     .lean()
     .exec();
-  console.log();
   await user.updateOne(
     { _id: request.owners },
     { $pull: { friends: NameFriend[0]._id } }

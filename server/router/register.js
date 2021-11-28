@@ -4,7 +4,7 @@ const functionAutho = require("../public/javascripts/CheckAutho");
 const user = require("../public/db/schema/User_Schema");
 /* GET home page. */
 router.get("/", functionAutho.checkNotAuthenticated, (req, res) => {
-  console.log("register");
+  console.log("Register");
 });
 
 router.post("/", async (req, res) => {

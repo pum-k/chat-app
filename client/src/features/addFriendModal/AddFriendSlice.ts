@@ -37,9 +37,7 @@ export const AddFriendSlice = createSlice({
     });
     builder.addCase(FindFriend.fulfilled, (state, action) => {
       state.loadding = false;
-      console.log(action.payload);
       if (action.payload.length > 0) {
-        console.log(action.payload);
         state.displayName = action.payload[0].displayName || '';
         state.username = action.payload[0].username;
         state.phoneNumber = action.payload[0].phoneNumber;

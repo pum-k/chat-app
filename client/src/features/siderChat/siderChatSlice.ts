@@ -33,8 +33,9 @@ export const unBlockUserAsync = createAsyncThunk(
 
 export const unFriendAsync = createAsyncThunk(
   'user/un-friend-user',
-  async (params: { owners: string | null, nameUnfriend: string}) => {
+  async (params: { owners: string | null; nameUnfriend: string }, thunkAPI) => {
     const response: any = await userApi.unFriend(params);
+    thunkAPI.dispatch(fetchListRoom());
     return response.data;
   }
 );
@@ -46,9 +47,19 @@ export const siderChatSlice = createSlice({
     updateBlock: (state, action) => {
       const temp = current(state.data).findIndex((item) => item.room_id === action.payload);
       state.data[temp].isBlock = !state.data[temp].isBlock;
-      
     },
-
+    increaseNumberNotSeen: (state, action) => {
+      const temp = current(state.data).findIndex((item) => item.room_id === action.payload.Room);
+      if (state.data[temp].numberNotSeen !== undefined) {
+        state.data[temp].numberNotSeen = state.data[temp].numberNotSeen + 1;
+      } else {
+        state.data[temp].numberNotSeen = 1;
+      }
+    },
+    removeNotSeen: (state, action) => {
+      const temp = current(state.data).findIndex((item) => item.room_id === action.payload);
+      if (state.data[temp] !== undefined) state.data[temp].numberNotSeen = 0;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchListRoom.pending, (state) => {
@@ -108,7 +119,6 @@ export const siderChatSlice = createSlice({
       if (action.payload.isSuccess) {
         setTimeout(() => {
           message.success('Unfriend successfully!');
-          window.location.href ="http://localhost:3000/t";
         }, 500);
       }
     });
@@ -116,6 +126,6 @@ export const siderChatSlice = createSlice({
 });
 
 export default siderChatSlice.reducer;
-export const { updateBlock } = siderChatSlice.actions;
+export const { updateBlock, increaseNumberNotSeen, removeNotSeen } = siderChatSlice.actions;
 export const selectListRoom = (state: RootState) => state.siderChat.data;
 export const selectListRoomLoading = (state: RootState) => state.siderChat.loading;
