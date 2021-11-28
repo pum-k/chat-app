@@ -8,7 +8,6 @@ import { selectUserModal, selectUserUpdate } from 'features/accountModal/account
 import {
   acceptRequest,
   denyRequest,
-  fetchListPending,
   fetchListRequest,
   removeRequest,
 } from './headerChatSlice';
@@ -28,7 +27,7 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
       message.success(`${data.displayName} just agreed to be friends with you`);
       dispatch(fetchListRoom());
     });
-  });
+  }, []);
 
   const dispatch = useAppDispatch();
 
