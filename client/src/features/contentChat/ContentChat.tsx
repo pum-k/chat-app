@@ -40,13 +40,6 @@ import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
-// import {
-//   blockUserAsync,
-//   fetchListRoom,
-//   unBlockUserAsync,
-//   unFriendAsync,
-//   updateBlock,
-// } from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
 import { blockUserAsync, unBlockUserAsync, unFriendAsync } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
@@ -87,8 +80,6 @@ const ContentChat = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(owner_avatar);
-
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
