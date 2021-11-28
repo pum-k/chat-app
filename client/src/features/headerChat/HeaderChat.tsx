@@ -19,10 +19,9 @@ import { Socket } from 'socket.io-client';
 const { Title, Text } = Typography;
 
 const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({ socket }) => {
-
   useEffect(() => {
     socket.on('addFriendRequest', () => {
-      console.log('co nguoi vua add friend');
+      dispatch(fetchListRequest());
     });
   });
 
@@ -74,7 +73,6 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
   }> = useAppSelector((state) => state.headerChat.listPending);
   useEffect(() => {
     dispatch(fetchListRequest());
-    dispatch(fetchListPending());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -107,7 +105,7 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
           icon={<LogoutOutlined />}
           onClick={() => {
             localStorage.removeItem('access_token');
-            window.location.reload();
+            window.location.href="http://localhost:3000/login";
           }}
         >
           Sign out
@@ -122,11 +120,13 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
         listRequest.map((item, index) => {
           return (
             <Menu.Item>
-              <Space>
-                <Avatar src={item.avatar} icon={<UserOutlined />} />
-                <Text>
-                  <b>{item.displayName || item.username}</b> wants to be friends with you
-                </Text>
+              <Space style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Space>
+                  <Avatar src={item.avatar} icon={<UserOutlined />} />
+                  <Text>
+                    <b>{item.displayName || item.username}</b> wants to be friends with you
+                  </Text>
+                </Space>
                 <Space>
                   <Button
                     type="primary"
@@ -148,20 +148,6 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
                     Deny
                   </Button>
                 </Space>
-              </Space>
-            </Menu.Item>
-          );
-        })}
-      {listPending &&
-        listPending.map((item) => {
-          return (
-            <Menu.Item>
-              <Space>
-                <Avatar src={item.avatar} icon={<UserOutlined />} />
-                <Text>
-                  <b>{item.displayName || item.username}</b> has accepted your friend request, let
-                  them agree!
-                </Text>
               </Space>
             </Menu.Item>
           );
@@ -193,7 +179,7 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
               <Dropdown
                 overlay={menuNotification}
                 trigger={['click']}
-                disabled={!listRequest && !listPending}
+                disabled={listRequest.length === 0}
               >
                 <div onClick={() => offNumberOfNotifications()}>
                   <Badge count={numberOfNotifications} offset={[-5, 5]}>

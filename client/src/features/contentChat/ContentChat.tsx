@@ -50,6 +50,7 @@ import { messageStructure } from 'constants/ChatTypes';
 // } from 'features/siderChat/siderChatSlice';
 import { userApi } from 'api/userApi';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
+import { blockUserAsync, unBlockUserAsync, unFriendAsync } from 'features/siderChat/siderChatSlice';
 const { Title } = Typography;
 const { Panel } = Collapse;
 const ContentChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (props) => {
