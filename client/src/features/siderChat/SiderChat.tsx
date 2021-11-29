@@ -27,6 +27,7 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
   useEffect(() => {
     socket.on('newMessageComming', (data: any) => {
       dispatch(increaseNumberNotSeen(data));
+      console.log(`object`)
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

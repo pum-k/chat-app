@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
 import { message } from 'antd';
 import { roomApi } from 'api/siderChatApi';
 import { userApi } from 'api/userApi';
-import { useAppDispatch } from 'app/hooks';
 import { RootState } from 'app/store';
 import { ListRoomChat } from 'constants/SiderChatTypes';
 
@@ -26,7 +25,6 @@ export const blockUserAsync = createAsyncThunk(
 export const unBlockUserAsync = createAsyncThunk(
   'user/un-block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
-    // param.dispatch(updateBlock(params.room_id));
     const response: any = await userApi.unBlockUser(params);
     return response.data;
   }
@@ -35,8 +33,10 @@ export const unBlockUserAsync = createAsyncThunk(
 export const unFriendAsync = createAsyncThunk(
   'user/un-friend-user',
   async (params: { owners: string | null; nameUnfriend: string }, thunkAPI) => {
-    thunkAPI.dispatch(fetchListRoom());
     const response: any = await userApi.unFriend(params);
+    setTimeout(() => {
+      thunkAPI.dispatch(fetchListRoom());
+    }, 1000)
     return response.data;
   }
 );

@@ -24,7 +24,7 @@ export const acceptRequest = createAsyncThunk(
     const response: any = await friendApi.acceptRequest(params);
     setTimeout(() => {
       thunkAPI.dispatch(fetchListRoom());
-    }, 2000);
+    }, 1000);
     return response.data;
   }
 );

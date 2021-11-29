@@ -1,13 +1,13 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var users = require("../public/db/schema/User_Schema");
-var RoomChat = require("../public/db/schema/chatroom_Schema");
-var upload = require("../public/db/functionForDB/upload");
-var moment = require("moment");
-let PORT = process.env.PORT || "http://localhost:4000";
-router.post("/sendMessage", async (req, res) => {
-  var io = req.app.get("socketio");
-  let orther = "";
+var users = require('../public/db/schema/User_Schema');
+var RoomChat = require('../public/db/schema/chatroom_Schema');
+var upload = require('../public/db/functionForDB/upload');
+var moment = require('moment');
+let PORT = process.env.PORT || 'http://localhost:4000';
+router.post('/sendMessage', async (req, res) => {
+  var io = req.app.get('socketio');
+  let orther = '';
   let people = await users.findById({ _id: req.body.id });
   let newMessage = {
     message: req.body.line_text,
@@ -22,14 +22,14 @@ router.post("/sendMessage", async (req, res) => {
   );
   orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
 
-  var userSocket = req.app.get("users");
+  var userSocket = req.app.get('users');
   let index = userSocket.findIndex((user) => user.idUser == orther);
-  if (userSocket[index] != undefined) {
-    io.to(userSocket[index].socketId).emit("newMessageComming", {
+  if (userSocket[index] !== undefined) {
+    io.to(userSocket[index].socketId).emit('newMessageComming', {
       Room: req.body.room_id,
     });
   }
-  io.to(req.body.room_id).emit("newMessages", newMessage);
+  io.to(req.body.room_id).emit('newMessages', newMessage);
   await RoomChat.findByIdAndUpdate(
     { _id: req.body.room_id },
     {
@@ -39,15 +39,15 @@ router.post("/sendMessage", async (req, res) => {
           displayName: people.displayName,
           user_name: people.username,
           createAt: Date.now(),
-          type: "text",
+          type: 'text',
         },
       },
     }
   );
   res.send({ sendSuccess: true });
 });
-router.post("/sendImage", upload.single("file"), async (req, res) => {
-  var io = req.app.get("socketio");
+router.post('/sendImage', upload.single('file'), async (req, res) => {
+  var io = req.app.get('socketio');
   let people = await users.findById({ _id: req.body.id });
   if (req.file === undefined) return res.send({ isSuccess: false });
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
@@ -58,14 +58,14 @@ router.post("/sendImage", upload.single("file"), async (req, res) => {
     create_at: people.createAt,
     user_Id: people._id,
   };
-  var userSocket = req.app.get("users");
+  var userSocket = req.app.get('users');
   let index = userSocket.findIndex((user) => user.idUser == people._id);
   if (userSocket[index] != undefined) {
-    io.to(userSocket[index].socketId).emit("newMessageComming", {
+    io.to(userSocket[index].socketId).emit('newMessageComming', {
       Room: req.body.room_id,
     });
   }
-  io.to(req.body.room_id).emit("newMessages", newMessage);
+  io.to(req.body.room_id).emit('newMessages', newMessage);
   await RoomChat.findByIdAndUpdate(
     { _id: req.body.room_id },
     {
@@ -75,19 +75,19 @@ router.post("/sendImage", upload.single("file"), async (req, res) => {
           displayName: people.displayName,
           user_name: people.username,
           createAt: Date.now(),
-          type: "image",
+          type: 'image',
         },
       },
     }
   );
   res.send({ sendSuccess: true });
 });
-router.post("/listMessages", async (req, res) => {
+router.post('/listMessages', async (req, res) => {
   if (req.body.chatRoom) {
     let ListMessages = await RoomChat.find({ _id: req.body.chatRoom })
       .lean()
       .exec();
-    if (ListMessages[0].textChat.length > 0) {
+    if ( ListMessages[0] && ListMessages[0].textChat.length > 0) {
       res.send({
         ListMessages: ListMessages[0].textChat,
         isBlock: ListMessages[0].isBlock,
@@ -97,7 +97,7 @@ router.post("/listMessages", async (req, res) => {
     }
   }
 });
-router.post("/listChatPage", async (req, res) => {
+router.post('/listChatPage', async (req, res) => {
   let user = req.body;
   let userRoomInUser = await users.find({ _id: user.owners }).lean().exec();
   let ListRoomChat = userRoomInUser[0].RoomChatId;
@@ -117,7 +117,7 @@ router.post("/listChatPage", async (req, res) => {
           RoomName.push({
             username: name.username,
             displayName: name.displayName || name.username,
-            avatar: name.avatar || "",
+            avatar: name.avatar || '',
           });
         }
       }
@@ -133,12 +133,12 @@ router.post("/listChatPage", async (req, res) => {
         last_message:
           AlltextChat[0] != undefined
             ? AlltextChat[AlltextChat.length - 1].displayName +
-                ": " +
+                ': ' +
                 AlltextChat[AlltextChat.length - 1].line_text ||
               AlltextChat[0].user_name +
-                ": " +
+                ': ' +
                 AlltextChat[AlltextChat.length - 1].line_text
-            : "",
+            : '',
       });
 
       RoomName = [];
@@ -147,7 +147,7 @@ router.post("/listChatPage", async (req, res) => {
   res.send({ infoAllRoomChat });
 });
 
-router.post("/blockRoom", async (req, res) => {
+router.post('/blockRoom', async (req, res) => {
   let request = req.body;
   let room = await RoomChat.find({ _id: request.room_id }).lean().exec();
 
@@ -155,13 +155,13 @@ router.post("/blockRoom", async (req, res) => {
     (eachUser) => eachUser == req.body.owners
   );
 
-  var userSocket = req.app.get("users");
+  var userSocket = req.app.get('users');
   orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
-  var io = req.app.get("socketio");
+  var io = req.app.get('socketio');
   console.log(orther);
   let index = userSocket.findIndex((user) => user.idUser == orther);
   if (index != -1 && userSocket[index] != undefined) {
-    io.to(userSocket[index].socketId).emit("lock", {
+    io.to(userSocket[index].socketId).emit('blockRoom', {
       Room: req.body.room_id,
     });
   }
@@ -180,7 +180,7 @@ router.post("/blockRoom", async (req, res) => {
     res.send({ isSuccess: false });
   }
 });
-router.post("/unBlockRoom", async (req, res) => {
+router.post('/unBlockRoom', async (req, res) => {
   let request = req.body;
 
   let room = await RoomChat.find({ _id: request.room_id }).lean().exec();
@@ -192,17 +192,20 @@ router.post("/unBlockRoom", async (req, res) => {
         { $set: { isBlock: false, id_user_block: null } },
         (err) => {
           if (!err) {
-            var userSocket = req.app.get("users");
+            let testIndex = room[0].MemberName.findIndex(
+              (eachUser) => eachUser == req.body.owners
+            );
+            var userSocket = req.app.get('users');
             orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
-            var io = req.app.get("socketio");
+            var io = req.app.get('socketio');
             console.log(orther);
             let index = userSocket.findIndex((user) => user.idUser == orther);
             if (index != -1 && userSocket[index] != undefined) {
-              io.to(userSocket[index].socketId).emit("unblock", {
+              io.to(userSocket[index].socketId).emit('unblock', {
                 Room: req.body.room_id,
               });
             }
-            res.send({ isSuccess: true });
+            res.send({ isSuccess: true, roomId: req.body.room_id });
           }
         }
       );

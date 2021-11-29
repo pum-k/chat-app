@@ -150,14 +150,20 @@ const ContentChat = () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoom());
     });
-    socket.on('blockroom', (data: any) => {
-      console.log(data);
+    socket.on('blockRoom', (data: any) => {
+      dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
     });
     socket.on('unblock', (data: any) => {
-      console.log(data);
+      dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
     });
     socket.on('unfriendCall', (data: any) => {
-      console.log(data);
+      setTimeout(() => {
+        dispatch(fetchListRoom());
+        history.push('/t');
+      }, 1000);
+      console.log(`feat`);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -269,8 +275,10 @@ const ContentChat = () => {
       owners,
       nameUnfriend,
     };
-    history.push('/t');
     dispatch(unFriendAsync(params));
+    setTimeout(() => {
+      history.push('/t');
+    }, 1000);
   };
   // <----------------------- Unfriend
 
@@ -404,11 +412,7 @@ const ContentChat = () => {
                   className={Boolean(isBlockUser) ? 'block-input' : undefined}
                   onClick={() => dispatch(removeNotSeen(roomId))}
                   size="large"
-                  placeholder={
-                    isBlockUser
-                      ? "Blocked. You can't text now!"
-                      : 'Chat now...'
-                  }
+                  placeholder={isBlockUser ? "Blocked. You can't text now!" : 'Chat now...'}
                   disabled={Boolean(isBlockUser)}
                   onKeyPress={(e: any) => {
                     chatEnterSubmit(e);
