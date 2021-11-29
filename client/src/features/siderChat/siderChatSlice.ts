@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
 import { message } from 'antd';
 import { roomApi } from 'api/siderChatApi';
 import { userApi } from 'api/userApi';
+import { useAppDispatch } from 'app/hooks';
 import { RootState } from 'app/store';
 import { ListRoomChat } from 'constants/SiderChatTypes';
 
@@ -17,16 +18,16 @@ export const fetchListRoom = createAsyncThunk('sider-chat/fetchListRoom', async 
 export const blockUserAsync = createAsyncThunk(
   'user/block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
-    const response: any = await userApi.blockUser(params);
     param.dispatch(updateBlock(params.room_id));
+    const response: any = await userApi.blockUser(params);
     return response.data;
   }
 );
 export const unBlockUserAsync = createAsyncThunk(
   'user/un-block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
+    // param.dispatch(updateBlock(params.room_id));
     const response: any = await userApi.unBlockUser(params);
-    param.dispatch(updateBlock(params.room_id));
     return response.data;
   }
 );
@@ -87,25 +88,22 @@ export const siderChatSlice = createSlice({
         setTimeout(() => {
           message.success('Block user successfully!');
         }, 500);
-      } else {
-        message.error('You are not authorized to do this!');
       }
     });
     builder.addCase(unBlockUserAsync.pending, (state) => {
-      state.loading = true;
       message.loading('Wait a second...', 0.5);
     });
-    builder.addCase(unBlockUserAsync.rejected, (state) => {
-      state.loading = false;
-    });
     builder.addCase(unBlockUserAsync.fulfilled, (state, action) => {
-      state.loading = false;
       if (action.payload.isSuccess) {
+        const temp = current(state.data).findIndex((item) => item.room_id === action.payload.roomId);
+        state.data[temp].isBlock = !state.data[temp].isBlock;
         setTimeout(() => {
           message.success('Unblock user successfully!');
         }, 500);
       } else {
-        message.error('You are not authorized to do this!');
+        setTimeout(() => {
+          message.error('You can not do this!');
+        }, 500);
       }
     });
     builder.addCase(unFriendAsync.pending, (state) => {

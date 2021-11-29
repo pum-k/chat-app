@@ -54,7 +54,10 @@ const ContentChat = () => {
   // -> Declare
   const dispatch = useAppDispatch();
 
+  // -> get store messages
+  const messages = useAppSelector((state) => state.contentChat.messages);
   // -> Fetch data
+
   let location = useLocation();
   const roomId = location.pathname.slice(3);
   useEffect(() => {
@@ -66,8 +69,6 @@ const ContentChat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // -> get store messages
-  const messages = useAppSelector((state) => state.contentChat.messages);
   // -> Info chat box
   const owner = useAppSelector((state) => state.accountModal.user);
   const owner_avatar = useAppSelector((state) => state.headerChat.avatar);
@@ -145,6 +146,22 @@ const ContentChat = () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoom());
     });
+    socket.on('unfriendCall' , (data: any) => {
+      console.log(data);
+      
+    })
+
+    socket.on('unBlock' ,(data: any) => {
+      console.log(data);
+      
+    })
+
+    socket.on('blockRoom' , (data: any) => {
+      console.log(data);
+      
+    })
+
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO
@@ -392,7 +409,7 @@ const ContentChat = () => {
                   size="large"
                   placeholder={
                     isBlockUser
-                      ? "You have been blocked by this user. You can't text now!"
+                      ? "Blocked. You can't text now!"
                       : 'Chat now...'
                   }
                   disabled={Boolean(isBlockUser)}
