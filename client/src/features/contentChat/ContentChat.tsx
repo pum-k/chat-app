@@ -29,19 +29,20 @@ import {
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
-import {
-  joinRoom,
-  renderMessageAsync,
-  sendImage,
-  sendMessageAsync,
-} from './contentChatSlice';
+import { joinRoom, renderMessageAsync, sendImage, sendMessageAsync } from './contentChatSlice';
 import './ContentChat.scss';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { messageStructure } from 'constants/ChatTypes';
 import { userApi } from 'api/userApi';
-import { blockUserAsync, unBlockUserAsync, unFriendAsync } from 'features/siderChat/siderChatSlice';
+import {
+  blockUserAsync,
+  unBlockUserAsync,
+  unFriendAsync,
+  removeNotSeen,
+  fetchListRoom,
+} from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -60,6 +61,8 @@ const ContentChat = () => {
     localStorage.setItem('room_id', roomId);
     dispatch(joinRoom(socket)); // Join room by id_room
     dispatch(renderMessageAsync());
+    setYourFriend(getYourFriend);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
@@ -71,15 +74,7 @@ const ContentChat = () => {
   const getYourFriend = useAppSelector((state) => state.siderChat.data).filter(
     (item) => item.room_id === roomId
   );
-
   const [yourFriend, setYourFriend] = useState<RoomChatRender[]>();
-
-  useEffect(() => {
-    if (getYourFriend.length > 0) {
-      setYourFriend(getYourFriend);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   // -> handle send message
   const onFinish = (value: any) => {
     form.resetFields();
@@ -89,6 +84,7 @@ const ContentChat = () => {
         line_text: value.message,
         user_name: localStorage.getItem('access_token') || '',
       };
+      dispatch(fetchListRoom());
       dispatch(sendMessageAsync(newMessage));
     }
   };
@@ -147,6 +143,7 @@ const ContentChat = () => {
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -195,6 +192,7 @@ const ContentChat = () => {
           type: 'image',
         };
         dispatch(sendImage(newMessage));
+        dispatch(fetchListRoom());
       });
     }
   };
@@ -215,7 +213,6 @@ const ContentChat = () => {
   useEffect(() => {
     if (infoRoom.length > 0 && infoRoom[0].isBlock !== isBlockUser) {
       setIsBlockUser(infoRoom[0].isBlock);
-      console.log(infoRoom[0].isBlock)
     }
   });
 
@@ -250,6 +247,7 @@ const ContentChat = () => {
 
   // Unfriend --------------------->
   const siderData = useAppSelector((state) => state.siderChat.data);
+  const history = useHistory();
   const handleUnfriend = () => {
     const owners = localStorage.getItem('access_token');
     const nameUnfriend = siderData.filter((item) => item.room_id === roomId)[0].friend_name;
@@ -257,7 +255,7 @@ const ContentChat = () => {
       owners,
       nameUnfriend,
     };
-
+    history.push('/t');
     dispatch(unFriendAsync(params));
   };
   // <----------------------- Unfriend
@@ -280,7 +278,7 @@ const ContentChat = () => {
               <Title level={5} style={{ margin: '0' }}>
                 {yourFriend && yourFriend[0].displayName}
               </Title>
-              <Badge color={'red'} text={'Offline'} size="small" />
+              <Badge color={'green'} text={'Online'} size="small" />
             </Space>
           </section>
           <section className="content-chat__2nd__header__feature">
@@ -308,7 +306,13 @@ const ContentChat = () => {
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={<b>{item.user_name === owner.user_name ? 'You' : item.user_name}</b>}
+                      author={
+                        <b>
+                          {item.user_name === owner.user_name
+                            ? 'You'
+                            : item.displayName || item.user_name}
+                        </b>
+                      }
                       avatar={
                         <Avatar
                           src={
@@ -335,7 +339,13 @@ const ContentChat = () => {
                       style={{ width: '100%' }}
                       key={index}
                       actions={[]}
-                      author={<b>{item.user_name === owner.user_name ? 'You' : item.user_name}</b>}
+                      author={
+                        <b>
+                          {item.user_name === owner.user_name
+                            ? 'You'
+                            : item.displayName || item.user_name}
+                        </b>
+                      }
                       avatar={
                         <Avatar
                           src={
@@ -377,6 +387,8 @@ const ContentChat = () => {
             <Space size="small" style={{ width: '100%' }}>
               <Form.Item name="message" style={{ width: '100%' }}>
                 <Input
+                  className={Boolean(isBlockUser) ? 'block-input' : undefined}
+                  onClick={() => dispatch(removeNotSeen(roomId))}
                   size="large"
                   placeholder={
                     isBlockUser

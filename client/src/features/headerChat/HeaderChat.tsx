@@ -1,16 +1,22 @@
 import AccountModal from 'features/accountModal/AccountModal';
-import { Menu, Avatar, Badge, Image, Space, Typography, Dropdown, Button, Spin, message } from 'antd';
+import {
+  Menu,
+  Avatar,
+  Badge,
+  Image,
+  Space,
+  Typography,
+  Dropdown,
+  Button,
+  Spin,
+  message,
+} from 'antd';
 import { MoreOutlined, UserOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
 import { FC, useEffect, useState } from 'react';
 import './HeaderChat.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { selectUserModal, selectUserUpdate } from 'features/accountModal/accountModalSlice';
-import {
-  acceptRequest,
-  denyRequest,
-  fetchListRequest,
-  removeRequest,
-} from './headerChatSlice';
+import { acceptRequest, denyRequest, fetchListRequest, removeRequest } from './headerChatSlice';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import { Socket } from 'socket.io-client';
@@ -25,8 +31,11 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
     });
     socket.on('acceptAddFriend', (data: any) => {
       message.success(`${data.displayName} just agreed to be friends with you`);
-      dispatch(fetchListRoom());
+      setTimeout(() => {
+        dispatch(fetchListRoom());
+      }, 2000);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dispatch = useAppDispatch();
@@ -109,7 +118,7 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
           icon={<LogoutOutlined />}
           onClick={() => {
             localStorage.removeItem('access_token');
-            window.location.href="http://localhost:3000/login";
+            window.location.href = 'http://localhost:3000/login';
           }}
         >
           Sign out

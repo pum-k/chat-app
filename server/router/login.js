@@ -35,43 +35,5 @@ router.post("/", async (req, res) => {
     res.send({ error: "Username or password is not correct" });
   }
 });
-// passport.use(
-//   new LocalStrategy(async (username, password, done) => {
-//     console.log(username , password);
-//     let DBfindUser = await login
-//       .find({ username: username, password: password })
-//       .lean()
-//       .exec();
-//     if (DBfindUser[0]) {
-//       user = {
-//         ID: DBfindUser[0]._id,
-//         username: DBfindUser[0].username,
-//         password: DBfindUser[0].password,
-//       };
-//       if (user && user.password == password) {
-//         return done(null, user);
-//       } else {
-//         return done(null, false);
-//       }
-//     }
-//   })
-// );
-// passport.serializeUser((user, done) => {
-//   done(null, user.username);
-// });
-// passport.deserializeUser(async (username, done) => {
-//   let DBfindUser = await login.find({ username: username }).lean().exec();
-//   if (DBfindUser[0]) {
-//     let users = {
-//       username: DBfindUser[0].username,
-//       password: DBfindUser[0].password,
-//     };
-//     if (users) {
-//       return done(null, users);
-//     } else {
-//       return done(null, false);
-//     }
-//   }
-// });
 
 module.exports = router;

@@ -31,14 +31,12 @@ module.exports = function (io) {
     });
 
     socket.on("sendMessage", (message) => {
-      console.log(message + socket.room_id);
 
       io.to(socket.room_id).emit("newMessages", message);
     });
 
     socket.on("disconnect", () => {
-      console.log(users);
-      console.log("nguoi dung " + socket.idUser + " da thoat");
+      console.log("The user" + socket.idUser + "has just left");
       let index = users.findIndex((user) => user.idUser === socket.idUser);
       users.splice(index, 1);
       let infoSomeOneDisconnect = socket.idUser;

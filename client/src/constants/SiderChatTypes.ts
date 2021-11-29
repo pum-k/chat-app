@@ -12,4 +12,5 @@ export type RoomChatRender = {
     time: string;
     friend_name: string;
     isBlock: boolean;
+    numberNotSeen: number;
 }

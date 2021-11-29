@@ -26,7 +26,7 @@ const HomeChat = () => {
       <div style={{ display: 'flex', width: '100%' }}>
         <SiderChat socket={socket} />
         <Switch>
-          <Route path="/t/:room">
+          <Route exact path="/t/:room">
             <ContentChat />
           </Route>
         </Switch>

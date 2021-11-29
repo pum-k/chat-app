@@ -53,18 +53,26 @@
           margin: 0;
 
           & .ant-input-affix-wrapper {
-            background-color: hsla(333, 87%, 66%, 0.15);
+            background-color: hsla(333, 87%, 66%, 0.08);
+            box-shadow: 0 0 3px hsla(331, 90%, 65%);
             border-radius: 10px;
             border: none;
 
             &-focused {
               box-shadow: 0 0 5px hsla(331, 90%, 65%);
             }
+            & input::placeholder {
+              color: hsla(333, 87%, 66%, 0.5);
+            }
+
+            & input {
+              color: #f45fa3;
+            }
 
             & svg {
               font-size: 1.5rem;
               cursor: pointer;
-              color: #333;
+              color: hsla(333, 87%, 66%, 1);
             }
           }
 
@@ -149,5 +157,15 @@
         background-color: hsla(331, 92%, 66%, 0.1);
       }
     }
+  }
+}
+
+.block-input {
+  background-color: hsla(333, 87%, 66%, 1) !important;
+  & input::placeholder {
+    color: #fff !important;
+  }
+  & svg {
+    color: #f9f9f9 !important;
   }
 }

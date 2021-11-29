@@ -16,13 +16,11 @@ const initialState: AccountState = {
 export const authLogin = createAsyncThunk('user/login', async (user: LoginInput) => {
   const response: any = await userApi.login(user);
   return response.data;
-  // console.log(response);
 });
 
 export const authRegister = createAsyncThunk('user/register', async (user: RegisterInput) => {
   const response: any = await userApi.register(user);
   return response.data;
-  // console.log(response.data);
 });
 
 export const authSlice = createSlice({
