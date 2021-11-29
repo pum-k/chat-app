@@ -4,17 +4,13 @@ import { Avatar, Space, List, Button, Empty, Badge, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './SiderChat.scss';
-import {
-  fetchListRoom,
-  increaseNumberNotSeen,
-  removeNotSeen,
-  selectListRoom,
-} from './siderChatSlice';
+import { fetchListRoom, increaseNumberNotSeen, selectListRoom } from './siderChatSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'app/hooks';
 import { useHistory } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
+import { renderMessageAsync } from 'features/contentChat/contentChatSlice';
 const { Text } = Typography;
 
 const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({ socket }) => {
@@ -24,13 +20,6 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
 
   const [isModalVisibleAddFriend, setIsModalVisibleAddFriend] = useState(false);
 
-  useEffect(() => {
-    socket.on('newMessageComming', (data: any) => {
-      dispatch(increaseNumberNotSeen(data));
-      console.log(`object`)
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const handleOkAddFriend = () => {
     setIsModalVisibleAddFriend(false);
   };
@@ -43,6 +32,28 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
     dispatch(fetchListRoom());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalVisibleAddFriend]);
+
+  useEffect(() => {
+    socket.on('blockRoom', (data: any) => {
+      dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
+    });
+    socket.on('unblock', (data: any) => {
+      dispatch(renderMessageAsync());
+      dispatch(fetchListRoom());
+    });
+    socket.on('unfriendCall', (data: any) => {
+      setTimeout(() => {
+        dispatch(fetchListRoom());
+        history.push('/t');
+      }, 1000);
+    });
+    socket.on('newMessageComming', (data: any) => {
+      dispatch(increaseNumberNotSeen(data));
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -59,7 +70,7 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
               itemLayout="horizontal"
               dataSource={rooms}
               renderItem={(item, index) => (
-                <List.Item onClick={() => dispatch(removeNotSeen(item.room_id))}>
+                <List.Item>
                   {index === 0 &&
                     history.location.pathname.length < 3 &&
                     history.push(`/t/${item.room_id}`)}
@@ -90,7 +101,10 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
                                 textOverflow: 'ellipsis',
                               }}
                             >
-                              {item.last_message.slice(-3) === 'png' ? item.last_message.slice(0, item.last_message.indexOf(":")+1) + ' image' : item.last_message}
+                              {item.last_message.slice(-3) === 'png'
+                                ? item.last_message.slice(0, item.last_message.indexOf(':') + 1) +
+                                  ' image'
+                                : item.last_message}
                             </p>
                             <p>• {item.time}</p>
                           </Space>

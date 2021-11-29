@@ -23,7 +23,6 @@ import {
   BellOutlined,
   SendOutlined,
   StopOutlined,
-  PhoneFilled,
   UserOutlined,
   FileImageOutlined,
 } from '@ant-design/icons';
@@ -42,6 +41,7 @@ import {
   unFriendAsync,
   removeNotSeen,
   fetchListRoom,
+  fetchListRoomOnlyMess,
 } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
 const { Title } = Typography;
@@ -61,10 +61,6 @@ const ContentChat = () => {
   let location = useLocation();
   const roomId = location.pathname.slice(3);
   useEffect(() => {
-    socket.emit('user_connection', {
-      id: localStorage.getItem('access_token'),
-      username: localStorage.getItem('username'),
-    });
     localStorage.setItem('room_id', roomId);
     dispatch(joinRoom(socket)); // Join room by id_room
     dispatch(renderMessageAsync());
@@ -148,23 +144,9 @@ const ContentChat = () => {
     // -> when new message
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
+      dispatch(fetchListRoomOnlyMess(roomId));
     });
-    socket.on('blockRoom', (data: any) => {
-      dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
-    });
-    socket.on('unblock', (data: any) => {
-      dispatch(renderMessageAsync());
-      dispatch(fetchListRoom());
-    });
-    socket.on('unfriendCall', (data: any) => {
-      setTimeout(() => {
-        dispatch(fetchListRoom());
-        history.push('/t');
-      }, 1000);
-      console.log(`feat`);
-    });
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO

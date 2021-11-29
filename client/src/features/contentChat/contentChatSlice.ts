@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { chatApi } from 'api/chatAPI';
 import { RootState } from 'app/store';
 import { ChatState, messageStructure } from 'constants/ChatTypes';

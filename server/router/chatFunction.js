@@ -58,9 +58,17 @@ router.post('/sendImage', upload.single('file'), async (req, res) => {
     create_at: people.createAt,
     user_Id: people._id,
   };
+  
+  let room = await RoomChat.find({ _id: req.body.room_id }).lean().exec();
+  let testIndex = await room[0].MemberName.findIndex(
+    (eachUser) => eachUser == req.body.id
+  );
+  let orther = '';
+  orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
+
   var userSocket = req.app.get('users');
-  let index = userSocket.findIndex((user) => user.idUser == people._id);
-  if (userSocket[index] != undefined) {
+  let index = userSocket.findIndex((user) => user.idUser == orther);
+  if (userSocket[index] !== undefined) {
     io.to(userSocket[index].socketId).emit('newMessageComming', {
       Room: req.body.room_id,
     });

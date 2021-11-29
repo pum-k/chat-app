@@ -5,7 +5,7 @@ import { Link, useHistory } from 'react-router-dom';
 import './Login.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { authLogin, removeError } from 'features/auth/authSlice';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { selectLoadingAuth, selectErrorAuth } from 'features/auth/authSlice';
 
 const { Text } = Typography;

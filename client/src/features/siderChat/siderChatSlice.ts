@@ -14,6 +14,13 @@ export const fetchListRoom = createAsyncThunk('sider-chat/fetchListRoom', async 
   const response: any = await roomApi.fetchList();
   return response.data;
 });
+export const fetchListRoomOnlyMess = createAsyncThunk(
+  'sider-chat/fetchListRoomOnlyMess',
+  async (roomId: string) => {
+    const response: any = await roomApi.fetchList();
+    return { data: response.data, roomId: roomId };
+  }
+);
 export const blockUserAsync = createAsyncThunk(
   'user/block-user',
   async (params: { owners: string | null; room_id: string }, param) => {
@@ -36,7 +43,7 @@ export const unFriendAsync = createAsyncThunk(
     const response: any = await userApi.unFriend(params);
     setTimeout(() => {
       thunkAPI.dispatch(fetchListRoom());
-    }, 1000)
+    }, 1000);
     return response.data;
   }
 );
@@ -75,6 +82,16 @@ export const siderChatSlice = createSlice({
         state.loading = false;
       }
     });
+    builder.addCase(fetchListRoomOnlyMess.fulfilled, (state, action) => {
+      if (action.payload) {
+        const rooms = action.payload.data.infoAllRoomChat;
+        const roomId = action.payload.roomId;
+        const index = rooms.findIndex((item: any) => item.room_id === roomId);
+        if (index !== -1) {
+          state.data[index].last_message = rooms[index].last_message;
+        }
+      }
+    });
     builder.addCase(blockUserAsync.pending, (state) => {
       state.loading = true;
       message.loading('Wait a second...', 0.5);
@@ -95,7 +112,9 @@ export const siderChatSlice = createSlice({
     });
     builder.addCase(unBlockUserAsync.fulfilled, (state, action) => {
       if (action.payload.isSuccess) {
-        const temp = current(state.data).findIndex((item) => item.room_id === action.payload.roomId);
+        const temp = current(state.data).findIndex(
+          (item) => item.room_id === action.payload.roomId
+        );
         state.data[temp].isBlock = !state.data[temp].isBlock;
         setTimeout(() => {
           message.success('Unblock user successfully!');

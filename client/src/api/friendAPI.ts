@@ -1,4 +1,3 @@
-import { acceptRequest } from './../features/headerChat/headerChatSlice';
 import axios from 'axios';
 import { FriendTypes } from 'constants/FriendTypes';
 
