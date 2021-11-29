@@ -15,12 +15,12 @@ router.post('/acceptAddFriend', async (req, res) => {
     .lean()
     .exec();
   let owner = await user.find({ _id: newFriendAdd.owners }).lean().exec();
-  var io = req.app.get('socketio');
-  var users = req.app.get('users');
+  var io = req.app.get("socketio");
+  var users = req.app.get("users");
 
   let index = users.findIndex((user) => user.idUser == findFriend[0]._id);
-  if (users[index].socketId) {
-    io.to(users[index].socketId).emit('acceptAddFriend', {
+  if (users[index] != undefined) {
+    io.to(users[index].socketId).emit("acceptAddFriend", {
       displayName: owner[0].displayName,
     });
   }
@@ -33,7 +33,7 @@ router.post('/acceptAddFriend', async (req, res) => {
 
     await user.updateOne(
       { _id: newFriendAdd.owners },
-      { $pull: { peddingRequests: findFriend[0]._id } }
+      { $pull: { requestAddFriends: findFriend[0]._id } }
     );
     await user.updateOne(
       { _id: findFriend[0]._id },
@@ -42,7 +42,7 @@ router.post('/acceptAddFriend', async (req, res) => {
 
     await user.updateOne(
       { _id: findFriend[0]._id },
-      { $pull: { requestAddFriends: newFriendAdd.owners } }
+      { $pull: { peddingRequests: newFriendAdd.owners } }
     );
 
     let newRoom = new RoomChat({
@@ -138,22 +138,6 @@ router.post('/denyAcceptAddFriend', async (req, res) => {
   }
   res.send({ isSuccess: true });
 });
-// router.post("/acceptAddFriend", async (req, res) => {
-//   let request = req.body;
-//   let findInfo = user.find({
-//     _id: request.owners,
-//     requestAddFriends: request.AcceptTo,
-//   });
-//   console.log(findInfo);
-//   // await user.updateOne(
-//   //   { _id: request.owners },
-//   //   { $pull: { requestAddFriends: request.AcceptTo } }
-//   // );
-//   // await user.updateOne(
-//   //   { _id: AcceptTo.AcceptTo },
-//   //   { $pull: { peddingRequest: request.owners } }
-//   // );
-// });
 
 router.post('/findFriend', async (req, res) => {
   let newFriendAdd = req.body;
@@ -300,11 +284,11 @@ router.post('/unfriend', async (req, res) => {
     .lean()
     .exec();
   /// socket realtime
-  var io = req.app.get('socketio');
-  var users = req.app.get('users');
+  var io = req.app.get("socketio");
+  var users = req.app.get("users");
   let index = users.findIndex((user) => user.idUser == NameFriend[0]._id);
   if (users[index] != undefined) {
-    io.to(users[index].socketId).emit('addFriendRequest', owner);
+    io.to(users[index].socketId).emit("unfriendCall", request.owners);
   }
 
   await user.updateOne(

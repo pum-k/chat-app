@@ -29,6 +29,13 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
     socket.on('addFriendRequest', () => {
       dispatch(fetchListRequest());
     });
+    socket.on('blockroom', (data: any) => {
+      console.log(data);
+    });
+    socket.on('unblock', (data: any) => {
+      console.log(data);
+    });
+
     socket.on('acceptAddFriend', (data: any) => {
       message.success(`${data.displayName} just agreed to be friends with you`);
       setTimeout(() => {

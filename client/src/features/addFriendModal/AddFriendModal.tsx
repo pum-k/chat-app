@@ -26,7 +26,6 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   useEffect(() => {
     if(friend.phoneNumber)
     setShowSearchResult(true);
-    console.log(friend);
   }, [friend]);
 
   const onFinishFailed = (errorInfo: any) => {
