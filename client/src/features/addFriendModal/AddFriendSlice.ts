@@ -8,7 +8,7 @@ const initialState: FriendTypes = {
   displayName: '',
   phoneNumber: '',
   username: '',
-  gender: 'male',
+  gender: '',
   birthday: '',
   loadding: false,
   isSuccess: false,
@@ -38,13 +38,15 @@ export const AddFriendSlice = createSlice({
     builder.addCase(FindFriend.fulfilled, (state, action) => {
       state.loadding = false;
       if (action.payload.length > 0) {
-        state.displayName = action.payload[0].displayName || '';
-        state.username = action.payload[0].username;
-        state.phoneNumber = action.payload[0].phoneNumber;
-        state.birthday = action.payload[0].dateOfBirth;
-        state.gender = action.payload[0].gender;
-        state.avatar = action.payload[0].avatar || '';
-        state.cover = action.payload[0].cover_image || '';
+        state.displayName = action.payload[0].displayName || 'No found';
+        state.username = action.payload[0].username || 'No found';
+        state.phoneNumber = action.payload[0].phoneNumber || 'No found';
+        state.birthday = action.payload[0].dateOfBirth || 'No found';
+        state.gender = action.payload[0].gender || 'No found';
+        state.avatar = action.payload[0].avatar || 'No found';
+        state.cover = action.payload[0].cover_image || 'No found';
+      } else {
+        message.error('No user found with that phone number, try again!', 1.5);
       }
     });
     builder.addCase(addFriend.pending, (state) => {

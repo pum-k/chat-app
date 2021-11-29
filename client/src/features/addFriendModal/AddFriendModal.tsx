@@ -1,4 +1,4 @@
-import { Modal, Input, Button, Form, Space, Image, Avatar, Typography, message } from 'antd';
+import { Modal, Input, Button, Form, Space, Image, Avatar, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import './AddFriendModal.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
@@ -21,8 +21,13 @@ const AddFriendModal: FC<ModalProps> = (props) => {
   const dispatch = useAppDispatch();
   const onFinish = (values: any) => {
     dispatch(FindFriend(values));
-    setShowSearchResult(true);
   };
+
+  useEffect(() => {
+    if(friend.phoneNumber)
+    setShowSearchResult(true);
+    console.log(friend);
+  }, [friend]);
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -123,7 +128,6 @@ const AddFriendModal: FC<ModalProps> = (props) => {
             autoComplete="off"
             style={{ padding: '1rem 1rem 0 1rem' }}
             layout="vertical"
-
           >
             <Form.Item
               label="Your friend's phone number"

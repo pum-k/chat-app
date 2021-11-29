@@ -35,8 +35,8 @@ export const unBlockUserAsync = createAsyncThunk(
 export const unFriendAsync = createAsyncThunk(
   'user/un-friend-user',
   async (params: { owners: string | null; nameUnfriend: string }, thunkAPI) => {
-    const response: any = await userApi.unFriend(params);
     thunkAPI.dispatch(fetchListRoom());
+    const response: any = await userApi.unFriend(params);
     return response.data;
   }
 );

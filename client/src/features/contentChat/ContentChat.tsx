@@ -298,11 +298,11 @@ const ContentChat = () => {
               <Badge color={'green'} text={'Online'} size="small" />
             </Space>
           </section>
-          <section className="content-chat__2nd__header__feature">
+          {/* <section className="content-chat__2nd__header__feature">
             <Tooltip title="Call now">
               <PhoneFilled style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }} />
             </Tooltip>
-          </section>
+          </section> */}
         </div>
         <div className="content-chat__2nd__chat-box" id="scrollableDiv">
           <InfiniteScroll

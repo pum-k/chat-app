@@ -1,26 +1,28 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var user = require("../public/db/schema/User_Schema");
-var RoomChat = require("../public/db/schema/chatroom_Schema");
-const upload = require("../public/db/functionForDB/upload");
-const { v4: uuidv4 } = require("uuid");
-let PORT = process.env.PORT || "http://localhost:4000";
-const moment = require("moment");
+var user = require('../public/db/schema/User_Schema');
+var RoomChat = require('../public/db/schema/chatroom_Schema');
+const upload = require('../public/db/functionForDB/upload');
+const { v4: uuidv4 } = require('uuid');
+let PORT = process.env.PORT || 'http://localhost:4000';
+const moment = require('moment');
 
-router.post("/acceptAddFriend", async (req, res) => {
+router.post('/acceptAddFriend', async (req, res) => {
   let newFriendAdd = req.body;
 
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
     .exec();
-  let owner = await user.find({_id : newFriendAdd.owners}).lean().exec()
-  var io = req.app.get("socketio");
-  var users = req.app.get("users");
-  
+  let owner = await user.find({ _id: newFriendAdd.owners }).lean().exec();
+  var io = req.app.get('socketio');
+  var users = req.app.get('users');
+
   let index = users.findIndex((user) => user.idUser == findFriend[0]._id);
-  if(users[index].socketId){
-    io.to(users[index].socketId).emit('acceptAddFriend', owner[0].displayName || owner[0].user_name )
+  if (users[index].socketId) {
+    io.to(users[index].socketId).emit('acceptAddFriend', {
+      displayName: owner[0].displayName,
+    });
   }
 
   if (findFriend.length > 0) {
@@ -44,7 +46,7 @@ router.post("/acceptAddFriend", async (req, res) => {
     );
 
     let newRoom = new RoomChat({
-      RoomName: "room vua ket ban",
+      RoomName: 'room vua ket ban',
       SocketId: uuidv4(),
     });
     await newRoom.save(async (err) => {
@@ -70,12 +72,12 @@ router.post("/acceptAddFriend", async (req, res) => {
       }
     });
 
-    res.send("tao room thnah cong");
+    res.send('tao room thnah cong');
   } else {
-    res.send({ error: "khong tim thay voi username nay" });
+    res.send({ error: 'khong tim thay voi username nay' });
   }
 });
-router.post("/allRequestAddFriend", async (req, res) => {
+router.post('/allRequestAddFriend', async (req, res) => {
   let request = req.body;
   let RequestAddFriend = [];
   let findInfo = await user.find({ _id: request.owners }).lean().exec();
@@ -96,7 +98,7 @@ router.post("/allRequestAddFriend", async (req, res) => {
     res.send({ isSuccess: false });
   }
 });
-router.post("/allPendingFriend", async (req, res) => {
+router.post('/allPendingFriend', async (req, res) => {
   let request = req.body;
   let PendingAddFriend = [];
   let findInfo = await user.find({ _id: request.owners }).lean().exec();
@@ -117,8 +119,9 @@ router.post("/allPendingFriend", async (req, res) => {
     res.send({ isSuccess: false });
   }
 });
-router.post("/denyAcceptAddFriend", async (req, res) => {
+router.post('/denyAcceptAddFriend', async (req, res) => {
   let newFriendAdd = req.body;
+  console.log(newFriendAdd);
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
     .lean()
@@ -152,7 +155,7 @@ router.post("/denyAcceptAddFriend", async (req, res) => {
 //   // );
 // });
 
-router.post("/findFriend", async (req, res) => {
+router.post('/findFriend', async (req, res) => {
   let newFriendAdd = req.body;
   let findFriend = await user
     .find({ phoneNumber: newFriendAdd.phoneNumber })
@@ -160,19 +163,19 @@ router.post("/findFriend", async (req, res) => {
     .exec();
   res.send(findFriend);
 });
-router.post("/getInfoUser", async (req, res) => {
+router.post('/getInfoUser', async (req, res) => {
   let request = req.body;
   let UserInfo = await user.find({ _id: request.owners }).lean().exec();
   res.send(UserInfo);
 });
-router.post("/editUserInfo", async (req, res) => {
+router.post('/editUserInfo', async (req, res) => {
   let request = req.body;
   let infoUser = await user.findById({ _id: request.owners }).lean().exec();
   if (infoUser) {
     let edit_User = await {
       id: infoUser._id,
       dateOfBirth: request.dateOfBirth || infoUser.dateOfBirth || null,
-      displayName: request.displayName || infoUser.displayName || "",
+      displayName: request.displayName || infoUser.displayName || '',
       gender: request.gender,
     };
     try {
@@ -198,9 +201,10 @@ router.post("/editUserInfo", async (req, res) => {
   }
 });
 
-router.post("/setAvater", upload.single("file"), async (req, res) => {
+router.post('/setAvater', upload.single('file'), async (req, res) => {
   let request = req.body;
-  if (req.file === undefined) return res.send("you must select a file.");
+  console.log(request.file);
+  if (req.file === undefined) return res.send('you must select a file.');
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
   let userInfo = await user.find({ _id: request.owners }).lean().exec();
   try {
@@ -219,9 +223,9 @@ router.post("/setAvater", upload.single("file"), async (req, res) => {
     );
   } catch (e) {}
 });
-router.post("/setCoverImage", upload.single("file"), async (req, res) => {
+router.post('/setCoverImage', upload.single('file'), async (req, res) => {
   let request = req.body;
-  if (req.file === undefined) return res.send("you must select a file.");
+  if (req.file === undefined) return res.send('you must select a file.');
   const imgUrl = `${PORT}/photo/${req.file.filename}`;
   let userInfo = await user.find({ _id: request.owners }).lean().exec();
   try {
@@ -240,18 +244,18 @@ router.post("/setCoverImage", upload.single("file"), async (req, res) => {
     );
   } catch (e) {}
 });
-router.post("/sendRequest", async (req, res) => {
+router.post('/sendRequest', async (req, res) => {
   let request = req.body;
   let findFriend = await user
     .find({ phoneNumber: request.sendTo })
     .lean()
     .exec();
   let owner = await user.find({ _id: request.owners }).lean().exec();
-  var io = req.app.get("socketio");
-  var users = req.app.get("users");
+  var io = req.app.get('socketio');
+  var users = req.app.get('users');
   let index = users.findIndex((user) => user.idUser == findFriend[0]._id);
-  if (users[index].socketId != undefined) {
-    io.to(users[index].socketId).emit("addFriendRequest", owner);
+  if (users[index] != undefined) {
+    io.to(users[index].socketId).emit('addFriendRequest', owner);
   }
   if (findFriend) {
     await user.updateOne(
@@ -266,7 +270,7 @@ router.post("/sendRequest", async (req, res) => {
   res.send({ isSuccess: true });
 });
 
-router.post("/listFriend", async (req, res) => {
+router.post('/listFriend', async (req, res) => {
   let request = req.body;
   let infoUser = await user.find({ _id: request.owners });
   let friends = [];
@@ -277,7 +281,7 @@ router.post("/listFriend", async (req, res) => {
       friends.push({
         _id: infoOfEachFriend[0]._id,
         phoneNumber: infoOfEachFriend[0].phoneNumber,
-        avatar: infoOfEachFriend[0].avatar || "",
+        avatar: infoOfEachFriend[0].avatar || '',
         displayName:
           infoOfEachFriend[0].displayName || infoOfEachFriend[0].username,
       });
@@ -289,12 +293,20 @@ router.post("/listFriend", async (req, res) => {
     res.send({ isSuccess: false });
   }
 });
-router.post("/unfriend", async (req, res) => {
+router.post('/unfriend', async (req, res) => {
   let request = req.body;
   let NameFriend = await user
     .find({ username: request.nameUnfriend })
     .lean()
     .exec();
+  /// socket realtime
+  var io = req.app.get('socketio');
+  var users = req.app.get('users');
+  let index = users.findIndex((user) => user.idUser == NameFriend[0]._id);
+  if (users[index] != undefined) {
+    io.to(users[index].socketId).emit('addFriendRequest', owner);
+  }
+
   await user.updateOne(
     { _id: request.owners },
     { $pull: { friends: NameFriend[0]._id } }
