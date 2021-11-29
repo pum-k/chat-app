@@ -54,7 +54,6 @@ io.on("connection", function (socket) {
         username: data.username,
       });
     } else {
-
       users[index].socketId = socket.id;
     }
   });

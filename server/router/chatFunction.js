@@ -21,7 +21,6 @@ router.post("/sendMessage", async (req, res) => {
     (eachUser) => eachUser == req.body.id
   );
   orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
- 
 
   var userSocket = req.app.get("users");
   let index = userSocket.findIndex((user) => user.idUser == orther);
@@ -151,6 +150,22 @@ router.post("/listChatPage", async (req, res) => {
 router.post("/blockRoom", async (req, res) => {
   let request = req.body;
   let room = await RoomChat.find({ _id: request.room_id }).lean().exec();
+
+  let testIndex = await room[0].MemberName.findIndex(
+    (eachUser) => eachUser == req.body.owners
+  );
+
+  var userSocket = req.app.get("users");
+  orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
+  var io = req.app.get("socketio");
+  console.log(orther);
+  let index = userSocket.findIndex((user) => user.idUser == orther);
+  if (index != -1 && userSocket[index] != undefined) {
+    io.to(userSocket[index].socketId).emit("blockroom", {
+      Room: req.body.room_id,
+    });
+  }
+
   if (room.length > 0) {
     await RoomChat.updateOne(
       { _id: request.room_id },
@@ -167,7 +182,9 @@ router.post("/blockRoom", async (req, res) => {
 });
 router.post("/unBlockRoom", async (req, res) => {
   let request = req.body;
+
   let room = await RoomChat.find({ _id: request.room_id }).lean().exec();
+
   if (room.length > 0) {
     if (room[0].id_user_block == request.owners) {
       await RoomChat.updateOne(
@@ -175,10 +192,26 @@ router.post("/unBlockRoom", async (req, res) => {
         { $set: { isBlock: false, id_user_block: null } },
         (err) => {
           if (!err) {
+
+            let testIndex = room[0].MemberName.findIndex(
+              (eachUser) => eachUser == req.body.owners
+            );
+            var userSocket = req.app.get("users");
+            orther = room[0].MemberName[testIndex == 1 ? 0 : 1];
+            var io = req.app.get("socketio");
+            console.log(orther);
+            let index = userSocket.findIndex((user) => user.idUser == orther);
+            if (index != -1 && userSocket[index] != undefined) {
+              io.to(userSocket[index].socketId).emit("unblock", {
+                Room: req.body.room_id,
+              });
+            }
             res.send({ isSuccess: true });
           }
         }
       );
+    } else {
+      res.send({ isSuccess: false });
     }
   } else {
     res.send({ isSuccess: false });

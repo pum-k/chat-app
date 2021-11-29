@@ -58,6 +58,10 @@ const ContentChat = () => {
   let location = useLocation();
   const roomId = location.pathname.slice(3);
   useEffect(() => {
+    socket.emit('user_connection', {
+      id: localStorage.getItem('access_token'),
+      username: localStorage.getItem('username'),
+    });
     localStorage.setItem('room_id', roomId);
     dispatch(joinRoom(socket)); // Join room by id_room
     dispatch(renderMessageAsync());
@@ -144,6 +148,15 @@ const ContentChat = () => {
     socket.on('newMessages', () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoom());
+    });
+    socket.on('blockroom', (data: any) => {
+      console.log(data);
+    });
+    socket.on('unblock', (data: any) => {
+      console.log(data);
+    });
+    socket.on('unfriendCall', (data: any) => {
+      console.log(data);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
