@@ -25,10 +25,17 @@ import {
   StopOutlined,
   UserOutlined,
   FileImageOutlined,
+  PhoneFilled,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
-import { joinRoom, renderMessageAsync, sendImage, sendMessageAsync } from './contentChatSlice';
+import {
+  handleVisiblePhoneCall,
+  joinRoom,
+  renderMessageAsync,
+  sendImage,
+  sendMessageAsync,
+} from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation, useHistory } from 'react-router-dom';
 import { io } from 'socket.io-client';
@@ -44,6 +51,7 @@ import {
   fetchListRoomOnlyMess,
 } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
+import PhoneCall from 'features/phoneCall/PhoneCall';
 const { Title } = Typography;
 const { Panel } = Collapse;
 
@@ -146,7 +154,7 @@ const ContentChat = () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoomOnlyMess(roomId));
     });
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO
@@ -264,8 +272,18 @@ const ContentChat = () => {
   };
   // <----------------------- Unfriend
 
+  // phone call ------------------------>
+
+  // <---------------------------- phone call
+
+  // delete mess ----------------------------------->
+  const handleDeleteMessage = (item: messageStructure) => {
+    console.log(item);
+  };
+  // <------------------------------------ delete mess
   return (
     <div className="content-chat">
+      <PhoneCall />
       <section className="content-chat__2nd">
         <div className="content-chat__2nd__header">
           <section className="content-chat__2nd__header__infor">
@@ -285,11 +303,17 @@ const ContentChat = () => {
               <Badge color={'green'} text={'Online'} size="small" />
             </Space>
           </section>
-          {/* <section className="content-chat__2nd__header__feature">
+          <section className="content-chat__2nd__header__feature">
             <Tooltip title="Call now">
-              <PhoneFilled style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }} />
+              <Button
+                type="link"
+                shape="circle"
+                onClick={() => dispatch(handleVisiblePhoneCall(true))}
+              >
+                <PhoneFilled style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }} />
+              </Button>
             </Tooltip>
-          </section> */}
+          </section>
         </div>
         <div className="content-chat__2nd__chat-box" id="scrollableDiv">
           <InfiniteScroll
@@ -307,9 +331,17 @@ const ContentChat = () => {
                 if (item.type === 'image')
                   return (
                     <Comment
+                      className="message-bubble"
                       style={{ width: '100%' }}
                       key={index}
-                      actions={[]}
+                      actions={[
+                        <span
+                          onClick={() => handleDeleteMessage(item)}
+                          key="comment-nested-reply-to"
+                        >
+                          Delete
+                        </span>,
+                      ]}
                       author={
                         <b>
                           {item.user_name === owner.user_name
@@ -340,9 +372,17 @@ const ContentChat = () => {
                 else if (item.type === 'text')
                   return (
                     <Comment
+                      className="message-bubble"
                       style={{ width: '100%' }}
                       key={index}
-                      actions={[]}
+                      actions={[
+                        <span
+                          onClick={() => handleDeleteMessage(item)}
+                          key="comment-nested-reply-to"
+                        >
+                          Delete
+                        </span>,
+                      ]}
                       author={
                         <b>
                           {item.user_name === owner.user_name

@@ -1,8 +1,7 @@
 .register-layout {
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
-
+  background-image: url('../../../assets/images/background.png');
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,6 +13,7 @@
   padding: 2rem;
   background-color: #fff;
   border-radius: 1rem;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
   p {
     color: #999;
   }
@@ -45,7 +45,7 @@
       outline: none;
       border: 1.35px solid #ccc;
       &:focus {
-        border-color: #f09819;
+        border-color: #f857a6;
       }
     }
 

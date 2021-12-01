@@ -12,6 +12,7 @@ export interface ChatState {
   messages: Array<messageStructure>,
   loading: boolean,
   listRoomChat: Array<RoomChatStructure>,
+  isVisiblePhoneCall: boolean
 }
 
 export interface RoomChatStructure {

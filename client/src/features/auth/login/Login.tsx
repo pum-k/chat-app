@@ -49,17 +49,8 @@ const Login = () => {
     if (loading) {
       message.loading({ content: 'Loading...', key });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
-
-  useEffect(() => {
     if (isSuccess) {
-      console.log(isSuccess);
       message.success({ content: 'Login successfully!', key });
-      setTimeout(() => {
-        history.push('/t');
-        dispatch(removeIsSuccess());
-      }, 800);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);

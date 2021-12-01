@@ -169,3 +169,13 @@
     color: #f9f9f9 !important;
   }
 }
+
+.message-bubble {
+  &:not(:first-child) {
+    border-bottom: 1px solid #eee;
+  }
+
+  & .ant-comment-actions {
+    margin-top: 0 !important;
+  }
+}

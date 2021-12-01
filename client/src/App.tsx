@@ -9,6 +9,7 @@ import './App.css';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import ContentChat from 'features/contentChat/ContentChat';
+import PhoneCall from 'features/phoneCall/PhoneCall';
 
 const socket = io('http://localhost:4000');
 
