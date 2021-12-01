@@ -120,7 +120,6 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
           ) : (
             <Empty
               style={{ marginTop: '1rem' }}
-              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
               imageStyle={{
                 height: 60,
               }}

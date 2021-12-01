@@ -21,10 +21,12 @@ import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import AddFriendModal from 'features/addFriendModal/AddFriendModal';
 import { Socket } from 'socket.io-client';
 import { fetchListRoom } from 'features/siderChat/siderChatSlice';
+import { useHistory } from 'react-router';
 
 const { Title, Text } = Typography;
 
 const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({ socket }) => {
+  let history = useHistory();
   useEffect(() => {
     socket.on('addFriendRequest', () => {
       dispatch(fetchListRequest());
@@ -35,7 +37,7 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
         dispatch(fetchListRoom());
       }, 1000);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dispatch = useAppDispatch();
@@ -117,8 +119,11 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
           danger
           icon={<LogoutOutlined />}
           onClick={() => {
-            localStorage.removeItem('access_token');
-            window.location.href = 'http://localhost:3000/login';
+            localStorage.clear();
+            message.loading('Wait a second...', 0.5);
+            setTimeout(() => {
+              history.push('/login');
+            }, 600);
           }}
         >
           Sign out

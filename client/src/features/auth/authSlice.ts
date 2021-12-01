@@ -30,6 +30,9 @@ export const authSlice = createSlice({
     removeError: (state) => {
       state.error = '';
     },
+    removeIsSuccess: (state) => {
+      state.isSuccess = false;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(authLogin.pending, (state) => {
@@ -41,11 +44,12 @@ export const authSlice = createSlice({
     });
     builder.addCase(authLogin.fulfilled, (state, action) => {
       state.loadding = false;
+
       if (action.payload.error) state.error = action.payload.error;
       if (action.payload.id) {
+        state.isSuccess = true;
         localStorage.setItem('access_token', action.payload.id);
         localStorage.setItem('username', action.payload.username);
-        window.location.href = 'http://localhost:3000/t';
       }
     });
     builder.addCase(authRegister.pending, (state) => {
@@ -59,18 +63,16 @@ export const authSlice = createSlice({
       state.loadding = false;
       if (action.payload.error) state.error = action.payload.error;
       state.isSuccess = action.payload.isSuccess;
+
       if (action.payload.isSuccess) {
-        state.isSuccess = false;
-        setTimeout(() => {
-          window.location.href = 'http://localhost:3000/login';
-        }, 1000);
+        state.isSuccess = action.payload.isSuccess;
       }
     });
   },
 });
 
 export default authSlice.reducer;
-export const { removeError } = authSlice.actions;
+export const { removeError, removeIsSuccess } = authSlice.actions;
 export const selectErrorAuth = (state: RootState) => state.auth.error;
 export const selectIsSuccess = (state: RootState) => state.auth.isSuccess;
 export const selectLoadingAuth = (state: RootState) => state.auth.loadding;

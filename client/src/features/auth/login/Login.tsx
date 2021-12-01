@@ -4,7 +4,7 @@ import { message, Typography } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { authLogin, removeError } from 'features/auth/authSlice';
+import { authLogin, removeError, removeIsSuccess } from 'features/auth/authSlice';
 import { useEffect } from 'react';
 import { selectLoadingAuth, selectErrorAuth } from 'features/auth/authSlice';
 
@@ -15,7 +15,11 @@ const Login = () => {
   useEffect(() => {
     let isAuthenticated = Boolean(localStorage.getItem('access_token'));
     if (isAuthenticated) {
-      history.push('/t');
+      setTimeout(() => {
+        history.push('/t');
+      }, 800);
+    } else {
+      dispatch(removeIsSuccess());
     }
   });
 
@@ -25,10 +29,13 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInput>();
-  const onSubmit: SubmitHandler<LoginInput> = (data) => dispatch(authLogin(data));
+  const onSubmit: SubmitHandler<LoginInput> = (data) => {
+    dispatch(authLogin(data));
+  };
 
   const loading = useAppSelector(selectLoadingAuth);
   const error = useAppSelector(selectErrorAuth);
+  const isSuccess = useAppSelector((state) => state.auth.isSuccess);
 
   let key = 'login';
   useEffect(() => {
@@ -41,6 +48,18 @@ const Login = () => {
   useEffect(() => {
     if (loading) {
       message.loading({ content: 'Loading...', key });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log(isSuccess);
+      message.success({ content: 'Login successfully!', key });
+      setTimeout(() => {
+        history.push('/t');
+        dispatch(removeIsSuccess());
+      }, 800);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
