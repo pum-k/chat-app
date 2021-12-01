@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from 'app/hooks';
 import {
   authRegister,
   removeError,
+  removeIsSuccess,
   selectErrorAuth,
   selectIsSuccess,
   selectLoadingAuth,
@@ -20,7 +21,9 @@ const Register = () => {
   useEffect(() => {
     let isAuthenticated = Boolean(localStorage.getItem('access_token'));
     if (isAuthenticated) {
-      history.push('/t');
+      history.push('/login');
+    } else {
+      dispatch(removeIsSuccess());
     }
   });
   const dispatch = useAppDispatch();
@@ -29,30 +32,37 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterInput>();
-  const onSubmit: SubmitHandler<RegisterInput> = (data) => dispatch(authRegister(data));
+  const onSubmit: SubmitHandler<RegisterInput> = (data) => {
+    dispatch(authRegister(data));
+  };
 
   const loading = useAppSelector(selectLoadingAuth);
   const error = useAppSelector(selectErrorAuth);
   const isSuccess = useAppSelector(selectIsSuccess);
-  
-  let key = 'register'
+  console.log(isSuccess);
+
+  let key = 'register';
   useEffect(() => {
     if (error) {
       message.error({ content: `${error}`, key, duration: 2 });
       dispatch(removeError());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
   useEffect(() => {
-    if(loading) {
-      message.loading({ content: 'Loading...', key });
+    if (loading) {
+      message.loading({ content: 'Loading...', key, duration: 2 });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
   useEffect(() => {
-    if(isSuccess) message.success({ content: 'Register successfully', key, duration: 2 });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess])
+    if (isSuccess) {
+      message.success({ content: 'Register successfully', key, duration: 2 });
+      history.push('/login');
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess]);
 
   return (
     <div className="register-layout">
@@ -98,7 +108,6 @@ const Register = () => {
                 className="register__content__input"
                 {...register('phoneNumber', { required: true, minLength: 10 })}
                 autoComplete="off"
-
               />
             </section>
             <section>
