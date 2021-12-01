@@ -13,6 +13,7 @@
   width: 480px;
   padding: 2rem;
   background-color: #fff;
+  border-radius: 1rem;
   p {
     color: #999;
   }
@@ -53,7 +54,7 @@
       width: 100%;
 
       cursor: pointer;
-      background-image: linear-gradient(to right, #ff512f 0%, #f09819 51%, #ff512f 100%);
+      background-image: linear-gradient(to right, #f857a6 0%, #ff5858 51%, #f857a6 100%);
       text-align: center;
       text-transform: uppercase;
       transition: 0.5s;
