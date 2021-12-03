@@ -55,6 +55,8 @@ import {
 } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
 import Peer from 'peerjs';
+import ReceiverCall from 'features/ReceiverCall/ReceiverCall';
+import SenderCall from 'features/SenderCall/SenderCall';
 const { Title } = Typography;
 const { Panel } = Collapse;
 
@@ -289,7 +291,8 @@ const ContentChat = () => {
   // <----------------------- Unfriend
 
   // phone call ------------------------>
-  const user_avatar = useAppSelector(state => state.accountModal.user.user_avatar);
+  const receiver = useAppSelector((state) => state.contentChat.voiceCall);
+  const user_avatar = useAppSelector((state) => state.accountModal.user.user_avatar);
   const handlePhoneCall = () => {
     socket.emit('callToOrther', {
       currentRoom: localStorage.getItem('room_id'),
@@ -297,9 +300,8 @@ const ContentChat = () => {
       username: localStorage.getItem('username'),
       displayname: localStorage.getItem('displayname'),
       peerid: localStorage.getItem('peerid'),
-      avatar: user_avatar
-    }
-    );
+      avatar: user_avatar,
+    });
     dispatch(handleVisibleSender(true));
   };
   // <---------------------------- phone call
@@ -311,7 +313,8 @@ const ContentChat = () => {
   // <------------------------------------ delete mess
   return (
     <div className="content-chat">
-      
+      <SenderCall />
+      {receiver && <ReceiverCall peer={peer} />}
       <section className="content-chat__2nd">
         <div className="content-chat__2nd__header">
           <section className="content-chat__2nd__header__infor">
