@@ -15,7 +15,10 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
   const MyVideo = useRef<any>();
   const isCallNow = useAppSelector((state) => state.contentChat.isVisiblePhoneCall);
   const dispatch = useAppDispatch();
-  const receiver = useAppSelector((state) => state.contentChat.receiver); // receiver
+  const receiver = useAppSelector((state) => state.contentChat.receiver); // sender info
+
+  console.log(receiver)
+
   const handleAccept = () => {
     dispatch(handleVisiblePhoneCall(true));
     navigator.mediaDevices
@@ -46,7 +49,7 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
           <video ref={MyVideo}></video>
 
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
-            <Avatar className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
+            <Avatar src={receiver.avatar} className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
             <Space direction="vertical" size="small">
               <Title style={{ margin: 0, color: 'white' }} level={3}>
                 {receiver.displayName || receiver.username}
