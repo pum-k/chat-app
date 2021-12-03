@@ -292,6 +292,7 @@ const ContentChat = () => {
   // phone call ------------------------>
   const receiver = useAppSelector((state) => state.contentChat.receiver);
   const user_avatar = useAppSelector((state) => state.accountModal.user.user_avatar);
+  const senderVisible = useAppSelector((state) => state.contentChat.isVisibleSender);
   const handlePhoneCall = () => {
     socket.emit('callToOrther', {
       currentRoom: localStorage.getItem('room_id'),
@@ -312,7 +313,7 @@ const ContentChat = () => {
   // <------------------------------------ delete mess
   return (
     <div className="content-chat">
-      <SenderCall peer={peer}/>
+      {senderVisible && <SenderCall peer={peer} receiver={yourFriend ? yourFriend[0] : undefined}/>}
       {receiver && <ReceiverCall peer={peer} />}
       <section className="content-chat__2nd">
         <div className="content-chat__2nd__header">
