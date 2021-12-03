@@ -57,7 +57,9 @@ io.on("connection", function (socket) {
       users[index].socketId = socket.id;
     }
   });
+  socket.on("callToOrhter", (Users)=> {
 
+  })
   socket.on("join_room", (data) => {
     socket.join(data.room_id);
     console.log("A user has just joined the room: " + data.room_id);

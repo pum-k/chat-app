@@ -52,11 +52,16 @@ import {
 } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
 import PhoneCall from 'features/phoneCall/PhoneCall';
+import Peer from 'peerjs';
 const { Title } = Typography;
 const { Panel } = Collapse;
 
 const socket = io('http://localhost:4000');
-
+let peer = new Peer({
+  secure: true,
+  host: 'mypeerserverjs.herokuapp.com',
+  port: 443,
+});
 const ContentChat = () => {
   // REDUX--------------------------->
   // -> Declare
@@ -69,11 +74,13 @@ const ContentChat = () => {
   let location = useLocation();
   const roomId = location.pathname.slice(3);
   useEffect(() => {
-    localStorage.setItem('room_id', roomId);
-    dispatch(joinRoom(socket)); // Join room by id_room
-    dispatch(renderMessageAsync());
-    setYourFriend(getYourFriend);
-
+    peer.on('open', async (id) => {
+      await localStorage.setItem('peerid', id);
+      localStorage.setItem('room_id', roomId);
+      dispatch(joinRoom(socket)); // Join room by id_room
+      dispatch(renderMessageAsync());
+      setYourFriend(getYourFriend);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
@@ -154,7 +161,9 @@ const ContentChat = () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoomOnlyMess(roomId));
     });
-
+    socket.on('recieveCall' , ()=> {
+      
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO
@@ -273,7 +282,10 @@ const ContentChat = () => {
   // <----------------------- Unfriend
 
   // phone call ------------------------>
-
+  const handlePhoneCall = () => {
+    socket.emit('callToOrhter' , {currenRoom: localStorage.getItem('room_id') , ownerCall: localStorage.getItem('access_token')})
+    dispatch(handleVisiblePhoneCall(true));
+  };
   // <---------------------------- phone call
 
   // delete mess ----------------------------------->
@@ -305,11 +317,7 @@ const ContentChat = () => {
           </section>
           <section className="content-chat__2nd__header__feature">
             <Tooltip title="Call now">
-              <Button
-                type="link"
-                shape="circle"
-                onClick={() => dispatch(handleVisiblePhoneCall(true))}
-              >
+              <Button type="link" shape="circle" onClick={() => handlePhoneCall()}>
                 <PhoneFilled style={{ fontSize: '26px', cursor: 'pointer', color: '#f857a6' }} />
               </Button>
             </Tooltip>

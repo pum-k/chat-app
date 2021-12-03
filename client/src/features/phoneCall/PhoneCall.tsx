@@ -106,8 +106,8 @@ const PhoneCall= () => {
             )}
           </Space>
 
-          {/* <BeforeCall /> */}
-          {/* <WaitingCall /> */}
+          {/* <BeforeCall /> */} 
+          {/* <WaitingCall /> */} 
         </div>
       </div>
     </Modal>

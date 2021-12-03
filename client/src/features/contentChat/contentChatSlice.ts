@@ -32,6 +32,7 @@ export const contentChatSlice = createSlice({
       action.payload.emit('join_room', {
         room_id: localStorage.getItem('room_id'),
         userInfo: localStorage.getItem('access_token'),
+        peerId: localStorage.getItem('peerid')
       });
     },
     sendImage: (state, action) => {
