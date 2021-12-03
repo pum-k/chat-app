@@ -13,6 +13,9 @@ export interface ChatState {
   loading: boolean,
   listRoomChat: Array<RoomChatStructure>,
   isVisiblePhoneCall: boolean
+  voiceCall?: any;
+  isVisibleSender: boolean,
+  isVisibleReceiver: boolean
 }
 
 export interface RoomChatStructure {

@@ -8,6 +8,8 @@ const initialState: ChatState = {
   loading: false,
   listRoomChat: [],
   isVisiblePhoneCall: false,
+  isVisibleSender: false,
+  isVisibleReceiver: false
 };
 
 export const sendMessageAsync = createAsyncThunk(
@@ -22,8 +24,6 @@ export const renderMessageAsync = createAsyncThunk('chat/renderMessageAsync', as
   return response.data;
 });
 
-
-
 export const contentChatSlice = createSlice({
   name: 'contentChatSlice',
   initialState,
@@ -31,16 +31,26 @@ export const contentChatSlice = createSlice({
     joinRoom: (state, action) => {
       action.payload.emit('join_room', {
         room_id: localStorage.getItem('room_id'),
+        displayName: localStorage.getItem('displayname'),
         userInfo: localStorage.getItem('access_token'),
-        peerId: localStorage.getItem('peerid')
+        peerId: localStorage.getItem('peerid'),
       });
     },
     sendImage: (state, action) => {
       state.messages.push(action.payload);
     },
     handleVisiblePhoneCall: (state, action) => {
-      state.isVisiblePhoneCall = action.payload;
-    }
+      if (!state.isVisiblePhoneCall) state.isVisiblePhoneCall = action.payload;
+    },
+    handleVisibleSender: (state, action) => {
+      if(!state.isVisibleSender) state.isVisibleSender = action.payload;
+    },
+    handleVisibleReceiver: (state, action) => {
+      if(!state.isVisibleReceiver) state.isVisibleReceiver = action.payload;
+    },
+    handleVoiceCall: (state, action) => {
+      state.voiceCall = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
@@ -70,5 +80,6 @@ export const contentChatSlice = createSlice({
 });
 
 export default contentChatSlice.reducer;
-export const { joinRoom, sendImage, handleVisiblePhoneCall } = contentChatSlice.actions;
+export const { joinRoom, sendImage, handleVisiblePhoneCall, handleVoiceCall, handleVisibleSender, handleVisibleReceiver } =
+  contentChatSlice.actions;
 export const selectMessages = (state: RootState) => state.contentChat.messages;

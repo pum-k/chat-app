@@ -52,15 +52,41 @@ io.on("connection", function (socket) {
         socketId: socket.id,
         idUser: data.id,
         username: data.username,
+        peerid: data.peerid,
       });
     } else {
       users[index].socketId = socket.id;
+      users[index].peerid = data.peerid;
     }
   });
-  socket.on("callToOrhter", (Users)=> {
-
-  })
+  socket.on("callToOrther", (UsersCall) => {
+    
+    let userInCurrentRoom = users.filter(
+      (user) => user.currentRoom == UsersCall.currentRoom
+    );
+    let index = userInCurrentRoom.findIndex(
+      (user) => user.idUser === UsersCall.ownerCall
+    );
+    io.to(users[index == 1 ? 0 : 1].socketId).emit("receiveCall" , UsersCall);
+  });
   socket.on("join_room", (data) => {
+    let index = users.findIndex((user) => user.idUser === data.userInfo);
+    if (index == -1) {
+      users.push({
+        socketId: socket.id,
+        idUser: data.userInfo,
+        
+        username: data.username,
+        currentRoom: data.currentRoom,
+        peerid: data.peerid,
+      });
+    } else {
+      users[index].socketId = socket.id;
+      users[index].displayName = data.displayname
+      users[index].currentRoom = data.room_id;
+      users[index].avatar=  data.avatar,
+      users[index].peerid = data.peerid;
+    }
     socket.join(data.room_id);
     console.log("A user has just joined the room: " + data.room_id);
   });
@@ -80,4 +106,6 @@ io.on("connection", function (socket) {
   });
 });
 
-server.listen(4000, () => console.log("Server is running at http://localhost:4000/"));
+server.listen(4000, () =>
+  console.log("Server is running at http://localhost:4000/")
+);

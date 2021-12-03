@@ -31,6 +31,8 @@ import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
 import {
   handleVisiblePhoneCall,
+  handleVisibleSender,
+  handleVoiceCall,
   joinRoom,
   renderMessageAsync,
   sendImage,
@@ -51,7 +53,6 @@ import {
   fetchListRoomOnlyMess,
 } from 'features/siderChat/siderChatSlice';
 import { RoomChatRender } from 'constants/SiderChatTypes';
-import PhoneCall from 'features/phoneCall/PhoneCall';
 import Peer from 'peerjs';
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -161,9 +162,14 @@ const ContentChat = () => {
       dispatch(renderMessageAsync());
       dispatch(fetchListRoomOnlyMess(roomId));
     });
-    socket.on('recieveCall' , ()=> {
-      
-    })
+    socket.on('receiveCall', (data: any) => {
+      console.log(data);
+      dispatch(handleVisiblePhoneCall(true));
+      dispatch(handleVoiceCall(data));
+    });
+    // socket.on('callToOrther', () => {
+    //   console.log('hello');
+    // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO
@@ -282,9 +288,18 @@ const ContentChat = () => {
   // <----------------------- Unfriend
 
   // phone call ------------------------>
+  const user_avatar = useAppSelector(state => state.accountModal.user.user_avatar);
   const handlePhoneCall = () => {
-    socket.emit('callToOrhter' , {currenRoom: localStorage.getItem('room_id') , ownerCall: localStorage.getItem('access_token')})
-    dispatch(handleVisiblePhoneCall(true));
+    socket.emit('callToOrther', {
+      currentRoom: localStorage.getItem('room_id'),
+      ownerCall: localStorage.getItem('access_token'),
+      username: localStorage.getItem('username'),
+      displayname: localStorage.getItem('displayname'),
+      peerid: localStorage.getItem('peerid'),
+      avatar: user_avatar
+    }
+    );
+    dispatch(handleVisibleSender(true));
   };
   // <---------------------------- phone call
 
@@ -295,7 +310,7 @@ const ContentChat = () => {
   // <------------------------------------ delete mess
   return (
     <div className="content-chat">
-      <PhoneCall />
+      
       <section className="content-chat__2nd">
         <div className="content-chat__2nd__header">
           <section className="content-chat__2nd__header__infor">

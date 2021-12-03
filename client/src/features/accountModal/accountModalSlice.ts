@@ -44,6 +44,7 @@ export const accountModalSlice = createSlice({
     });
     builder.addCase(fetchUserModal.fulfilled, (state, action) => {
       if (action.payload) {
+        localStorage.setItem('displayname', action.payload[0].displayName)
         let user = {
           user_cover_image: action.payload[0].cover_image || '',
           user_avatar: action.payload[0].avatar || '',

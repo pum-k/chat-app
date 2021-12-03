@@ -5,11 +5,10 @@ import Login from 'features/auth/login/Login';
 import Register from 'features/auth/register/Register';
 import SiderChat from 'features/siderChat/SiderChat';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import './App.css';
+import './App.scss';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import ContentChat from 'features/contentChat/ContentChat';
-import PhoneCall from 'features/phoneCall/PhoneCall';
 
 const socket = io('http://localhost:4000');
 
