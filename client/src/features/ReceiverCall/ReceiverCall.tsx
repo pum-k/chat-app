@@ -1,12 +1,8 @@
 import { Avatar, Button, Modal, Space, Typography } from 'antd';
-import {
-  PoweroffOutlined,
-  UserOutlined,
-  PhoneOutlined,
-} from '@ant-design/icons';
+import { PoweroffOutlined, UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { FC, useRef } from 'react';
-import { handleVisiblePhoneCall } from 'features/contentChat/contentChatSlice';
+import { FC, useEffect, useRef, useState } from 'react';
+import { handleVisiblePhoneCall, hangUpCall } from 'features/contentChat/contentChatSlice';
 import InCall from 'features/InCall/InCall';
 const { Title, Text } = Typography;
 
@@ -16,8 +12,20 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
   const isCallNow = useAppSelector((state) => state.contentChat.isVisiblePhoneCall);
   const dispatch = useAppDispatch();
   const receiver = useAppSelector((state) => state.contentChat.receiver); // sender info
-
-  console.log(receiver)
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    if (seconds === 60) {
+      setMinutes(minutes + 1);
+      setSeconds(0);
+    }
+    const interval = setInterval(() => {
+      setSeconds(seconds + 1);
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [minutes, seconds]);
 
   const handleAccept = () => {
     dispatch(handleVisiblePhoneCall(true));
@@ -46,16 +54,20 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
     >
       <div className="phone-call">
         <div className="phone-call__caller">
-          <video ref={MyVideo}></video>
-
+          <video ref={MyVideo} autoPlay></video>
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
-            <Avatar src={receiver.avatar} className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
+            <Avatar
+              src={receiver.avatar}
+              className="phone-call__caller__avatar"
+              size={128}
+              icon={<UserOutlined />}
+            />
             <Space direction="vertical" size="small">
               <Title style={{ margin: 0, color: 'white' }} level={3}>
                 {receiver.displayName || receiver.username}
               </Title>
               <Text type="secondary" style={{ color: '#dedede' }}>
-                00:00
+                {!isCallNow ? 'Waiting...' : `${minutes}:${seconds}`}
               </Text>
             </Space>
           </Space>
@@ -79,6 +91,7 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
                 danger
                 shape="circle"
                 icon={<PoweroffOutlined />}
+                onClick={() => dispatch(hangUpCall())}
               />
             </div>
           )}

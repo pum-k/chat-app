@@ -2,7 +2,7 @@ import { Avatar, Button, Modal, Space, Tooltip, Typography } from 'antd';
 import { PoweroffOutlined, UserOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { FC, useRef, useEffect, useState } from 'react';
-import { handleVisiblePhoneCall } from 'features/contentChat/contentChatSlice';
+import { handleVisiblePhoneCall, hangUpCall } from 'features/contentChat/contentChatSlice';
 import InCall from 'features/InCall/InCall';
 import { RoomChatRender } from 'constants/SiderChatTypes';
 const { Title, Text } = Typography;
@@ -30,13 +30,21 @@ const SenderCall: FC<{ peer: any, receiver: RoomChatRender | undefined}> = ({ pe
   
   useEffect(() => {
     peer.on('call', (call: any) => {
-      dispatch(handleVisiblePhoneCall(true));
-      call.answer(MyVideo.current.srcObject);
-      call.on('stream', (remoteStream: any) => {
-        if (MyVideo.current != null) {
-          MyVideo.current.srcObject = remoteStream;
-        }
-      });
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true,
+        })
+        .then((stream: any) => {
+          dispatch(handleVisiblePhoneCall(true));
+          call.answer(stream);
+          call.on('stream', (remoteStream: any) => {
+            let newVideoRecieve = document.querySelectorAll('video');
+            if (newVideoRecieve != null) {
+              newVideoRecieve[0].srcObject = remoteStream;
+            }
+          });
+        });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -53,7 +61,7 @@ const SenderCall: FC<{ peer: any, receiver: RoomChatRender | undefined}> = ({ pe
     >
       <div className="phone-call">
         <div className="phone-call__caller">
-          {MyVideo && <video ref={MyVideo}></video>}
+          <video ref={MyVideo} autoPlay></video>
 
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
             <Avatar src={receiver && receiver.avatar} className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
@@ -62,7 +70,7 @@ const SenderCall: FC<{ peer: any, receiver: RoomChatRender | undefined}> = ({ pe
                 {receiver ? receiver.displayName || receiver.friend_name : 'Not found'}
               </Title>
               <Text type="secondary" style={{ color: '#dedede' }}>
-                {/* {!isCallNow ? 'Waiting...' : } */}
+                {!isCallNow ? 'Waiting...' : `${minutes}:${seconds}`}
               </Text>
             </Space>
           </Space>
@@ -78,6 +86,8 @@ const SenderCall: FC<{ peer: any, receiver: RoomChatRender | undefined}> = ({ pe
                 danger
                 shape="circle"
                 icon={<PoweroffOutlined />}
+                onClick={() => dispatch(hangUpCall())}
+
               />
             </Tooltip>
           )}

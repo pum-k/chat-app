@@ -1,10 +1,12 @@
 import { Button, Space, Tooltip } from 'antd';
 import React from 'react';
 import { VideoCameraOutlined, PoweroffOutlined, AudioOutlined } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
+import { hangUpCall } from 'features/contentChat/contentChatSlice';
 const InCall = () => {
   const onCam = false;
   const onMic = false;
-
+  const dispatch = useDispatch();
   return (
     <Space size="large">
       {onCam ? (
@@ -27,7 +29,14 @@ const InCall = () => {
       )}
 
       <Tooltip title="Hang up">
-        <Button type="primary" size="large" danger shape="circle" icon={<PoweroffOutlined />} />
+        <Button
+          onClick={() => dispatch(hangUpCall())}
+          type="primary"
+          size="large"
+          danger
+          shape="circle"
+          icon={<PoweroffOutlined />}
+        />
       </Tooltip>
 
       {onMic ? (
