@@ -28,6 +28,7 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
       .then((stream: any) => {
         let call = peer.call(receiver.peerid, stream);
         call.on('stream', (remoteStream: any) => {
+          
           if (MyVideo.current != null) {
             MyVideo.current.srcObject = remoteStream;
           }
@@ -45,8 +46,7 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
     >
       <div className="phone-call">
         <div className="phone-call__caller">
-          <video ref={MyVideo}></video>
-
+          <video ref={MyVideo} autoPlay></video>
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
             <Avatar className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
             <Space direction="vertical" size="small">

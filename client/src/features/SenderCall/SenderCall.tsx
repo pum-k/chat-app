@@ -13,13 +13,21 @@ const SenderCall: FC<{ peer: any }> = ({ peer }) => {
   const sender = useAppSelector((state) => state.accountModal.user); // sender
   useEffect(() => {
     peer.on('call', (call: any) => {
-      dispatch(handleVisiblePhoneCall(true));
-      call.answer(MyVideo.current.srcObject);
-      call.on('stream', (remoteStream: any) => {
-        if (MyVideo.current != null) {
-          MyVideo.current.srcObject = remoteStream;
-        }
-      });
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true,
+        })
+        .then((stream: any) => {
+          dispatch(handleVisiblePhoneCall(true));
+          call.answer(stream);
+          call.on('stream', (remoteStream: any) => {
+            let newVideoRecieve = document.querySelectorAll('video');
+            if (newVideoRecieve != null) {
+              newVideoRecieve[0].srcObject = remoteStream;
+            }
+          });
+        });
     });
   }, []);
 
@@ -34,7 +42,7 @@ const SenderCall: FC<{ peer: any }> = ({ peer }) => {
     >
       <div className="phone-call">
         <div className="phone-call__caller">
-          <video ref={MyVideo}></video>
+          <video ref={MyVideo} autoPlay></video>
 
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
             <Avatar className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
