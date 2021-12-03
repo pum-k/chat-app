@@ -72,7 +72,7 @@ const SiderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
               renderItem={(item, index) => (
                 <List.Item>
                   {index === 0 &&
-                    history.location.pathname.length < 3 &&
+                    history.location.pathname === '/t' &&
                     history.push(`/t/${item.room_id}`)}
                   <Link
                     to={`/t/${item.room_id}`}

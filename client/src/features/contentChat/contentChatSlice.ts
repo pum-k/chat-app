@@ -9,7 +9,7 @@ const initialState: ChatState = {
   listRoomChat: [],
   isVisiblePhoneCall: false,
   isVisibleSender: false,
-  isVisibleReceiver: false
+  isVisibleReceiver: false,
 };
 
 export const sendMessageAsync = createAsyncThunk(
@@ -43,10 +43,10 @@ export const contentChatSlice = createSlice({
       if (!state.isVisiblePhoneCall) state.isVisiblePhoneCall = action.payload;
     },
     handleVisibleSender: (state, action) => {
-      if(!state.isVisibleSender) state.isVisibleSender = action.payload;
+      if (!state.isVisibleSender) state.isVisibleSender = action.payload;
     },
     handleVisibleReceiver: (state, action) => {
-      if(!state.isVisibleReceiver) state.isVisibleReceiver = action.payload;
+      if (!state.isVisibleReceiver) state.isVisibleReceiver = action.payload;
     },
     setReceiver: (state, action) => {
       state.receiver = action.payload;
@@ -56,7 +56,7 @@ export const contentChatSlice = createSlice({
       state.isVisibleReceiver = false;
       state.isVisibleSender = false;
       state.receiver = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(sendMessageAsync.pending, (state) => {
@@ -86,6 +86,13 @@ export const contentChatSlice = createSlice({
 });
 
 export default contentChatSlice.reducer;
-export const { joinRoom, sendImage, handleVisiblePhoneCall,hangUpCall, setReceiver, handleVisibleSender, handleVisibleReceiver } =
-  contentChatSlice.actions;
+export const {
+  joinRoom,
+  sendImage,
+  handleVisiblePhoneCall,
+  hangUpCall,
+  setReceiver,
+  handleVisibleSender,
+  handleVisibleReceiver,
+} = contentChatSlice.actions;
 export const selectMessages = (state: RootState) => state.contentChat.messages;

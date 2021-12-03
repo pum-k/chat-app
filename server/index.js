@@ -69,6 +69,18 @@ io.on("connection", function (socket) {
     );
     io.to(users[index == 1 ? 0 : 1].socketId).emit("receiveCall" , UsersCall);
   });
+  socket.on('closeCall' , (data)=> {
+    let userInCurrentRoom = users.filter(
+      (user) => user.currentRoom == data.currentRoom
+    );
+    let index = userInCurrentRoom.findIndex(
+      (user) => user.idUser === data.owner
+    );
+    io.to(users[index == 1 ? 0 : 1].socketId).emit("closeCallToOrther" );
+
+  })
+
+
   socket.on("join_room", (data) => {
     let index = users.findIndex((user) => user.idUser === data.userInfo);
     if (index == -1) {

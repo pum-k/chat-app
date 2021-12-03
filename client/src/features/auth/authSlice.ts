@@ -44,7 +44,6 @@ export const authSlice = createSlice({
     });
     builder.addCase(authLogin.fulfilled, (state, action) => {
       state.loadding = false;
-
       if (action.payload.error) state.error = action.payload.error;
       if (action.payload.id) {
         state.isSuccess = true;
@@ -62,7 +61,6 @@ export const authSlice = createSlice({
     builder.addCase(authRegister.fulfilled, (state, action) => {
       state.loadding = false;
       if (action.payload.error) state.error = action.payload.error;
-      state.isSuccess = action.payload.isSuccess;
 
       if (action.payload.isSuccess) {
         state.isSuccess = action.payload.isSuccess;

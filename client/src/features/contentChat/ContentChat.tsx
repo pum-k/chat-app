@@ -32,6 +32,7 @@ import moment from 'moment';
 import {
   handleVisibleReceiver,
   handleVisibleSender,
+  hangUpCall,
   joinRoom,
   renderMessageAsync,
   sendImage,
@@ -165,13 +166,25 @@ const ContentChat = () => {
       dispatch(fetchListRoomOnlyMess(roomId));
     });
     socket.on('receiveCall', (data: any) => {
-      console.log(data);
       dispatch(handleVisibleReceiver(true));
       dispatch(setReceiver(data));
     });
-    // socket.on('callToOrther', () => {
-    //   console.log('hello');
-    // });
+
+    socket.on('closeCallToOrther', () => {
+      let video = document.querySelector('video');
+      if (video) {
+        let stream: MediaStream = video.srcObject as MediaStream;
+        if (stream) {
+          const tracks = stream.getTracks();
+          tracks.forEach(function (track) {
+            track.stop();
+          });
+        }
+        video.srcObject = null;
+      }
+      dispatch(hangUpCall());
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // <-----------------------------SOCKET.IO
@@ -306,15 +319,12 @@ const ContentChat = () => {
   };
   // <---------------------------- phone call
 
-  // delete mess ----------------------------------->
-  const handleDeleteMessage = (item: messageStructure) => {
-    console.log(item);
-  };
-  // <------------------------------------ delete mess
   return (
     <div className="content-chat">
-      {senderVisible && <SenderCall peer={peer} receiver={yourFriend ? yourFriend[0] : undefined}/>}
-      {receiver && <ReceiverCall peer={peer} />}
+      {senderVisible && (
+        <SenderCall peer={peer} receiver={yourFriend ? yourFriend[0] : undefined} socket={socket} />
+      )}
+      {receiver && <ReceiverCall peer={peer} socket={socket} />}
       <section className="content-chat__2nd">
         <div className="content-chat__2nd__header">
           <section className="content-chat__2nd__header__infor">
@@ -358,17 +368,8 @@ const ContentChat = () => {
                 if (item.type === 'image')
                   return (
                     <Comment
-                      className="message-bubble"
                       style={{ width: '100%' }}
                       key={index}
-                      actions={[
-                        <span
-                          onClick={() => handleDeleteMessage(item)}
-                          key="comment-nested-reply-to"
-                        >
-                          Delete
-                        </span>,
-                      ]}
                       author={
                         <b>
                           {item.user_name === owner.user_name
@@ -399,17 +400,8 @@ const ContentChat = () => {
                 else if (item.type === 'text')
                   return (
                     <Comment
-                      className="message-bubble"
                       style={{ width: '100%' }}
                       key={index}
-                      actions={[
-                        <span
-                          onClick={() => handleDeleteMessage(item)}
-                          key="comment-nested-reply-to"
-                        >
-                          Delete
-                        </span>,
-                      ]}
                       author={
                         <b>
                           {item.user_name === owner.user_name

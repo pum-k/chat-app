@@ -110,7 +110,7 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
       </Menu.Item>
       <Menu.Item>
         <Button type="text" icon={<UserOutlined />} onClick={() => showModalAccount()}>
-          Account
+          Profile
         </Button>
       </Menu.Item>
       <Menu.Item>
@@ -120,10 +120,8 @@ const HeaderChat: FC<{ socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = (
           icon={<LogoutOutlined />}
           onClick={() => {
             localStorage.clear();
-            message.loading('Wait a second...', 0.5);
-            setTimeout(() => {
-              history.push('/login');
-            }, 600);
+            message.success('Logout successfully', 0.5);
+            history.push('/login');
           }}
         >
           Sign out

@@ -4,45 +4,42 @@ import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { FC, useEffect, useRef, useState } from 'react';
 import { handleVisiblePhoneCall, hangUpCall } from 'features/contentChat/contentChatSlice';
 import InCall from 'features/InCall/InCall';
+import { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 const { Title, Text } = Typography;
 
-const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
+const ReceiverCall: FC<{ peer: any; socket: Socket<DefaultEventsMap, DefaultEventsMap> }> = ({
+  peer,
+  socket,
+}) => {
   const isVisible = useAppSelector((state) => state.contentChat.isVisibleReceiver);
-  const MyVideo = useRef<any>();
+  const OrtherVideo = useRef<any>();
   const isCallNow = useAppSelector((state) => state.contentChat.isVisiblePhoneCall);
   const dispatch = useAppDispatch();
   const receiver = useAppSelector((state) => state.contentChat.receiver); // sender info
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-  useEffect(() => {
-    if (seconds === 60) {
-      setMinutes(minutes + 1);
-      setSeconds(0);
-    }
-    const interval = setInterval(() => {
-      setSeconds(seconds + 1);
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [minutes, seconds]);
+  const onCam = useAppSelector((state) => state.inCall.onCam);
+  const onMic = useAppSelector((state) => state.inCall.onMic);
+  const [stream, setStream] = useState<MediaStream>();
 
   const handleAccept = () => {
     dispatch(handleVisiblePhoneCall(true));
     navigator.mediaDevices
       .getUserMedia({
-        video: true,
-        audio: true,
+        video: onCam,
+        audio: onMic,
       })
-      .then((stream: any) => {
+      .then((stream: MediaStream) => {
+        setStream(stream);
         let call = peer.call(receiver.peerid, stream);
         call.on('stream', (remoteStream: any) => {
-          if (MyVideo.current != null) {
-            MyVideo.current.srcObject = remoteStream;
+          if (OrtherVideo.current) {
+            OrtherVideo.current.srcObject = remoteStream;
           }
         });
       });
   };
+
+
   return (
     <Modal
       className="modal-phone-call"
@@ -54,7 +51,11 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
     >
       <div className="phone-call">
         <div className="phone-call__caller">
-          <video ref={MyVideo} autoPlay></video>
+          <video
+            ref={OrtherVideo}
+            autoPlay
+            className={OrtherVideo ? 'video-call' : 'video-call video-call--off'}
+          />
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
             <Avatar
               src={receiver.avatar}
@@ -64,17 +65,17 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
             />
             <Space direction="vertical" size="small">
               <Title style={{ margin: 0, color: 'white' }} level={3}>
-                {receiver.displayName || receiver.username}
+                {receiver.displayname || receiver.username}
               </Title>
               <Text type="secondary" style={{ color: '#dedede' }}>
-                {!isCallNow ? 'Waiting...' : `${minutes}:${seconds}`}
+                {!isCallNow && 'Waiting...'}
               </Text>
             </Space>
           </Space>
         </div>
         <div className="phone-call__controller">
           {isCallNow ? (
-            <InCall />
+            <InCall MyVideo={stream} socket={socket} />
           ) : (
             <div className="before-call">
               <Button
@@ -91,7 +92,13 @@ const ReceiverCall: FC<{ peer: any }> = ({ peer }) => {
                 danger
                 shape="circle"
                 icon={<PoweroffOutlined />}
-                onClick={() => dispatch(hangUpCall())}
+                onClick={() => {
+                  dispatch(hangUpCall());
+                  socket.emit('closeCall', {
+                    owner: localStorage.getItem('access_token'),
+                    currentRoom: localStorage.getItem('room_id'),
+                  });
+                }}
               />
             </div>
           )}

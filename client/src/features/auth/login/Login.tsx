@@ -12,16 +12,19 @@ const { Text } = Typography;
 
 const Login = () => {
   let history = useHistory();
+  const loading = useAppSelector(selectLoadingAuth);
+  const error = useAppSelector(selectErrorAuth);
+  const isSuccess = useAppSelector((state) => state.auth.isSuccess);
   useEffect(() => {
+    dispatch(removeIsSuccess());
     let isAuthenticated = Boolean(localStorage.getItem('access_token'));
     if (isAuthenticated) {
       setTimeout(() => {
         history.push('/t');
-      }, 800);
-    } else {
-      dispatch(removeIsSuccess());
+      }, 1000);
     }
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess]);
 
   const dispatch = useAppDispatch();
   const {
@@ -32,10 +35,6 @@ const Login = () => {
   const onSubmit: SubmitHandler<LoginInput> = (data) => {
     dispatch(authLogin(data));
   };
-
-  const loading = useAppSelector(selectLoadingAuth);
-  const error = useAppSelector(selectErrorAuth);
-  const isSuccess = useAppSelector((state) => state.auth.isSuccess);
 
   let key = 'login';
   useEffect(() => {
@@ -49,7 +48,7 @@ const Login = () => {
     if (loading) {
       message.loading({ content: 'Loading...', key });
     }
-    if (isSuccess) {
+    if (isSuccess && !loading) {
       message.success({ content: 'Login successfully!', key });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
