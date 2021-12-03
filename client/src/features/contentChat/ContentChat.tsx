@@ -291,7 +291,7 @@ const ContentChat = () => {
   // <----------------------- Unfriend
 
   // phone call ------------------------>
-  const receiver = useAppSelector((state) => state.contentChat.voiceCall);
+  const receiver = useAppSelector((state) => state.contentChat.receiver);
   const user_avatar = useAppSelector((state) => state.accountModal.user.user_avatar);
   const handlePhoneCall = () => {
     socket.emit('callToOrther', {
@@ -313,7 +313,7 @@ const ContentChat = () => {
   // <------------------------------------ delete mess
   return (
     <div className="content-chat">
-      <SenderCall />
+      <SenderCall peer={peer}/>
       {receiver && <ReceiverCall peer={peer} />}
       <section className="content-chat__2nd">
         <div className="content-chat__2nd__header">

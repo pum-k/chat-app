@@ -49,7 +49,7 @@ export const contentChatSlice = createSlice({
       if(!state.isVisibleReceiver) state.isVisibleReceiver = action.payload;
     },
     setReceiver: (state, action) => {
-      state.voiceCall = action.payload;
+      state.receiver = action.payload;
     },
   },
   extraReducers: (builder) => {

@@ -13,7 +13,7 @@ export interface ChatState {
   loading: boolean,
   listRoomChat: Array<RoomChatStructure>,
   isVisiblePhoneCall: boolean
-  voiceCall?: any;
+  receiver?: any;
   isVisibleSender: boolean,
   isVisibleReceiver: boolean
 }

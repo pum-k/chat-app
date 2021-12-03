@@ -1,16 +1,27 @@
 import { Avatar, Button, Modal, Space, Tooltip, Typography } from 'antd';
-import {
-  VideoCameraOutlined,
-  PoweroffOutlined,
-  AudioOutlined,
-  UserOutlined,
-  PhoneOutlined,
-} from '@ant-design/icons';
-import { useAppSelector } from 'app/hooks';
+import { PoweroffOutlined, UserOutlined } from '@ant-design/icons';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { FC, useRef, useEffect } from 'react';
+import { handleVisiblePhoneCall } from 'features/contentChat/contentChatSlice';
+import InCall from 'features/InCall/InCall';
 const { Title, Text } = Typography;
-const SenderCall = () => {
-    const isVisible = useAppSelector(state => state.contentChat.isVisibleSender);
-    const sender = useAppSelector(state => state.accountModal.user); // sender
+const SenderCall: FC<{ peer: any }> = ({ peer }) => {
+  const isVisible = useAppSelector((state) => state.contentChat.isVisibleSender);
+  const MyVideo = useRef<any>();
+  const dispatch = useAppDispatch();
+  const isCallNow = useAppSelector((state) => state.contentChat.isVisiblePhoneCall);
+  const sender = useAppSelector((state) => state.accountModal.user); // sender
+  useEffect(() => {
+    peer.on('call', (call: any) => {
+      dispatch(handleVisiblePhoneCall(true));
+      call.answer(MyVideo.current.srcObject);
+      call.on('stream', (remoteStream: any) => {
+        if (MyVideo.current != null) {
+          MyVideo.current.srcObject = remoteStream;
+        }
+      });
+    });
+  }, []);
 
   return (
     <Modal
@@ -23,13 +34,13 @@ const SenderCall = () => {
     >
       <div className="phone-call">
         <div className="phone-call__caller">
-          {/* <video src={}></video> */}
+          <video ref={MyVideo}></video>
 
           <Space direction="vertical" size="large" style={{ transform: 'translateY(90px)' }}>
             <Avatar className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
             <Space direction="vertical" size="small">
               <Title style={{ margin: 0, color: 'white' }} level={3}>
-                  {sender.user_display_name || sender.user_name}
+                {sender.user_display_name || sender.user_name}
               </Title>
               <Text type="secondary" style={{ color: '#dedede' }}>
                 00:00
@@ -38,10 +49,19 @@ const SenderCall = () => {
           </Space>
         </div>
         <div className="phone-call__controller">
-          {/* <InCall /> */}
-          <Tooltip title="Hang up">
-            <Button type="primary" size="large" danger shape="circle" icon={<PoweroffOutlined />} />
-          </Tooltip>
+          {isCallNow ? (
+            <InCall />
+          ) : (
+            <Tooltip title="Hang up">
+              <Button
+                type="primary"
+                size="large"
+                danger
+                shape="circle"
+                icon={<PoweroffOutlined />}
+              />
+            </Tooltip>
+          )}
         </div>
       </div>
     </Modal>
