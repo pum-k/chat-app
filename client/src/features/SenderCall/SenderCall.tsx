@@ -29,7 +29,7 @@ const SenderCall = () => {
             <Avatar className="phone-call__caller__avatar" size={128} icon={<UserOutlined />} />
             <Space direction="vertical" size="small">
               <Title style={{ margin: 0, color: 'white' }} level={3}>
-                Con CAc
+                  {sender.user_display_name || sender.user_name}
               </Title>
               <Text type="secondary" style={{ color: '#dedede' }}>
                 00:00

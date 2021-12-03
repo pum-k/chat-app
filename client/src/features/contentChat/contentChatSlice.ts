@@ -48,7 +48,7 @@ export const contentChatSlice = createSlice({
     handleVisibleReceiver: (state, action) => {
       if(!state.isVisibleReceiver) state.isVisibleReceiver = action.payload;
     },
-    handleVoiceCall: (state, action) => {
+    setReceiver: (state, action) => {
       state.voiceCall = action.payload;
     },
   },
@@ -80,6 +80,6 @@ export const contentChatSlice = createSlice({
 });
 
 export default contentChatSlice.reducer;
-export const { joinRoom, sendImage, handleVisiblePhoneCall, handleVoiceCall, handleVisibleSender, handleVisibleReceiver } =
+export const { joinRoom, sendImage, handleVisiblePhoneCall, setReceiver, handleVisibleSender, handleVisibleReceiver } =
   contentChatSlice.actions;
 export const selectMessages = (state: RootState) => state.contentChat.messages;

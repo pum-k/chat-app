@@ -31,12 +31,13 @@ import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
 import {
   handleVisiblePhoneCall,
+  handleVisibleReceiver,
   handleVisibleSender,
-  handleVoiceCall,
   joinRoom,
   renderMessageAsync,
   sendImage,
   sendMessageAsync,
+  setReceiver,
 } from './contentChatSlice';
 import './ContentChat.scss';
 import { useLocation, useHistory } from 'react-router-dom';
@@ -164,8 +165,8 @@ const ContentChat = () => {
     });
     socket.on('receiveCall', (data: any) => {
       console.log(data);
-      dispatch(handleVisiblePhoneCall(true));
-      dispatch(handleVoiceCall(data));
+      dispatch(handleVisibleReceiver(true));
+      dispatch(setReceiver(data));
     });
     // socket.on('callToOrther', () => {
     //   console.log('hello');
