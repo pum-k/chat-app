@@ -1,8 +1,6 @@
 import { Avatar, Button, Modal, Space, Typography } from 'antd';
 import {
-  VideoCameraOutlined,
   PoweroffOutlined,
-  AudioOutlined,
   UserOutlined,
   PhoneOutlined,
 } from '@ant-design/icons';

@@ -21,6 +21,7 @@ const SenderCall: FC<{ peer: any }> = ({ peer }) => {
         }
       });
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

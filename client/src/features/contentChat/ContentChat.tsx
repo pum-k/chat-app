@@ -30,7 +30,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import moment from 'moment';
 import {
-  handleVisiblePhoneCall,
   handleVisibleReceiver,
   handleVisibleSender,
   joinRoom,
